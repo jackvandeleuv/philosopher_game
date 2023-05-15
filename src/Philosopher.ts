@@ -46,11 +46,14 @@ export class Philosopher {
         return this.healthPoints;
     }
 
-    takeDamage(damage: number): void {
+    /*
+    Returns a boolean to indicate if the Philosopher retired as a result
+    of the damage taken.
+    */
+    takeDamage(damage: number): boolean {
         this.healthPoints = this.healthPoints - damage;
-        if (this.healthPoints <= 0) {
-            this.retire();
-        }
+        this.retired = this.healthPoints <= 0;
+        return this.retired;
     }
 
     isRetired(): boolean {
@@ -61,7 +64,11 @@ export class Philosopher {
         return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
     }
 
-    private retire(): void { 
-        this.retired = true;
+    getMoves(): string[] {
+        let moveNames: string[] = []
+        for (let move of this.movePool) {
+            moveNames.push(move.getName());
+        } 
+        return moveNames;
     }
 }

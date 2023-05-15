@@ -6,6 +6,7 @@ class Philosopher {
     constructor(newName, newAttack, newDefense, newHealthPoints) {
         this.movePool = [];
         this.maxMoves = 5;
+        this.retired = false;
         this.name = newName;
         this.attack = newAttack;
         this.defense = newDefense;
@@ -22,12 +23,36 @@ class Philosopher {
     getAttack() {
         return this.attack;
     }
+    getName() {
+        return this.name;
+    }
+    getDefense() {
+        return this.defense;
+    }
+    getHealthPoints() {
+        return this.healthPoints;
+    }
+    /*
+    Returns a boolean to indicate if the Philosopher retired as a result
+    of the damage taken.
+    */
     takeDamage(damage) {
         this.healthPoints = this.healthPoints - damage;
-        if (this.healthPoints <= 0) {
-            this.retire();
-        }
+        this.retired = this.healthPoints <= 0;
+        return this.retired;
     }
-    retire() { console.log(this.name + ' retired!'); }
+    isRetired() {
+        return this.retired;
+    }
+    deepCopy() {
+        return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
+    }
+    getMoves() {
+        let moveNames = [];
+        for (let move of this.movePool) {
+            moveNames.push(move.getName());
+        }
+        return moveNames;
+    }
 }
 exports.Philosopher = Philosopher;
