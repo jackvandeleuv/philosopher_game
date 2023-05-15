@@ -7,6 +7,7 @@ export class Philosopher {
     private healthPoints: number;
     private movePool: Move[] = [];
     private maxMoves: number = 5;
+    private retired: boolean = false;
 
     constructor(newName: string, newAttack: number, newDefense: number, newHealthPoints: number) {
         this.name = newName;
@@ -33,6 +34,18 @@ export class Philosopher {
         return this.attack;
     }
 
+    getName(): string {
+        return this.name;
+    }
+
+    getDefense(): number {
+        return this.defense;
+    }
+
+    getHealthPoints(): number {
+        return this.healthPoints;
+    }
+
     takeDamage(damage: number): void {
         this.healthPoints = this.healthPoints - damage;
         if (this.healthPoints <= 0) {
@@ -40,5 +53,15 @@ export class Philosopher {
         }
     }
 
-    private retire(): void { console.log(this.name + ' retired!'); }
+    isRetired(): boolean {
+        return this.retired;
+    }
+
+    deepCopy(): Philosopher {
+        return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
+    }
+
+    private retire(): void { 
+        this.retired = true;
+    }
 }
