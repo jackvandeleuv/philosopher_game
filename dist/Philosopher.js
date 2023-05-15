@@ -32,6 +32,13 @@ class Philosopher {
     getHealthPoints() {
         return this.healthPoints;
     }
+    makeAttack(moveIndex) {
+        let chosenMove = this.movePool[moveIndex];
+        if (Math.random() > chosenMove.getAccuracy()) {
+            return 0;
+        }
+        return this.attack * chosenMove.getPower();
+    }
     /*
     Returns a boolean to indicate if the Philosopher retired as a result
     of the damage taken.
