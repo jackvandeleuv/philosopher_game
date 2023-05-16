@@ -84,14 +84,15 @@ export class Game {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
         let movingPhil = this.activePhils[this.moving];
         let defendingPhil = this.activePhils[this.defending];
-        console.log(movingPhil
-            + ' is ready to move.\nYour opponent is '
+        console.log(movingPhil + ' is ready to move.\n');
+        console.log('Your '
+            + movingPhil
+            + "'s Health - "
+            + movingPhil.getHealthPoints().toString()
+            + '\n');
+        console.log('Opposing '
             + defendingPhil
-            + '.\n');
-        console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
-        console.log('The opposing '
-            + defendingPhil
-            + ' has '
+            + "'s health - "
             + defendingPhil.getHealthPoints()
             + '\n');
     }
