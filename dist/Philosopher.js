@@ -44,7 +44,7 @@ export class Philosopher {
     of the damage taken.
     */
     takeDamage(damage) {
-        this.healthPoints = this.healthPoints - damage;
+        this.healthPoints = this.healthPoints - (damage * this.defense);
         this.retired = this.healthPoints <= 0;
     }
     isRetired() {
