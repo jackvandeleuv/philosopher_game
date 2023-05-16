@@ -41,6 +41,7 @@ export class Game {
             this.moveSelect();
             let winner: number = this.allRetired();
             if (winner != -1) {
+                console.log('Player ' + winner + " won! Game over!");
                 return winner;
             }
         }
@@ -80,7 +81,7 @@ export class Game {
         if (damageDealt == 0) {
             console.log(chosenMoveName 
                             + ' missed the mark and did no damage!');
-        }
+        } 
 
         if (damageDealt > 0) {
             console.log(chosenMoveName + ' did ' + damageDealt + ' damage!\n')
@@ -92,6 +93,7 @@ export class Game {
             console.log(philToDefend + ' retired! Pick a new Philosopher:\n');
 
             while (philToDefend.isRetired()) {
+                if (this.allRetired() != -1) { return };
                 philToDefend = this.chooseNewDefender();
                 if (philToDefend.isRetired()) {
                     console.log('That Philosopher retired already! Pick a different one.\n')
@@ -164,7 +166,6 @@ export class Game {
             }
 
             if (teamRetired) {
-                console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
                 return i ^ 1;
             }
             
