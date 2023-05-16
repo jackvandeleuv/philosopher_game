@@ -1,4 +1,4 @@
-import { Move } from './Move';
+import { Move } from './Move.js';
 export class Philosopher {
     constructor(newName, newAttack, newDefense, newHealthPoints) {
         this.movePool = [];

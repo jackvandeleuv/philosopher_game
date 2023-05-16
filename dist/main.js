@@ -8,7 +8,6 @@ let moves = [
     new Move('Analyze', new School(), 100, 100),
     new Move('Propagandize', new School(), 100, 100),
     new Move('Revolt', new School(), 100, 100),
-    new Move('Propeller', new School(), 100, 100),
     new Move('Rant', new School(), 100, 100)
 ];
 let philosophers = [
@@ -21,4 +20,10 @@ let philosophers = [
     new Philosopher('Aristotle', 100, 100, 100),
     new Philosopher('Kierkegaard', 100, 100, 100)
 ];
+for (let phil of philosophers) {
+    for (let move of moves) {
+        phil.addMove(move);
+    }
+}
 let game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 4), philosophers.slice(4));
+game.start();

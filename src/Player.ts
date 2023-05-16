@@ -21,4 +21,8 @@ export class Player {
     getName(): string {
         return this.name;
     }
+
+    deepCopy(): Player {
+        return new Player(this.name);
+    }
 }
