@@ -76,7 +76,8 @@ export class Game {
                     + chosenMoveName
                     + '!\n');
         
-        let damageDealt: number = philToMove.makeAttack(chosenMoveIndex);
+        let damageOut: number = philToMove.makeAttack(chosenMoveIndex);
+        let damageDealt: number = damageOut * philToDefend.getDefense();
 
         if (damageDealt == 0) {
             console.log(chosenMoveName 
@@ -143,12 +144,12 @@ export class Game {
         console.log('Your '
                         + movingPhil 
                         + "'s Health - " 
-                        + movingPhil.getHealthPoints().toString() 
+                        + movingPhil.getHealth().toString() 
                         + '\n');
         console.log('Opposing ' 
                         + defendingPhil 
                         + "'s health - " 
-                        + defendingPhil.getHealthPoints()
+                        + defendingPhil.getHealth()
                         + '\n');
     }
 

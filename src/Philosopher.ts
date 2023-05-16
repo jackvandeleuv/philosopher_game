@@ -4,33 +4,33 @@ export class Philosopher {
     private name: string;
     private attack: number;
     private defense: number;
-    private healthPoints: number;
-    private movePool: Move[] = [];
+    private health: number;
+    private moves: Move[] = [];
     private maxMoves: number = 5;
     private retired: boolean = false;
 
-    constructor(newName: string, newAttack: number, newDefense: number, newHealthPoints: number) {
-        this.name = newName;
-        this.attack = newAttack;
-        this.defense = newDefense;
-        this.healthPoints = newHealthPoints;
+    constructor(name: string, attack: number, defense: number, health: number) {
+        this.name = name;
+        this.attack = attack;
+        this.defense = defense;
+        this.health = health;
     }
 
     getMove(moveIndex: number) {
-        return this.movePool[moveIndex].deepCopy();
+        return this.moves[moveIndex].deepCopy();
     }
 
-    addMove(newMove: Move): boolean {
-        if (this.movePool.length >= this.maxMoves) {
+    addMove(move: Move): boolean {
+        if (this.moves.length >= this.maxMoves) {
             return false;
         }
 
-        let moveCopy = new Move(newMove.getName(), 
-                                newMove.getSchool(), 
-                                newMove.getAccuracy(), 
-                                newMove.getPower()
+        let moveCopy = new Move(move.getName(), 
+                                move.getSchool(), 
+                                move.getAccuracy(), 
+                                move.getPower()
                                 );
-        this.movePool.push(moveCopy);
+        this.moves.push(moveCopy);
         return true;
     }
 
@@ -46,26 +46,17 @@ export class Philosopher {
         return this.defense;
     }
 
-    getHealthPoints(): number {
-        return this.healthPoints;
+    getHealth(): number {
+        return this.health;
     }
 
     makeAttack(moveIndex: number): number {
-        let chosenMove = this.movePool[moveIndex];
+        let chosenMove = this.moves[moveIndex];
         if (Math.random() > chosenMove.getAccuracy()) {
             return 0;
         }
 
         return this.attack * chosenMove.getPower();
-    }
-
-    /*
-    Returns a boolean to indicate if the Philosopher retired as a result
-    of the damage taken.
-    */
-    takeDamage(damage: number): void {
-        this.healthPoints = this.healthPoints - (damage * this.defense);
-        this.retired = this.healthPoints <= 0;
     }
 
     isRetired(): boolean {
@@ -76,17 +67,22 @@ export class Philosopher {
         let philCopy: Philosopher = new Philosopher(this.name, 
                                                     this.attack, 
                                                     this.defense, 
-                                                    this.healthPoints);
-        for (let move of this.movePool) {
+                                                    this.health);
+        for (let move of this.moves) {
             philCopy.addMove(move);
         }
 
         return philCopy;
     }
 
+    takeDamage(damage: number): void {
+        this.health = this.health - damage;
+        this.retired = this.health <= 0;
+    }
+
     getMoveNames(): string[] {
         let moveNames: string[] = []
-        for (let move of this.movePool) {
+        for (let move of this.moves) {
             moveNames.push(move.getName());
         } 
         return moveNames;

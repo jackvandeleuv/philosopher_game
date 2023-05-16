@@ -58,7 +58,8 @@ export class Game {
             + ' used '
             + chosenMoveName
             + '!\n');
-        let damageDealt = philToMove.makeAttack(chosenMoveIndex);
+        let damageOut = philToMove.makeAttack(chosenMoveIndex);
+        let damageDealt = damageOut * philToDefend.getDefense();
         if (damageDealt == 0) {
             console.log(chosenMoveName
                 + ' missed the mark and did no damage!');
@@ -115,12 +116,12 @@ export class Game {
         console.log('Your '
             + movingPhil
             + "'s Health - "
-            + movingPhil.getHealthPoints().toString()
+            + movingPhil.getHealth().toString()
             + '\n');
         console.log('Opposing '
             + defendingPhil
             + "'s health - "
-            + defendingPhil.getHealthPoints()
+            + defendingPhil.getHealth()
             + '\n');
     }
     allRetired() {
