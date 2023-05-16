@@ -23,7 +23,7 @@ export class Philosopher {
     getAttack() {
         return this.attack;
     }
-    getName() {
+    toString() {
         return this.name;
     }
     getDefense() {

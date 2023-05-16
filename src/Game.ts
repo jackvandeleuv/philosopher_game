@@ -61,7 +61,7 @@ export class Game {
 
         let chosenMove: number = parseInt(prompt(promptString) as string) as number - 1;
 
-        console.log(philToMove.getName() 
+        console.log(philToMove 
                     + ' used ' 
                     + philToMove.getMoveNames()[chosenMove] 
                     + '!\n');
@@ -70,8 +70,8 @@ export class Game {
         let defenderRetired: boolean = philToDefend.takeDamage(damageDealt);  
         
         if (defenderRetired) {
-            this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
-            console.log('Your turn, ' + this.activePhils[this.defending].getName() + '!\n');
+            this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.toString());
+            console.log('Your turn, ' + this.activePhils[this.defending] + '!\n');
         }
 
         this.moving = this.moving ^ 1;
@@ -89,7 +89,7 @@ export class Game {
                 promptString = promptString 
                                 + (i + 1).toString() 
                                 + ') ' 
-                                + defendingGroup[i].getName() 
+                                + defendingGroup[i] 
                                 + '\n';
             }
 
@@ -97,7 +97,7 @@ export class Game {
                 promptString = promptString
                                 + (i + 1).toString()
                                 + ') '
-                                + defendingGroup[i].getName()
+                                + defendingGroup[i]
                                 + ' (retired)\n'
             }
         }
@@ -112,13 +112,13 @@ export class Game {
         let movingPhil: Philosopher = this.activePhils[this.moving];
         let defendingPhil: Philosopher = this.activePhils[this.defending];
 
-        console.log(movingPhil.getName() 
+        console.log(movingPhil 
                     + ' is ready to move.\nYour opponent is ' 
-                    + defendingPhil.getName()
+                    + defendingPhil
                     + '.\n');
         console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
         console.log('The opposing ' 
-                        + defendingPhil.getName() 
+                        + defendingPhil 
                         + ' has ' 
                         + defendingPhil.getHealthPoints()
                         + '\n');

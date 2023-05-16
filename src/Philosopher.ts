@@ -38,7 +38,7 @@ export class Philosopher {
         return this.attack;
     }
 
-    getName(): string {
+    toString(): string {
         return this.name;
     }
 
