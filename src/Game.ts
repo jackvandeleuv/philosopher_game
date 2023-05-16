@@ -104,7 +104,10 @@ export class Game {
         let movingPhil: Philosopher = this.activePhils[this.moving];
         let defendingPhil: Philosopher = this.activePhils[this.defending];
 
-        console.log(movingPhil.getName() + ' is ready to move.\n');
+        console.log(movingPhil.getName() 
+                    + ' is ready to move.\nYour opponent is ' 
+                    + defendingPhil.getName()
+                    + '.\n');
         console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
         console.log('The opposing ' 
                         + defendingPhil.getName() 

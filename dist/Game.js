@@ -77,7 +77,10 @@ export class Game {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
         let movingPhil = this.activePhils[this.moving];
         let defendingPhil = this.activePhils[this.defending];
-        console.log(movingPhil.getName() + ' is ready to move.\n');
+        console.log(movingPhil.getName()
+            + ' is ready to move.\nYour opponent is '
+            + defendingPhil.getName()
+            + '.\n');
         console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
         console.log('The opposing '
             + defendingPhil.getName()
