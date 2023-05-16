@@ -28,18 +28,9 @@ export class Game {
     start() {
         while (true) {
             this.moveSelect();
-            // Check to see if all Philosophers on one team are retired.
-            for (let i = 0; i < this.philGroups.length; i++) {
-                let teamRetired = true;
-                for (let phil of this.philGroups[i]) {
-                    if (!phil.isRetired()) {
-                        teamRetired = !teamRetired;
-                    }
-                }
-                if (teamRetired) {
-                    console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
-                    return i ^ 1;
-                }
+            let winner = this.allRetired();
+            if (winner != -1) {
+                return winner;
             }
         }
     }
@@ -93,5 +84,21 @@ export class Game {
             + ' has '
             + defendingPhil.getHealthPoints()
             + '\n');
+    }
+    allRetired() {
+        // Check to see if all Philosophers on one team are retired.
+        for (let i = 0; i < this.philGroups.length; i++) {
+            let teamRetired = true;
+            for (let phil of this.philGroups[i]) {
+                if (!phil.isRetired()) {
+                    teamRetired = !teamRetired;
+                }
+            }
+            if (teamRetired) {
+                console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
+                return i ^ 1;
+            }
+        }
+        return -1;
     }
 }

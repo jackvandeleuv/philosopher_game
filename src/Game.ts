@@ -39,24 +39,14 @@ export class Game {
     start(): number {
         while (true) {
             this.moveSelect();
-
-            // Check to see if all Philosophers on one team are retired.
-            for (let i = 0; i < this.philGroups.length; i++) {
-                let teamRetired: boolean = true;
-                for (let phil of this.philGroups[i]) {
-                    if (!phil.isRetired()) {
-                        teamRetired = !teamRetired;
-                    }
-                }
-                if (teamRetired) {
-                    console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
-                    return i ^ 1;
-                }
+            let winner: number = this.allRetired();
+            if (winner != -1) {
+                return winner;
             }
         }
     }
 
-    private moveSelect(): void {
+    private moveSelect() {
         let philToMove: Philosopher = this.activePhils[this.moving];
         let philToDefend: Philosopher = this.activePhils[this.defending];
 
@@ -121,6 +111,24 @@ export class Game {
                         + ' has ' 
                         + defendingPhil.getHealthPoints()
                         + '\n');
+    }
+
+    private allRetired(): number {
+        // Check to see if all Philosophers on one team are retired.
+        for (let i = 0; i < this.philGroups.length; i++) {
+            let teamRetired: boolean = true;
+            for (let phil of this.philGroups[i]) {
+                if (!phil.isRetired()) {
+                    teamRetired = !teamRetired;
+                }
+            }
+            if (teamRetired) {
+                console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
+                return i ^ 1;
+            }
+        }
+
+        return -1;
     }
 
 }
