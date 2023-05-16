@@ -11,16 +11,29 @@ export class Game {
     private defending: number = 1;
 
     constructor(newPlayer1: Player, newPlayer2: Player, newPhilGroup1: Philosopher[], newPhilGroup2: Philosopher[]) {
-        this.players.push(newPlayer1);
-        this.players.push(newPlayer2);
-        this.philGroups.push(newPhilGroup1);
-        this.philGroups.push(newPhilGroup2);
+        this.players.push(newPlayer1.deepCopy());
+        this.players.push(newPlayer2.deepCopy());
 
-        this.activePhils.push(newPhilGroup1[0])
-        this.activePhils.push(newPhilGroup2[1]);
+        // Defensive copy
+        let newPhilGroup1Copy: Philosopher[] = []
+        for (let i = 0; i < newPhilGroup1.length; i++) {
+            newPhilGroup1Copy[i] = newPhilGroup1[i].deepCopy()
+        }
+
+        // Defensive copy
+        let newPhilGroup2Copy: Philosopher[] = []
+        for (let i = 0; i < newPhilGroup2.length; i++) {
+            newPhilGroup2Copy[i] = newPhilGroup2[i].deepCopy()
+        }
+
+        this.philGroups.push(newPhilGroup1Copy);
+        this.philGroups.push(newPhilGroup2Copy);
+
+        this.activePhils.push(newPhilGroup1Copy[0])
+        this.activePhils.push(newPhilGroup2Copy[0]);
     }
 
-    chooseNewDefender(retiredPhilName: string): Philosopher {
+    private chooseNewDefender(retiredPhilName: string): Philosopher {
         let defendingGroup: Philosopher[] = this.philGroups[this.defending];
         let promptString: string = retiredPhilName + ' retired! Pick a new Philosopher:\n';
         for (let i = 0; i < defendingGroup.length; i++) {
@@ -30,6 +43,20 @@ export class Game {
         }
         let chosenPhilIndex: number = parseInt(prompt(promptString) as string) as number;
         return defendingGroup[chosenPhilIndex];
+    }
+
+    /*
+    Returns an integer indicating the winner.
+    */
+    start(): number {
+
+    }
+
+    private printTeamStatus(): void {
+        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
+        let movingPhil = this.activePhils[this.moving].getHealthPoints();
+        let defendingPhil = this.activePhils[this.defending].getHealthPoints();
+
     }
 
     private moveSelect(): void {
