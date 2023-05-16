@@ -58,7 +58,6 @@ export class Game {
             + chosenMoveName
             + '!\n');
         let damageDealt = philToMove.makeAttack(chosenMoveIndex);
-        let timeOut = new Promise(resolve => setTimeout(resolve, 750));
         if (damageDealt == 0) {
             console.log(chosenMoveName
                 + ' missed the mark and did no damage!');
@@ -66,17 +65,23 @@ export class Game {
         if (damageDealt > 0) {
             console.log(chosenMoveName + ' did ' + damageDealt + ' damage!\n');
         }
-        let defenderRetired = philToDefend.takeDamage(damageDealt);
-        if (defenderRetired) {
-            this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.toString());
-            console.log('Your turn, ' + this.activePhils[this.defending] + '!\n');
+        philToDefend.takeDamage(damageDealt);
+        if (philToDefend.isRetired()) {
+            console.log(philToDefend + ' retired! Pick a new Philosopher:\n');
+            while (philToDefend.isRetired()) {
+                philToDefend = this.chooseNewDefender();
+                if (philToDefend.isRetired()) {
+                    console.log('That Philosopher retired already! Pick a different one.\n');
+                }
+            }
+            this.activePhils[this.defending] = philToDefend;
+            console.log('Your turn, ' + philToDefend + '!\n');
         }
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
     }
-    chooseNewDefender(retiredPhilName) {
+    chooseNewDefender() {
         let defendingGroup = this.philGroups[this.defending];
-        console.log(retiredPhilName + ' retired! Pick a new Philosopher:\n');
         let promptString = '';
         for (let i = 0; i < defendingGroup.length; i++) {
             if (!defendingGroup[i].isRetired()) {

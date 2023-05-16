@@ -63,10 +63,9 @@ export class Philosopher {
     Returns a boolean to indicate if the Philosopher retired as a result
     of the damage taken.
     */
-    takeDamage(damage: number): boolean {
+    takeDamage(damage: number): void {
         this.healthPoints = this.healthPoints - damage;
         this.retired = this.healthPoints <= 0;
-        return this.retired;
     }
 
     isRetired(): boolean {
