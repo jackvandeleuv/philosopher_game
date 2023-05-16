@@ -71,7 +71,7 @@ export class Game {
         
         if (defenderRetired) {
             this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
-            console.log('Your turn, ' + this.activePhils[this.defending] + '!\n');
+            console.log('Your turn, ' + this.activePhils[this.defending].getName() + '!\n');
         }
 
         this.moving = this.moving ^ 1;
@@ -92,10 +92,18 @@ export class Game {
                                 + defendingGroup[i].getName() 
                                 + '\n';
             }
+
+            if (defendingGroup[i].isRetired()) {
+                promptString = promptString
+                                + (i + 1).toString()
+                                + ') '
+                                + defendingGroup[i].getName()
+                                + ' (retired)\n'
+            }
         }
 
-        let chosenPhil: number = parseInt(prompt(promptString) as string) as number;
-        return defendingGroup[chosenPhil - 1];
+        let chosenPhil: number = parseInt(prompt(promptString) as string) - 1;
+        return defendingGroup[chosenPhil];
     }
 
     private printBattleStatus(): void {
