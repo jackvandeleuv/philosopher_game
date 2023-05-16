@@ -52,7 +52,11 @@ export class Philosopher {
         return this.retired;
     }
     deepCopy() {
-        return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
+        let philCopy = new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
+        for (let move of this.movePool) {
+            philCopy.addMove(move);
+        }
+        return philCopy;
     }
     getMoveNames() {
         let moveNames = [];

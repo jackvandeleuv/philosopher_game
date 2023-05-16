@@ -74,7 +74,15 @@ export class Philosopher {
     }
 
     deepCopy(): Philosopher {
-        return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
+        let philCopy: Philosopher = new Philosopher(this.name, 
+                                                    this.attack, 
+                                                    this.defense, 
+                                                    this.healthPoints);
+        for (let move of this.movePool) {
+            philCopy.addMove(move);
+        }
+
+        return philCopy;
     }
 
     getMoveNames(): string[] {

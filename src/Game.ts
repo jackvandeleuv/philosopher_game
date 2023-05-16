@@ -33,54 +33,94 @@ export class Game {
         this.activePhils.push(newPhilGroup2Copy[0]);
     }
 
-    private chooseNewDefender(retiredPhilName: string): Philosopher {
-        let defendingGroup: Philosopher[] = this.philGroups[this.defending];
-        let promptString: string = retiredPhilName + ' retired! Pick a new Philosopher:\n';
-        for (let i = 0; i < defendingGroup.length; i++) {
-            if (!defendingGroup[i].isRetired()) {
-                promptString = promptString + (i + 1).toString() + ') ' + defendingGroup[i].getName() + '\n';
-            }
-        }
-        let chosenPhilIndex: number = parseInt(prompt(promptString) as string) as number;
-        return defendingGroup[chosenPhilIndex];
-    }
-
     /*
     Returns an integer indicating the winner.
     */
     start(): number {
+        while (true) {
+            this.moveSelect();
 
-    }
-
-    private printTeamStatus(): void {
-        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
-        let movingPhil = this.activePhils[this.moving].getHealthPoints();
-        let defendingPhil = this.activePhils[this.defending].getHealthPoints();
-
+            // Check to see if all Philosophers on one team are retired.
+            for (let i = 0; i < this.philGroups.length; i++) {
+                let teamRetired: boolean = true;
+                for (let phil of this.philGroups[i]) {
+                    if (!phil.isRetired()) {
+                        teamRetired = !teamRetired;
+                    }
+                }
+                if (teamRetired) {
+                    console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
+                    return i ^ 1;
+                }
+            }
+        }
     }
 
     private moveSelect(): void {
         let philToMove: Philosopher = this.activePhils[this.moving];
         let philToDefend: Philosopher = this.activePhils[this.defending];
 
+        this.printBattleStatus();
+
         let moves: string[] = philToMove.getMoveNames();
-        let promptString: string = 'Player ' + (this.moving + 1).toString() + "'s turn:\n";
+        let promptString: string = '';
 
         for (let i = 0; i < moves.length; i++) {
             promptString = promptString + (i + 1).toString() + ') ' + moves[i] + '\n'
         }
 
         let chosenMove: number = parseInt(prompt(promptString) as string) as number;
+
+        console.log(philToMove.getName() 
+                    + ' used ' 
+                    + philToMove.getMoveNames()[chosenMove].toString() 
+                    + '!\n');
         
-        let damageDealt: number = philToMove.makeAttack(chosenMove);
+        let damageDealt: number = philToMove.makeAttack(chosenMove - 1);
         let defenderRetired: boolean = philToDefend.takeDamage(damageDealt);  
         
         if (defenderRetired) {
             this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
+            console.log('Your turn, ' + this.activePhils[this.defending] + '!\n');
         }
 
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
+    }
+
+    private chooseNewDefender(retiredPhilName: string): Philosopher {
+        let defendingGroup: Philosopher[] = this.philGroups[this.defending];
+
+        console.log(retiredPhilName + ' retired! Pick a new Philosopher:\n');
+
+        let promptString: string = ''; 
+        for (let i = 0; i < defendingGroup.length; i++) {
+            if (!defendingGroup[i].isRetired()) {
+                promptString = promptString 
+                                + (i + 1).toString() 
+                                + ') ' 
+                                + defendingGroup[i].getName() 
+                                + '\n';
+            }
+        }
+
+        let chosenPhil: number = parseInt(prompt(promptString) as string) as number;
+        return defendingGroup[chosenPhil - 1];
+    }
+
+    private printBattleStatus(): void {
+        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
+
+        let movingPhil: Philosopher = this.activePhils[this.moving];
+        let defendingPhil: Philosopher = this.activePhils[this.defending];
+
+        console.log(movingPhil.getName() + ' is ready to move.\n');
+        console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
+        console.log('The opposing ' 
+                        + defendingPhil.getName() 
+                        + ' has ' 
+                        + defendingPhil.getHealthPoints()
+                        + '\n');
     }
 
 }

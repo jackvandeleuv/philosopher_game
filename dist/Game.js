@@ -22,42 +22,76 @@ export class Game {
         this.activePhils.push(newPhilGroup1Copy[0]);
         this.activePhils.push(newPhilGroup2Copy[0]);
     }
-    chooseNewDefender(retiredPhilName) {
-        let defendingGroup = this.philGroups[this.defending];
-        let promptString = retiredPhilName + ' retired! Pick a new Philosopher:\n';
-        for (let i = 0; i < defendingGroup.length; i++) {
-            if (!defendingGroup[i].isRetired()) {
-                promptString = promptString + (i + 1).toString() + ') ' + defendingGroup[i].getName() + '\n';
-            }
-        }
-        let chosenPhilIndex = parseInt(prompt(promptString));
-        return defendingGroup[chosenPhilIndex];
-    }
     /*
     Returns an integer indicating the winner.
     */
     start() {
-    }
-    printTeamStatus() {
-        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
-        let movingPhil = this.activePhils[this.moving].getHealthPoints();
-        let defendingPhil = this.activePhils[this.defending].getHealthPoints();
+        while (true) {
+            this.moveSelect();
+            // Check to see if all Philosophers on one team are retired.
+            for (let i = 0; i < this.philGroups.length; i++) {
+                let teamRetired = true;
+                for (let phil of this.philGroups[i]) {
+                    if (!phil.isRetired()) {
+                        teamRetired = !teamRetired;
+                    }
+                }
+                if (teamRetired) {
+                    console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
+                    return i ^ 1;
+                }
+            }
+        }
     }
     moveSelect() {
         let philToMove = this.activePhils[this.moving];
         let philToDefend = this.activePhils[this.defending];
+        this.printBattleStatus();
         let moves = philToMove.getMoveNames();
-        let promptString = 'Player ' + (this.moving + 1).toString() + "'s turn:\n";
+        let promptString = '';
         for (let i = 0; i < moves.length; i++) {
             promptString = promptString + (i + 1).toString() + ') ' + moves[i] + '\n';
         }
         let chosenMove = parseInt(prompt(promptString));
-        let damageDealt = philToMove.makeAttack(chosenMove);
+        console.log(philToMove.getName()
+            + ' used '
+            + philToMove.getMoveNames()[chosenMove].toString()
+            + '!\n');
+        let damageDealt = philToMove.makeAttack(chosenMove - 1);
         let defenderRetired = philToDefend.takeDamage(damageDealt);
         if (defenderRetired) {
             this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
+            console.log('Your turn, ' + this.activePhils[this.defending] + '!\n');
         }
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
+    }
+    chooseNewDefender(retiredPhilName) {
+        let defendingGroup = this.philGroups[this.defending];
+        console.log(retiredPhilName + ' retired! Pick a new Philosopher:\n');
+        let promptString = '';
+        for (let i = 0; i < defendingGroup.length; i++) {
+            if (!defendingGroup[i].isRetired()) {
+                promptString = promptString
+                    + (i + 1).toString()
+                    + ') '
+                    + defendingGroup[i].getName()
+                    + '\n';
+            }
+        }
+        let chosenPhil = parseInt(prompt(promptString));
+        return defendingGroup[chosenPhil - 1];
+    }
+    printBattleStatus() {
+        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
+        let movingPhil = this.activePhils[this.moving];
+        let defendingPhil = this.activePhils[this.defending];
+        console.log(movingPhil.getName() + ' is ready to move.\n');
+        console.log('Health - ' + movingPhil.getHealthPoints().toString() + '\n');
+        console.log('The opposing '
+            + defendingPhil.getName()
+            + ' has '
+            + defendingPhil.getHealthPoints()
+            + '\n');
     }
 }

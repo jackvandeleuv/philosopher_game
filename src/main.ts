@@ -5,11 +5,11 @@ import { Player } from './Player.js';
 import { Game } from './Game.js';
 
 let moves: Move[] = [
-    new Move('Critique', new School(), 100, 100),
-    new Move('Analyze', new School(), 100, 100),
-    new Move('Propagandize', new School(), 100, 100),
-    new Move('Revolt', new School(), 100, 100),
-    new Move('Rant', new School(), 100, 100)
+    new Move('Critique', new School(), .5, 100),
+    new Move('Analyze', new School(), .5, 100),
+    new Move('Propagandize', new School(), .5, 100),
+    new Move('Revolt', new School(), .5, 100),
+    new Move('Rant', new School(), .5, 100)
 ]
  
 let philosophers: Philosopher[] = [
