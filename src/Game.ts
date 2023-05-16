@@ -59,14 +59,14 @@ export class Game {
             promptString = promptString + (i + 1).toString() + ') ' + moves[i] + '\n'
         }
 
-        let chosenMove: number = parseInt(prompt(promptString) as string) as number;
+        let chosenMove: number = parseInt(prompt(promptString) as string) as number - 1;
 
         console.log(philToMove.getName() 
                     + ' used ' 
-                    + philToMove.getMoveNames()[chosenMove].toString() 
+                    + philToMove.getMoveNames()[chosenMove] 
                     + '!\n');
         
-        let damageDealt: number = philToMove.makeAttack(chosenMove - 1);
+        let damageDealt: number = philToMove.makeAttack(chosenMove);
         let defenderRetired: boolean = philToDefend.takeDamage(damageDealt);  
         
         if (defenderRetired) {
@@ -99,7 +99,7 @@ export class Game {
     }
 
     private printBattleStatus(): void {
-        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
+        console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
 
         let movingPhil: Philosopher = this.activePhils[this.moving];
         let defendingPhil: Philosopher = this.activePhils[this.defending];

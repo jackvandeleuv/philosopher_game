@@ -43,12 +43,12 @@ export class Game {
         for (let i = 0; i < moves.length; i++) {
             promptString = promptString + (i + 1).toString() + ') ' + moves[i] + '\n';
         }
-        let chosenMove = parseInt(prompt(promptString));
+        let chosenMove = parseInt(prompt(promptString)) - 1;
         console.log(philToMove.getName()
             + ' used '
-            + philToMove.getMoveNames()[chosenMove].toString()
+            + philToMove.getMoveNames()[chosenMove]
             + '!\n');
-        let damageDealt = philToMove.makeAttack(chosenMove - 1);
+        let damageDealt = philToMove.makeAttack(chosenMove);
         let defenderRetired = philToDefend.takeDamage(damageDealt);
         if (defenderRetired) {
             this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
@@ -74,7 +74,7 @@ export class Game {
         return defendingGroup[chosenPhil - 1];
     }
     printBattleStatus() {
-        console.log('Player ' + (this.moving + 1).toString() + "'s turn:\n");
+        console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
         let movingPhil = this.activePhils[this.moving];
         let defendingPhil = this.activePhils[this.defending];
         console.log(movingPhil.getName() + ' is ready to move.\n');
