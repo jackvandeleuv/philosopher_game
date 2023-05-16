@@ -1,12 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Move = void 0;
-class Move {
+export class Move {
     constructor(name, school, accuracy, power) {
         this.name = name;
         this.school = school;
         this.accuracy = accuracy;
         this.power = power;
+    }
+    deepCopy() {
+        return new Move(this.name, this.school, this.accuracy, this.power);
     }
     getName() {
         return this.name;
@@ -21,4 +21,3 @@ class Move {
         return this.power;
     }
 }
-exports.Move = Move;

@@ -1,18 +1,24 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Move_1 = require("./Move");
-const School_1 = require("./School");
-const Philosopher_1 = require("./Philosopher");
-const Player_1 = require("./Player");
+import { Move } from './Move.js';
+import { School } from './School.js';
+import { Philosopher } from './Philosopher.js';
+import { Player } from './Player.js';
+import { Game } from './Game.js';
 let moves = [
-    new Move_1.Move('Critique', new School_1.School(), 100, 100),
-    new Move_1.Move('Analyze', new School_1.School(), 100, 100)
+    new Move('Critique', new School(), 100, 100),
+    new Move('Analyze', new School(), 100, 100),
+    new Move('Propagandize', new School(), 100, 100),
+    new Move('Revolt', new School(), 100, 100),
+    new Move('Propeller', new School(), 100, 100),
+    new Move('Rant', new School(), 100, 100)
 ];
-let wittgenstein = new Philosopher_1.Philosopher('Wittgenstein', 100, 100, 100);
-wittgenstein.addMove(moves[1]);
-let marx = new Philosopher_1.Philosopher('Marx', 100, 100, 100);
-marx.addMove(moves[0]);
-let player1 = new Player_1.Player('Player 1');
-let player2 = new Player_1.Player('Player 2');
-player1.addGroupMember(wittgenstein);
-player2.addGroupMember(marx);
+let philosophers = [
+    new Philosopher('Wittgenstein', 100, 100, 100),
+    new Philosopher('Marx', 100, 100, 100),
+    new Philosopher('Russell', 100, 100, 100),
+    new Philosopher('Moore', 100, 100, 100),
+    new Philosopher('Hegel', 100, 100, 100),
+    new Philosopher('Sartre', 100, 100, 100),
+    new Philosopher('Aristotle', 100, 100, 100),
+    new Philosopher('Kierkegaard', 100, 100, 100)
+];
+let game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 4), philosophers.slice(4));

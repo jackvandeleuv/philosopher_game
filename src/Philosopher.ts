@@ -16,6 +16,10 @@ export class Philosopher {
         this.healthPoints = newHealthPoints;
     }
 
+    getMove(moveIndex: number) {
+        return this.movePool[moveIndex].deepCopy();
+    }
+
     addMove(newMove: Move): boolean {
         if (this.movePool.length >= this.maxMoves) {
             return false;
@@ -73,7 +77,7 @@ export class Philosopher {
         return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
     }
 
-    getMoves(): string[] {
+    getMoveNames(): string[] {
         let moveNames: string[] = []
         for (let move of this.movePool) {
             moveNames.push(move.getName());

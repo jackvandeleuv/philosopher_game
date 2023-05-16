@@ -1,6 +1,6 @@
-import { Move } from './Move';
-import { School } from './School';
-import { Philosopher } from './Philosopher';
+import { Move } from './Move.js';
+import { School } from './School.js';
+import { Philosopher } from './Philosopher.js';
 
 export class Player {
     private name: string;

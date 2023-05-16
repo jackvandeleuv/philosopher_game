@@ -1,4 +1,4 @@
-import { School } from './School';
+import { School } from './School.js';
 
 export class Move {
     private name: string;
@@ -11,6 +11,10 @@ export class Move {
         this.school = school;
         this.accuracy = accuracy;
         this.power = power;
+    }
+
+    deepCopy() {
+        return new Move(this.name, this.school, this.accuracy, this.power);
     }
 
     getName(): string {

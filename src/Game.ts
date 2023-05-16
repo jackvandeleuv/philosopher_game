@@ -1,7 +1,7 @@
-import { Move } from './Move';
-import { School } from './School';
-import { Philosopher } from './Philosopher';
-import { Player } from './Player';
+import { Move } from './Move.js';
+import { School } from './School.js';
+import { Philosopher } from './Philosopher.js';
+import { Player } from './Player.js';
 
 export class Game {
     private players: Player[] = [];
@@ -20,11 +20,23 @@ export class Game {
         this.activePhils.push(newPhilGroup2[1]);
     }
 
+    chooseNewDefender(retiredPhilName: string): Philosopher {
+        let defendingGroup: Philosopher[] = this.philGroups[this.defending];
+        let promptString: string = retiredPhilName + ' retired! Pick a new Philosopher:\n';
+        for (let i = 0; i < defendingGroup.length; i++) {
+            if (!defendingGroup[i].isRetired()) {
+                promptString = promptString + (i + 1).toString() + ') ' + defendingGroup[i].getName() + '\n';
+            }
+        }
+        let chosenPhilIndex: number = parseInt(prompt(promptString) as string) as number;
+        return defendingGroup[chosenPhilIndex];
+    }
+
     private moveSelect(): void {
         let philToMove: Philosopher = this.activePhils[this.moving];
         let philToDefend: Philosopher = this.activePhils[this.defending];
 
-        let moves: string[] = philToMove.getMoves();
+        let moves: string[] = philToMove.getMoveNames();
         let promptString: string = 'Player ' + (this.moving + 1).toString() + "'s turn:\n";
 
         for (let i = 0; i < moves.length; i++) {
@@ -33,12 +45,15 @@ export class Game {
 
         let chosenMove: number = parseInt(prompt(promptString) as string) as number;
         
-        this.doBattle(philToMove, philToDefend, chosenMove - 1);
-
-    }
-
-    private doBattle(philToMove: Philosopher, philToDefend: Philosopher, chosenIndex: number): void {
+        let damageDealt: number = philToMove.makeAttack(chosenMove);
+        let defenderRetired: boolean = philToDefend.takeDamage(damageDealt);  
         
+        if (defenderRetired) {
+            this.activePhils[this.defending] = this.chooseNewDefender(philToDefend.getName());
+        }
+
+        this.moving = this.moving ^ 1;
+        this.defending = this.defending ^ 1;
     }
 
 }

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Philosopher = void 0;
-const Move_1 = require("./Move");
-class Philosopher {
+import { Move } from './Move';
+export class Philosopher {
     constructor(newName, newAttack, newDefense, newHealthPoints) {
         this.movePool = [];
         this.maxMoves = 5;
@@ -12,11 +9,14 @@ class Philosopher {
         this.defense = newDefense;
         this.healthPoints = newHealthPoints;
     }
+    getMove(moveIndex) {
+        return this.movePool[moveIndex].deepCopy();
+    }
     addMove(newMove) {
         if (this.movePool.length >= this.maxMoves) {
             return false;
         }
-        let moveCopy = new Move_1.Move(newMove.getName(), newMove.getSchool(), newMove.getAccuracy(), newMove.getPower());
+        let moveCopy = new Move(newMove.getName(), newMove.getSchool(), newMove.getAccuracy(), newMove.getPower());
         this.movePool.push(moveCopy);
         return true;
     }
@@ -54,7 +54,7 @@ class Philosopher {
     deepCopy() {
         return new Philosopher(this.name, this.attack, this.defense, this.healthPoints);
     }
-    getMoves() {
+    getMoveNames() {
         let moveNames = [];
         for (let move of this.movePool) {
             moveNames.push(move.getName());
@@ -62,4 +62,3 @@ class Philosopher {
         return moveNames;
     }
 }
-exports.Philosopher = Philosopher;
