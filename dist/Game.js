@@ -92,6 +92,7 @@ export class Game {
             for (let phil of this.philGroups[i]) {
                 if (!phil.isRetired()) {
                     teamRetired = !teamRetired;
+                    break;
                 }
             }
             if (teamRetired) {

@@ -116,16 +116,21 @@ export class Game {
     private allRetired(): number {
         // Check to see if all Philosophers on one team are retired.
         for (let i = 0; i < this.philGroups.length; i++) {
+
             let teamRetired: boolean = true;
+
             for (let phil of this.philGroups[i]) {
                 if (!phil.isRetired()) {
                     teamRetired = !teamRetired;
+                    break;
                 }
             }
+
             if (teamRetired) {
                 console.log('Player ' + (i + 1).toString() + "'s team retired! Game over!");
                 return i ^ 1;
             }
+            
         }
 
         return -1;
