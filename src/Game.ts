@@ -53,20 +53,41 @@ export class Game {
         this.printBattleStatus();
 
         let moves: string[] = philToMove.getMoveNames();
-        let promptString: string = '';
+        let promptString: string = 'What should Player ' 
+                                    + (this.moving + 1).toString() 
+                                    + "'s "
+                                    + philToMove
+                                    + ' do?\n';
 
         for (let i = 0; i < moves.length; i++) {
-            promptString = promptString + (i + 1).toString() + ') ' + moves[i] + '\n'
+            promptString = promptString 
+                            + (i + 1).toString() 
+                            + ') ' 
+                            + moves[i] 
+                            + '\n'
         }
 
-        let chosenMove: number = parseInt(prompt(promptString) as string) as number - 1;
+        let chosenMoveIndex: number = parseInt(prompt(promptString) as string) as number - 1;
+        let chosenMoveName: string = philToMove.getMoveNames()[chosenMoveIndex];
 
         console.log(philToMove 
                     + ' used ' 
-                    + philToMove.getMoveNames()[chosenMove] 
+                    + chosenMoveName
                     + '!\n');
         
-        let damageDealt: number = philToMove.makeAttack(chosenMove);
+        let damageDealt: number = philToMove.makeAttack(chosenMoveIndex);
+
+        let timeOut = new Promise(resolve => setTimeout(resolve, 750));
+
+        if (damageDealt == 0) {
+            console.log(chosenMoveName 
+                            + ' missed the mark and did no damage!');
+        }
+
+        if (damageDealt > 0) {
+            console.log(chosenMoveName + ' did ' + damageDealt + ' damage!\n')
+        }
+
         let defenderRetired: boolean = philToDefend.takeDamage(damageDealt);  
         
         if (defenderRetired) {
