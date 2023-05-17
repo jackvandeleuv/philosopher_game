@@ -2,15 +2,24 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
+import { State } from './State.js';
+import { MainBattleMenu } from './MainBattleMenu.js';
 
+export enum MenuState {
+    MainBattleMenu,
+    MoveMenu
+}
+ 
 export class Game {
     private players: Player[] = [];
     private philGroups: Philosopher[][] = [];
     private activePhils: Philosopher[] = [];
     private moving: number = 0;
     private defending: number = 1;
+    private currentState: State;
+    private ctx: CanvasRenderingContext2D;
 
-    constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[]) {
+    constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], ctx: CanvasRenderingContext2D) {
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
 
@@ -31,15 +40,36 @@ export class Game {
 
         this.activePhils.push(philGroup1Copy[0])
         this.activePhils.push(philGroup2Copy[0]);
+
+        this.currentState = new MainBattleMenu(ctx);
+        this.ctx = ctx;
+    }
+
+    switchState(state: State) {
+        this.currentState = state;
+    }
+
+    handleInput(event: 'click') {
+        this.currentState.handleInput(this.ctx);
+    }
+
+    update() {
+        this.currentState.update();
+    }
+    
+    render(ctx: CanvasRenderingContext2D) {
+        this.currentState.render(ctx);
     }
 
     /*
     Returns an integer indicating the winner.
     */
-    start(): number {
+    gameLoop(): number {
         while (true) {
             this.moveSelect();
+
             let winner: number = this.allRetired();
+
             if (winner != -1) {
                 console.log('Player ' + winner + " won! Game over!");
                 return winner;
@@ -54,6 +84,7 @@ export class Game {
         this.printBattleStatus();
 
         let moves: string[] = philToMove.getMoveNames();
+        
         let promptString: string = 'What should Player ' 
                                     + (this.moving + 1).toString() 
                                     + "'s "

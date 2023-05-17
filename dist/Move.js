@@ -8,7 +8,7 @@ export class Move {
     deepCopy() {
         return new Move(this.name, this.school, this.accuracy, this.power);
     }
-    getName() {
+    toString() {
         return this.name;
     }
     getSchool() {

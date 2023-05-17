@@ -12,11 +12,18 @@ export class Philosopher {
     getMove(moveIndex) {
         return this.moves[moveIndex].deepCopy();
     }
+    getMoves() {
+        let moveCopies = [];
+        for (let i = 0; i < this.moves.length; i++) {
+            moveCopies[i] = this.moves[i].deepCopy();
+        }
+        return moveCopies;
+    }
     addMove(move) {
         if (this.moves.length >= this.maxMoves) {
             return false;
         }
-        let moveCopy = new Move(move.getName(), move.getSchool(), move.getAccuracy(), move.getPower());
+        let moveCopy = new Move(move.toString(), move.getSchool(), move.getAccuracy(), move.getPower());
         this.moves.push(moveCopy);
         return true;
     }
@@ -56,7 +63,7 @@ export class Philosopher {
     getMoveNames() {
         let moveNames = [];
         for (let move of this.moves) {
-            moveNames.push(move.getName());
+            moveNames.push(move.toString());
         }
         return moveNames;
     }

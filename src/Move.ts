@@ -17,7 +17,7 @@ export class Move {
         return new Move(this.name, this.school, this.accuracy, this.power);
     }
 
-    getName(): string {
+    toString(): string {
         return this.name;
     }
 

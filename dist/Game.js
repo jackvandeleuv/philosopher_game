@@ -1,5 +1,11 @@
+import { MainBattleMenu } from './MainBattleMenu.js';
+export var MenuState;
+(function (MenuState) {
+    MenuState[MenuState["MainBattleMenu"] = 0] = "MainBattleMenu";
+    MenuState[MenuState["MoveMenu"] = 1] = "MoveMenu";
+})(MenuState || (MenuState = {}));
 export class Game {
-    constructor(player1, player2, philGroup1, philGroup2) {
+    constructor(player1, player2, philGroup1, philGroup2, ctx) {
         this.players = [];
         this.philGroups = [];
         this.activePhils = [];
@@ -21,11 +27,25 @@ export class Game {
         this.philGroups.push(philGroup2Copy);
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
+        this.currentState = new MainBattleMenu(ctx);
+        this.ctx = ctx;
+    }
+    switchState(state) {
+        this.currentState = state;
+    }
+    handleInput(event) {
+        this.currentState.handleInput(this.ctx);
+    }
+    update() {
+        this.currentState.update();
+    }
+    render(ctx) {
+        this.currentState.render(ctx);
     }
     /*
     Returns an integer indicating the winner.
     */
-    start() {
+    gameLoop() {
         while (true) {
             this.moveSelect();
             let winner = this.allRetired();

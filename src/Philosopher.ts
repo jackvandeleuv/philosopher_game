@@ -16,8 +16,16 @@ export class Philosopher {
         this.health = health;
     }
 
-    getMove(moveIndex: number) {
+    getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
+    }
+
+    getMoves(): Move[] {
+        let moveCopies: Move[] = [];
+        for (let i = 0; i < this.moves.length; i++) {
+            moveCopies[i] = this.moves[i].deepCopy();
+        }
+        return moveCopies;
     }
 
     addMove(move: Move): boolean {
@@ -25,7 +33,7 @@ export class Philosopher {
             return false;
         }
 
-        let moveCopy = new Move(move.getName(), 
+        let moveCopy = new Move(move.toString(), 
                                 move.getSchool(), 
                                 move.getAccuracy(), 
                                 move.getPower()
@@ -83,7 +91,7 @@ export class Philosopher {
     getMoveNames(): string[] {
         let moveNames: string[] = []
         for (let move of this.moves) {
-            moveNames.push(move.getName());
+            moveNames.push(move.toString());
         } 
         return moveNames;
     }
