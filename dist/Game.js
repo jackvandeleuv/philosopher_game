@@ -57,6 +57,7 @@ export class Game {
                 this.mainBattleMenu.render();
                 break;
             case MenuState.MoveMenu:
+                this.moveMenu.update(this.activePhils[this.moving].getMoves());
                 this.moveMenu.render();
                 break;
             default:

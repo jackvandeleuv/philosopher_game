@@ -78,12 +78,4 @@ export class Philosopher {
         this.health = this.health - damage;
         this.retired = this.health <= 0;
     }
-
-    getMoveNames(): string[] {
-        let moveNames: string[] = []
-        for (let move of this.moves) {
-            moveNames.push(move.toString());
-        } 
-        return moveNames;
-    }
 }
