@@ -87,8 +87,6 @@ export class MainBattleMenu {
         this.ctx.arcTo(x, y, x + w, y, r);
         this.ctx.closePath();
     }
-    update() {
-    }
     deactivate() {
         this.ctx.canvas.removeEventListener('click', this.handleClick);
     }

@@ -103,9 +103,6 @@ export class MainBattleMenu implements State {
         this.ctx.closePath();
     }
 
-    update(): void {
-    }
-
     deactivate(): void {
         this.ctx.canvas.removeEventListener('click', this.handleClick);
     }

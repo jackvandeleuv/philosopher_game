@@ -20,15 +20,13 @@ export class Game {
     private moving = 0;
     private defending = 1;
     private ctx: CanvasRenderingContext2D;
-    private activeMenuState: MenuState = MenuState.MainBattleMenu;
+    private activeMenuState: State;
     private mainBattleMenu: MainBattleMenu;
     private moveMenu: MoveMenu;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], ctx: CanvasRenderingContext2D) {
         this.mainBattleMenu = new MainBattleMenu(ctx);
-        this.mainBattleMenu.activate();
         this.moveMenu = new MoveMenu(ctx);
-        this.moveMenu.activate();
         
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
@@ -36,25 +34,27 @@ export class Game {
         // Defensive copy
         let philGroup1Copy: Philosopher[] = []
         for (let i = 0; i < philGroup1.length; i++) {
-            philGroup1Copy[i] = philGroup1[i].deepCopy()
+            philGroup1Copy[i] = philGroup1[i].deepCopy();
         }
 
         // Defensive copy
         let philGroup2Copy: Philosopher[] = []
         for (let i = 0; i < philGroup2.length; i++) {
-            philGroup2Copy[i] = philGroup2[i].deepCopy()
+            philGroup2Copy[i] = philGroup2[i].deepCopy();
         }
 
         this.philGroups.push(philGroup1Copy);
         this.philGroups.push(philGroup2Copy);
 
-        this.activePhils.push(philGroup1Copy[0])
+        this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
 
         this.ctx = ctx;
     }
 
     start(): void {
+        this.activeMenuState = this.mainBattleMenu;
+        this.activeMenuState.activate();
         this.gameLoop();
     }
 
@@ -72,39 +72,57 @@ export class Game {
     }
 
     private render(): void {
-        switch(this.activeMenuState) {
-            case MenuState.MainBattleMenu:
-                this.mainBattleMenu.render();
-                break;
-            case MenuState.MoveMenu:
-                this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
-                this.moveMenu.render();
-                break;
-            default: 
-                throw new Error('Menus were not as expected.')
+        if (this.activeMenuState instanceof MainBattleMenu) {
+            this.mainBattleMenu.render();
+        } else if (this.activeMenuState instanceof MoveMenu) {
+            this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
+            this.moveMenu.render();
+        } else {
+            throw new Error('Menus were not as expected.');
         }
     }
 
-    private processInput() {
-        switch(this.activeMenuState) {
+    /*
+    Uses MenuState enum to switch the active menu object.
+    */
+    private switchMenuState(state: MenuState) {
+        switch(state) {
             case MenuState.MainBattleMenu:
-                let newStateMain = this.mainBattleMenu.getNextState();
-                if (newStateMain != null) {
-                    this.activeMenuState = newStateMain;
-                }
+                this.activeMenuState.deactivate();
+                this.activeMenuState = this.mainBattleMenu;
+                this.activeMenuState.activate();
                 break;
             case MenuState.MoveMenu:
-                let newStateMove = this.moveMenu.getNextState();
-                if (newStateMove != null) {
-                    this.activeMenuState = newStateMove;
-                } 
-                let newMove = this.moveMenu.getNextMove();
-                if (newMove != null) {
-                    this.makeMove(newMove.deepCopy())
-                }
+                this.activeMenuState.deactivate();
+                this.activeMenuState = this.moveMenu;
+                this.activeMenuState.activate();
                 break;   
             default:
                 throw new Error("Menu state not as expected.");
+        }
+    }
+    
+    private processInput() {
+        if (this.activeMenuState instanceof MainBattleMenu) {
+            // Switch menu state if applicable
+            let newStateMain = this.mainBattleMenu.getNextState();
+            if (newStateMain != null) {
+                this.switchMenuState(newStateMain);
+            }
+        } else if (this.activeMenuState instanceof MoveMenu) {
+            // Switch menu state if applicable
+            let newStateMove = this.moveMenu.getNextState();
+            if (newStateMove != null) {
+                this.switchMenuState(newStateMove);
+            } 
+
+            // Make new move if applicable
+            let newMove = this.moveMenu.getNextMove();
+            if (newMove != null) {
+                this.makeMove(newMove.deepCopy())
+            }
+        } else {
+            throw new Error("Menu state not as expected.");
         }
     }
 
