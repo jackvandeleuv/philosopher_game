@@ -3,6 +3,7 @@ import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
 import { Game } from './Game.js';
+import { renderMenu } from './BattleMenu.js';
 
 let moves: Move[] = [
     // Analytic Moves
@@ -85,8 +86,17 @@ philosophers[5].addMove(kantMoves[2]);
 philosophers[5].addMove(kantMoves[3]);
 
 
-let game: Game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3));
+// let game: Game = new Game(new Player('Player1'), 
+//                             new Player('Player2'), 
+//                             philosophers.slice(0, 3), 
+//                             philosophers.slice(3));
+// game.start();
 
-game.start();
+let canvas = <HTMLCanvasElement> document.getElementById('gameCanvas');
+let ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
+
+ctx.fillStyle = '#9FB4C7';
+ctx.fillRect(0, 0, 1000, 1000);
 
 
+renderMenu(ctx);
