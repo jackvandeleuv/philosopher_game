@@ -9,11 +9,15 @@ export class MoveMenu implements State {
     private menuItems: MenuButton[] = [];
     private buttonWidth = this.ctx.canvas.width * (2 / 3);
     private buttonHeight = this.ctx.canvas.height / 18;
-    private spacing = this.ctx.canvas.width / 16;
+    private spacing = this.ctx.canvas.width / 15;
     private y = this.ctx.canvas.height * (5 / 8);
     private x = (this.ctx.canvas.width - this.buttonWidth) / 2;
 
-    constructor(private ctx: CanvasRenderingContext2D, private moves: Move[]) {}
+    constructor(private ctx: CanvasRenderingContext2D, private moves: Move[]) {
+        // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
+        // firing from a different context.
+        this.handleClick = this.handleClick.bind(this); 
+    }
 
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -99,22 +103,27 @@ export class MoveMenu implements State {
         
     }
 
-    handleInput(): void {
-        this.ctx.canvas.addEventListener('click', (e: MouseEvent) => {
-            if (this.nextState == null) {
-                let rect = this.ctx.canvas.getBoundingClientRect();
-                let x = e.clientX - rect.left;
-                let y = e.clientY - rect.top;
-
-                for (let item of this.menuItems) {
-                    if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                        item.action();
-                        break;
-                    } 
-                }
-            }
-        });       
+    deactivate(): void {
+        this.ctx.canvas.removeEventListener('click', this.handleClick);
     }
+
+    activate(): void {
+        this.ctx.canvas.addEventListener('click', this.handleClick);
+    }
+
+    handleClick(e: any): void {
+        let rect = this.ctx.canvas.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+
+        for (let item of this.menuItems) {
+            if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                item.action();
+                break;
+            } 
+        }
+    }
+
     
     getNextState(): MenuState | null {
         return this.nextState;

@@ -39,7 +39,11 @@ export class MainBattleMenu implements State {
         }
     ]
 
-    constructor(private ctx: CanvasRenderingContext2D) {}
+    constructor(private ctx: CanvasRenderingContext2D) {
+        // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
+        // firing from a different context.
+        this.handleClick = this.handleClick.bind(this); 
+    }
 
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -100,25 +104,27 @@ export class MainBattleMenu implements State {
     }
 
     update(): void {
-        
     }
 
-    handleInput(): void {
-        this.ctx.canvas.addEventListener('click', (e: MouseEvent) => {
-            // Check to make sure we haven't switched menus.
-            if (this.nextState == null) {
-                let rect = this.ctx.canvas.getBoundingClientRect();
-                let x = e.clientX - rect.left;
-                let y = e.clientY - rect.top;
-    
-                for (let item of this.menuItems) {
-                    if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                        item.action();
-                        break;
-                    } 
-                }
+    deactivate(): void {
+        this.ctx.canvas.removeEventListener('click', this.handleClick);
+    }
+
+    activate(): void {
+        this.ctx.canvas.addEventListener('click', this.handleClick);
+    }
+
+    handleClick(e: any): void {
+        let rect = this.ctx.canvas.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+
+        for (let item of this.menuItems) {
+            if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                item.action();
+                break;
             } 
-        });
+        }
     }
 
     getNextState(): MenuState | null {

@@ -35,6 +35,9 @@ export class MainBattleMenu {
                 action: () => console.log('Resign')
             }
         ];
+        // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
+        // firing from a different context.
+        this.handleClick = this.handleClick.bind(this);
     }
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -86,21 +89,22 @@ export class MainBattleMenu {
     }
     update() {
     }
-    handleInput() {
-        this.ctx.canvas.addEventListener('click', (e) => {
-            // Check to make sure we haven't switched menus.
-            if (this.nextState == null) {
-                let rect = this.ctx.canvas.getBoundingClientRect();
-                let x = e.clientX - rect.left;
-                let y = e.clientY - rect.top;
-                for (let item of this.menuItems) {
-                    if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                        item.action();
-                        break;
-                    }
-                }
+    deactivate() {
+        this.ctx.canvas.removeEventListener('click', this.handleClick);
+    }
+    activate() {
+        this.ctx.canvas.addEventListener('click', this.handleClick);
+    }
+    handleClick(e) {
+        let rect = this.ctx.canvas.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        for (let item of this.menuItems) {
+            if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                item.action();
+                break;
             }
-        });
+        }
     }
     getNextState() {
         return this.nextState;

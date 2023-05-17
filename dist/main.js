@@ -1,7 +1,7 @@
 import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
-import { MoveMenu } from './MoveMenu.js';
+import { MainBattleMenu } from './MainBattleMenu.js';
 let moves = [
     // Analytic Moves
     new Move('Logic Bomb', new School(), .9, 85),
@@ -72,10 +72,10 @@ philosophers[5].addMove(kantMoves[2]);
 philosophers[5].addMove(kantMoves[3]);
 let canvas = document.getElementById('gameCanvas');
 let ctx = canvas.getContext('2d');
-let menu = new MoveMenu(ctx, philosophers[0].getMoves());
+let menu = new MainBattleMenu(ctx);
 // let menu = new MoveMenu(ctx, philosophers[0].getMoves());
-menu.handleInput();
 menu.render();
+menu.activate();
 // let game: Game = new Game(new Player('Player1'), 
 //                             new Player('Player2'), 
 //                             philosophers.slice(0, 3), 

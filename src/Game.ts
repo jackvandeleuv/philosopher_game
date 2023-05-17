@@ -50,7 +50,7 @@ export class Game {
     }
 
     handleInput(event: 'click') {
-        this.currentState.handleInput(this.ctx);
+        this.currentState.handleClick(this.ctx);
     }
 
     update() {
@@ -83,24 +83,8 @@ export class Game {
 
         this.printBattleStatus();
 
-        let moves: string[] = philToMove.getMoveNames();
-        
-        let promptString: string = 'What should Player ' 
-                                    + (this.moving + 1).toString() 
-                                    + "'s "
-                                    + philToMove
-                                    + ' do?\n';
-
-        for (let i = 0; i < moves.length; i++) {
-            promptString = promptString 
-                            + (i + 1).toString() 
-                            + ') ' 
-                            + moves[i] 
-                            + '\n'
-        }
-
-        let chosenMoveIndex: number = parseInt(prompt(promptString) as string) as number - 1;
-        let chosenMoveName: string = philToMove.getMoveNames()[chosenMoveIndex];
+        this.currentState = new MainBattleMenu(this.ctx);
+        this.currentState.
 
         console.log(philToMove 
                     + ' used ' 

@@ -89,10 +89,10 @@ philosophers[5].addMove(kantMoves[3]);
 let canvas = <HTMLCanvasElement> document.getElementById('gameCanvas');
 let ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
  
-let menu = new MoveMenu(ctx, philosophers[0].getMoves());
+let menu = new MainBattleMenu(ctx);
 // let menu = new MoveMenu(ctx, philosophers[0].getMoves());
-menu.handleInput();
 menu.render();
+menu.activate()
 
 // let game: Game = new Game(new Player('Player1'), 
 //                             new Player('Player2'), 
