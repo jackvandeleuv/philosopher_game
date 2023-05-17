@@ -1,8 +1,11 @@
 import { MainBattleMenu } from './MainBattleMenu.js';
+import { MoveMenu } from './MoveMenu.js';
 export var MenuState;
 (function (MenuState) {
     MenuState[MenuState["MainBattleMenu"] = 0] = "MainBattleMenu";
     MenuState[MenuState["MoveMenu"] = 1] = "MoveMenu";
+    MenuState[MenuState["SwitchMenu"] = 2] = "SwitchMenu";
+    MenuState[MenuState["Resign"] = 3] = "Resign";
 })(MenuState || (MenuState = {}));
 export class Game {
     constructor(player1, player2, philGroup1, philGroup2, ctx) {
@@ -11,6 +14,11 @@ export class Game {
         this.activePhils = [];
         this.moving = 0;
         this.defending = 1;
+        this.activeMenuState = MenuState.MainBattleMenu;
+        this.mainBattleMenu = new MainBattleMenu(ctx);
+        this.mainBattleMenu.activate();
+        this.moveMenu = new MoveMenu(ctx);
+        this.moveMenu.activate();
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
         // Defensive copy
@@ -27,52 +35,72 @@ export class Game {
         this.philGroups.push(philGroup2Copy);
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
-        this.currentState = new MainBattleMenu(ctx);
         this.ctx = ctx;
     }
-    switchState(state) {
-        this.currentState = state;
-    }
-    handleInput(event) {
-        this.currentState.handleClick(this.ctx);
-    }
-    update() {
-        this.currentState.update();
-    }
-    render(ctx) {
-        this.currentState.render(ctx);
+    start() {
+        this.gameLoop();
     }
     /*
     Returns an integer indicating the winner.
     */
     gameLoop() {
-        while (true) {
-            this.moveSelect();
-            let winner = this.allRetired();
-            if (winner != -1) {
-                console.log('Player ' + winner + " won! Game over!");
-                return winner;
-            }
+        const gameLoopStep = () => {
+            this.processInput();
+            this.render();
+            requestAnimationFrame(gameLoopStep);
+        };
+        requestAnimationFrame(gameLoopStep);
+    }
+    render() {
+        switch (this.activeMenuState) {
+            case MenuState.MainBattleMenu:
+                this.mainBattleMenu.render();
+                break;
+            case MenuState.MoveMenu:
+                this.moveMenu.render();
+                break;
+            default:
+                throw new Error('Menus were not as expected.');
         }
     }
-    moveSelect() {
+    processInput() {
+        switch (this.activeMenuState) {
+            case MenuState.MainBattleMenu:
+                let newStateMain = this.mainBattleMenu.getNextState();
+                if (newStateMain != null) {
+                    this.activeMenuState = newStateMain;
+                }
+                break;
+            case MenuState.MoveMenu:
+                let newStateMove = this.moveMenu.getNextState();
+                if (newStateMove != null) {
+                    this.activeMenuState = newStateMove;
+                }
+                let newMove = this.moveMenu.getNextMove();
+                if (newMove != null) {
+                    this.makeMove(newMove.deepCopy());
+                }
+                break;
+            default:
+                throw new Error("Menu state not as expected.");
+        }
+    }
+    makeMove(chosenMove) {
         let philToMove = this.activePhils[this.moving];
         let philToDefend = this.activePhils[this.defending];
         this.printBattleStatus();
-        this.currentState = new MainBattleMenu(this.ctx);
-        this.currentState.
-            console.log(philToMove
+        console.log(philToMove
             + ' used '
-            + chosenMoveName
+            + chosenMove
             + '!\n');
-        let damageOut = philToMove.makeAttack(chosenMoveIndex);
+        let damageOut = philToMove.getAttack() * chosenMove.getPower();
         let damageDealt = damageOut * philToDefend.getDefense();
         if (damageDealt == 0) {
-            console.log(chosenMoveName
+            console.log(chosenMove
                 + ' missed the mark and did no damage!');
         }
         if (damageDealt > 0) {
-            console.log(chosenMoveName + ' did ' + damageDealt + ' damage!\n');
+            console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
         }
         philToDefend.takeDamage(damageDealt);
         if (philToDefend.isRetired()) {

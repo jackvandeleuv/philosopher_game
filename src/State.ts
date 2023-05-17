@@ -1,10 +1,12 @@
 import { MenuState } from "./Game";
 
 export interface State {
-    handleClick(ctx: CanvasRenderingContext2D): void;
-    update(): void;
-    render(ctx: CanvasRenderingContext2D): void;
+    render(): void;
     getNextState(): MenuState | null;
+
+    // Add relevant event listeners
     activate(): void;
+
+    // Remove relevant event listeners
     deactivate(): void;
 } 

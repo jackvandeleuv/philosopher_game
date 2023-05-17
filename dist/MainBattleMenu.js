@@ -16,7 +16,7 @@ export class MainBattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => console.log('Switch')
+                action: () => this.nextState = MenuState.SwitchMenu
             },
             {
                 text: 'Philosophize!',
@@ -32,7 +32,7 @@ export class MainBattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => console.log('Resign')
+                action: () => this.nextState = MenuState.Resign
             }
         ];
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
@@ -107,6 +107,8 @@ export class MainBattleMenu {
         }
     }
     getNextState() {
-        return this.nextState;
+        let nextState = this.nextState;
+        this.nextState = null;
+        return nextState;
     }
 }

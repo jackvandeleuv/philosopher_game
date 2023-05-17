@@ -19,7 +19,7 @@ export class MainBattleMenu implements State {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => console.log('Switch')
+            action: () => this.nextState = MenuState.SwitchMenu
         },
         {
             text: 'Philosophize!',
@@ -35,7 +35,7 @@ export class MainBattleMenu implements State {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => console.log('Resign')
+            action: () => this.nextState = MenuState.Resign
         }
     ]
 
@@ -114,7 +114,7 @@ export class MainBattleMenu implements State {
         this.ctx.canvas.addEventListener('click', this.handleClick);
     }
 
-    handleClick(e: any): void {
+    private handleClick(e: any): void {
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
@@ -128,7 +128,9 @@ export class MainBattleMenu implements State {
     }
 
     getNextState(): MenuState | null {
-        return this.nextState;
+        let nextState = this.nextState;
+        this.nextState = null;
+        return nextState;
     }
  
 }

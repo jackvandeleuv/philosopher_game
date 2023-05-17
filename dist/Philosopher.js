@@ -39,13 +39,6 @@ export class Philosopher {
     getHealth() {
         return this.health;
     }
-    makeAttack(moveIndex) {
-        let chosenMove = this.moves[moveIndex];
-        if (Math.random() > chosenMove.getAccuracy()) {
-            return 0;
-        }
-        return this.attack * chosenMove.getPower();
-    }
     isRetired() {
         return this.retired;
     }

@@ -6,14 +6,16 @@ import { MenuState } from './Game.js';
 
 export class MoveMenu implements State {
     private nextState: MenuState | null = null;
+    private nextMove: Move | null = null;
     private menuItems: MenuButton[] = [];
     private buttonWidth = this.ctx.canvas.width * (2 / 3);
     private buttonHeight = this.ctx.canvas.height / 18;
     private spacing = this.ctx.canvas.width / 15;
     private y = this.ctx.canvas.height * (5 / 8);
     private x = (this.ctx.canvas.width - this.buttonWidth) / 2;
+    private moves: Move[] = [];
 
-    constructor(private ctx: CanvasRenderingContext2D, private moves: Move[]) {
+    constructor(private ctx: CanvasRenderingContext2D) {
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this); 
@@ -31,7 +33,7 @@ export class MoveMenu implements State {
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
-                action: () => console.log(this.moves[i].toString())
+                action: () => this.nextMove = this.moves[i].deepCopy()
             })
         }
 
@@ -41,7 +43,7 @@ export class MoveMenu implements State {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuState.MoveMenu
+            action: () => this.nextState = MenuState.MainBattleMenu
         })
     
         for (let item of this.menuItems) {
@@ -99,8 +101,12 @@ export class MoveMenu implements State {
         this.ctx.closePath();
     }
 
-    update(): void {
-        
+    update(moves: Move[]): void {
+        let movesCopy: Move[] = [];
+        for (let move of moves) {
+            movesCopy.push(move.deepCopy());
+        }
+        this.moves = movesCopy;
     }
 
     deactivate(): void {
@@ -111,7 +117,7 @@ export class MoveMenu implements State {
         this.ctx.canvas.addEventListener('click', this.handleClick);
     }
 
-    handleClick(e: any): void {
+    private handleClick(e: any): void {
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
@@ -124,8 +130,18 @@ export class MoveMenu implements State {
         }
     }
 
-    
     getNextState(): MenuState | null {
-        return this.nextState;
+        let nextState = this.nextState;
+        this.nextState = null;
+        return nextState;
+    }
+
+    getNextMove(): Move | null {
+        if (this.nextMove == null) {
+            return null;
+        }
+        let nextMove = this.nextMove.deepCopy();
+        this.nextMove = null;
+        return nextMove;
     }
 }

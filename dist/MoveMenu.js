@@ -1,15 +1,16 @@
 import { MenuState } from './Game.js';
 export class MoveMenu {
-    constructor(ctx, moves) {
+    constructor(ctx) {
         this.ctx = ctx;
-        this.moves = moves;
         this.nextState = null;
+        this.nextMove = null;
         this.menuItems = [];
         this.buttonWidth = this.ctx.canvas.width * (2 / 3);
         this.buttonHeight = this.ctx.canvas.height / 18;
         this.spacing = this.ctx.canvas.width / 15;
         this.y = this.ctx.canvas.height * (5 / 8);
         this.x = (this.ctx.canvas.width - this.buttonWidth) / 2;
+        this.moves = [];
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this);
@@ -25,7 +26,7 @@ export class MoveMenu {
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
-                action: () => console.log(this.moves[i].toString())
+                action: () => this.nextMove = this.moves[i].deepCopy()
             });
         }
         this.menuItems.push({
@@ -34,7 +35,7 @@ export class MoveMenu {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuState.MoveMenu
+            action: () => this.nextState = MenuState.MainBattleMenu
         });
         for (let item of this.menuItems) {
             // Ensure the item is within the menu area
@@ -82,7 +83,12 @@ export class MoveMenu {
         this.ctx.arcTo(x, y, x + w, y, r);
         this.ctx.closePath();
     }
-    update() {
+    update(moves) {
+        let movesCopy = [];
+        for (let move of moves) {
+            movesCopy.push(move.deepCopy());
+        }
+        this.moves = movesCopy;
     }
     deactivate() {
         this.ctx.canvas.removeEventListener('click', this.handleClick);
@@ -102,6 +108,16 @@ export class MoveMenu {
         }
     }
     getNextState() {
-        return this.nextState;
+        let nextState = this.nextState;
+        this.nextState = null;
+        return nextState;
+    }
+    getNextMove() {
+        if (this.nextMove == null) {
+            return null;
+        }
+        let nextMove = this.nextMove.deepCopy();
+        this.nextMove = null;
+        return nextMove;
     }
 }

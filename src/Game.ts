@@ -4,22 +4,32 @@ import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
 import { State } from './State.js';
 import { MainBattleMenu } from './MainBattleMenu.js';
+import { MoveMenu } from './MoveMenu.js';
 
 export enum MenuState {
     MainBattleMenu,
-    MoveMenu
+    MoveMenu,
+    SwitchMenu,
+    Resign
 }
  
 export class Game {
     private players: Player[] = [];
     private philGroups: Philosopher[][] = [];
     private activePhils: Philosopher[] = [];
-    private moving: number = 0;
-    private defending: number = 1;
-    private currentState: State;
+    private moving = 0;
+    private defending = 1;
     private ctx: CanvasRenderingContext2D;
+    private activeMenuState: MenuState = MenuState.MainBattleMenu;
+    private mainBattleMenu: MainBattleMenu;
+    private moveMenu: MoveMenu;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], ctx: CanvasRenderingContext2D) {
+        this.mainBattleMenu = new MainBattleMenu(ctx);
+        this.mainBattleMenu.activate();
+        this.moveMenu = new MoveMenu(ctx);
+        this.moveMenu.activate();
+        
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
 
@@ -41,66 +51,83 @@ export class Game {
         this.activePhils.push(philGroup1Copy[0])
         this.activePhils.push(philGroup2Copy[0]);
 
-        this.currentState = new MainBattleMenu(ctx);
         this.ctx = ctx;
     }
 
-    switchState(state: State) {
-        this.currentState = state;
-    }
-
-    handleInput(event: 'click') {
-        this.currentState.handleClick(this.ctx);
-    }
-
-    update() {
-        this.currentState.update();
-    }
-    
-    render(ctx: CanvasRenderingContext2D) {
-        this.currentState.render(ctx);
+    start(): void {
+        this.gameLoop();
     }
 
     /*
     Returns an integer indicating the winner.
     */
-    gameLoop(): number {
-        while (true) {
-            this.moveSelect();
+    private gameLoop(): void {
+        const gameLoopStep = () => {
+            this.processInput();
+            this.render();
+            requestAnimationFrame(gameLoopStep);
+        }
 
-            let winner: number = this.allRetired();
+        requestAnimationFrame(gameLoopStep);
+    }
 
-            if (winner != -1) {
-                console.log('Player ' + winner + " won! Game over!");
-                return winner;
-            }
+    private render(): void {
+        switch(this.activeMenuState) {
+            case MenuState.MainBattleMenu:
+                this.mainBattleMenu.render();
+                break;
+            case MenuState.MoveMenu:
+                this.moveMenu.render();
+                break;
+            default: 
+                throw new Error('Menus were not as expected.')
         }
     }
 
-    private moveSelect() {
+    private processInput() {
+        switch(this.activeMenuState) {
+            case MenuState.MainBattleMenu:
+                let newStateMain = this.mainBattleMenu.getNextState();
+                if (newStateMain != null) {
+                    this.activeMenuState = newStateMain;
+                }
+                break;
+            case MenuState.MoveMenu:
+                let newStateMove = this.moveMenu.getNextState();
+                if (newStateMove != null) {
+                    this.activeMenuState = newStateMove;
+                } 
+                let newMove = this.moveMenu.getNextMove();
+                if (newMove != null) {
+                    this.makeMove(newMove.deepCopy())
+                }
+                break;   
+            default:
+                throw new Error("Menu state not as expected.");
+        }
+    }
+
+    private makeMove(chosenMove: Move) {
         let philToMove: Philosopher = this.activePhils[this.moving];
         let philToDefend: Philosopher = this.activePhils[this.defending];
 
         this.printBattleStatus();
 
-        this.currentState = new MainBattleMenu(this.ctx);
-        this.currentState.
-
         console.log(philToMove 
                     + ' used ' 
-                    + chosenMoveName
+                    + chosenMove
                     + '!\n');
         
-        let damageOut: number = philToMove.makeAttack(chosenMoveIndex);
+        let damageOut: number = philToMove.getAttack() * chosenMove.getPower();
         let damageDealt: number = damageOut * philToDefend.getDefense();
 
         if (damageDealt == 0) {
-            console.log(chosenMoveName 
+            console.log(chosenMove 
                             + ' missed the mark and did no damage!');
         } 
 
         if (damageDealt > 0) {
-            console.log(chosenMoveName + ' did ' + damageDealt + ' damage!\n')
+            console.log(chosenMove + ' did ' + damageDealt + ' damage!\n')
         }
 
         philToDefend.takeDamage(damageDealt);  
