@@ -26,6 +26,7 @@ export class MoveMenu implements State {
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
     
+        this.menuItems = [];
         for (let i = 0; i < this.moves.length; i++) {
             this.menuItems.push({
                 text: this.moves[i].toString(),
@@ -101,7 +102,7 @@ export class MoveMenu implements State {
         this.ctx.closePath();
     }
 
-    update(moves: Move[]): void {
+    updateMoves(moves: Move[]): void {
         let movesCopy: Move[] = [];
         for (let move of moves) {
             movesCopy.push(move.deepCopy());

@@ -19,6 +19,7 @@ export class MoveMenu {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
+        this.menuItems = [];
         for (let i = 0; i < this.moves.length; i++) {
             this.menuItems.push({
                 text: this.moves[i].toString(),
@@ -83,7 +84,7 @@ export class MoveMenu {
         this.ctx.arcTo(x, y, x + w, y, r);
         this.ctx.closePath();
     }
-    update(moves) {
+    updateMoves(moves) {
         let movesCopy = [];
         for (let move of moves) {
             movesCopy.push(move.deepCopy());
