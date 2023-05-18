@@ -1,10 +1,10 @@
 import { Move } from './Move.js';
 import { Philosopher } from './Philosopher.js';
 import { MenuButton } from './MenuButton.js';
-import { State } from './State.js'
+import { GameMenuState } from './GameState.js'
 import { MenuType } from './Game.js';
 
-export class MoveMenu implements State {
+export class MoveMenu implements GameMenuState {
     private nextState: MenuType | null = null;
     private nextMove: Move | null = null;
     private menuItems: MenuButton[] = [];

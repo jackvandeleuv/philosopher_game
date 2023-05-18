@@ -1,8 +1,8 @@
 import { MenuType } from './Game.js';
 import { Philosopher } from './Philosopher.js';
-import { State } from './State.js';
+import { GameState } from './GameState.js';
 
-export class EnterPhil implements State {
+export class EnterPhil implements GameState {
 
     constructor(private ctx: CanvasRenderingContext2D, private philToEnter: Philosopher) {}
 

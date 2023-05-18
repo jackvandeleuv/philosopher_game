@@ -2,7 +2,7 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
-import { GameMenuState } from './State.js';
+import { GameMenuState } from './GameState.js';
 import { MainBattleMenu } from './MainBattleMenu.js';
 import { MoveMenu } from './MoveMenu.js';
 
@@ -20,7 +20,7 @@ export class Game {
     private moving = 0;
     private defending = 1;
     private ctx: CanvasRenderingContext2D;
-    private activeMenuState: GameMenuState;
+    private currentMenuState: GameMenuState;
     private mainBattleMenu: MainBattleMenu;
     private moveMenu: MoveMenu;
 
@@ -51,8 +51,8 @@ export class Game {
 
         this.ctx = ctx;
 
-        this.activeMenuState = this.mainBattleMenu;
-        this.activeMenuState.activate();
+        this.currentMenuState = this.mainBattleMenu;
+        this.currentMenuState.activate();
     }
 
     start(): void {
@@ -73,9 +73,9 @@ export class Game {
     }
 
     private render(): void {
-        if (this.activeMenuState instanceof MainBattleMenu) {
+        if (this.currentMenuState instanceof MainBattleMenu) {
             this.mainBattleMenu.render();
-        } else if (this.activeMenuState instanceof MoveMenu) {
+        } else if (this.currentMenuState instanceof MoveMenu) {
             this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
             this.moveMenu.render();
         } else {
@@ -89,14 +89,14 @@ export class Game {
     private switchMenuState(state: MenuType) {
         switch(state) {
             case MenuType.MainBattleMenu:
-                this.activeMenuState.deactivate();
-                this.activeMenuState = this.mainBattleMenu;
-                this.activeMenuState.activate();
+                this.currentMenuState.deactivate();
+                this.currentMenuState = this.mainBattleMenu;
+                this.currentMenuState.activate();
                 break;
             case MenuType.MoveMenu:
-                this.activeMenuState.deactivate();
-                this.activeMenuState = this.moveMenu;
-                this.activeMenuState.activate();
+                this.currentMenuState.deactivate();
+                this.currentMenuState = this.moveMenu;
+                this.currentMenuState.activate();
                 break;   
             default:
                 throw new Error("Menu state not as expected.");
@@ -104,13 +104,13 @@ export class Game {
     }
     
     private processInput() {
-        if (this.activeMenuState instanceof MainBattleMenu) {
+        if (this.currentMenuState instanceof MainBattleMenu) {
             // Switch menu state if applicable
             let newStateMain = this.mainBattleMenu.getNextState();
             if (newStateMain != null) {
                 this.switchMenuState(newStateMain);
             }
-        } else if (this.activeMenuState instanceof MoveMenu) {
+        } else if (this.currentMenuState instanceof MoveMenu) {
             // Switch menu state if applicable
             let newStateMove = this.moveMenu.getNextState();
             if (newStateMove != null) {
