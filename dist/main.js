@@ -75,7 +75,7 @@ philosophers[5].addMove(kantMoves[2]);
 philosophers[5].addMove(kantMoves[3]);
 let canvas = document.getElementById('gameCanvas');
 let ctx = canvas.getContext('2d');
-let game = new GameLogic(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3));
+let game = new GameLogic(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3), ctx);
 let manager = new StateManager(ctx, game);
 manager.start();
 // let icon = new Image();

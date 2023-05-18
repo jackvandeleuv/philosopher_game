@@ -3,6 +3,7 @@ export class BattleStart {
         this.ctx = ctx;
         this.phil1 = phil1;
         this.phil2 = phil2;
+        this.sceneComplete = false;
     }
     render() {
         let x = this.ctx.canvas.width / 6.4;
@@ -34,6 +35,9 @@ export class BattleStart {
             // Restore the context to the previous state
             this.ctx.restore();
         }
+        if (this.phil1.iconLoaded() && this.phil2.iconLoaded()) {
+            this.sceneComplete = true;
+        }
     }
     drawPlatform(x, y, radiusX, radiusY) {
         this.ctx.beginPath();
@@ -43,7 +47,7 @@ export class BattleStart {
         this.ctx.fill();
         this.ctx.closePath();
     }
-    getNextState() {
-        throw new Error('Method not implemented.');
+    isSceneComplete() {
+        return this.sceneComplete;
     }
 }

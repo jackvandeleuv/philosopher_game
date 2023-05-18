@@ -93,7 +93,8 @@ let ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
 let game: GameLogic = new GameLogic(new Player('Player1'), 
                             new Player('Player2'), 
                             philosophers.slice(0, 3), 
-                            philosophers.slice(3));
+                            philosophers.slice(3),
+                            ctx);
 
 let manager: StateManager = new StateManager(ctx, game);
 manager.start();

@@ -15,5 +15,5 @@ export interface MenuState extends State {
 }
 
 export interface GameScene extends State {
-
+    isSceneComplete(): boolean;
 }

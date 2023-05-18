@@ -1,5 +1,9 @@
+import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
+import { BattleStart } from './scenes/BattleStart.js';
+import { YourPhilEnters } from './scenes/YourPhilEnters.js';
 export class GameLogic {
-    constructor(player1, player2, philGroup1, philGroup2) {
+    constructor(player1, player2, philGroup1, philGroup2, ctx) {
+        this.ctx = ctx;
         this.players = [];
         this.philGroups = [];
         this.activePhils = [];
@@ -21,6 +25,10 @@ export class GameLogic {
         this.philGroups.push(philGroup2Copy);
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
+        this.nextScene = new BattleStart(this.ctx, this.activePhils[0], this.activePhils[1]);
+    }
+    getNextScene() {
+        return this.nextScene;
     }
     oppMove() {
         let moves = this.activePhils[this.moving].getMoves();
@@ -61,22 +69,39 @@ export class GameLogic {
         }
         philToDefend.takeDamage(damageDealt);
         if (philToDefend.isRetired()) {
-            console.log(philToDefend + ' retired! Pick a new Philosopher:\n');
-            while (philToDefend.isRetired()) {
+            this.pickNewPhil();
+        }
+        this.moving = this.moving ^ 1;
+        this.defending = this.defending ^ 1;
+    }
+    pickNewPhil() {
+        let opposingPhil = this.activePhils[this.moving];
+        let philToReplace = this.activePhils[this.defending];
+        if (this.moving == 1) {
+            this.nextScene = new YourPhilLeaves(this.ctx, philToReplace.deepCopy(), opposingPhil.deepCopy());
+            console.log(philToReplace + ' retired! Pick a new Philosopher:\n');
+            while (philToReplace.isRetired()) {
                 if (this.allRetired() != -1) {
                     return;
                 }
                 ;
-                philToDefend = this.chooseNewDefender();
-                if (philToDefend.isRetired()) {
+                philToReplace = this.chooseNewDefender();
+                if (philToReplace.isRetired()) {
                     console.log('That Philosopher retired already! Pick a different one.\n');
                 }
             }
-            this.activePhils[this.defending] = philToDefend;
-            console.log('Your turn, ' + philToDefend + '!\n');
+            this.activePhils[this.defending] = philToReplace;
+            console.log('Your turn, ' + philToReplace + '!\n');
+            this.nextScene = new YourPhilEnters(this.ctx, philToReplace.deepCopy(), opposingPhil);
         }
-        this.moving = this.moving ^ 1;
-        this.defending = this.defending ^ 1;
+        else {
+            for (let phil of this.philGroups[this.defending]) {
+                if (!phil.isRetired()) {
+                    this.activePhils[this.defending] = phil;
+                    return;
+                }
+            }
+        }
     }
     chooseNewDefender() {
         let defendingGroup = this.philGroups[this.defending];

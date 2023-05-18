@@ -1,6 +1,5 @@
 import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
-import { BattleStart } from './scenes/BattleStart.js';
 export var MenuType;
 (function (MenuType) {
     MenuType[MenuType["MainBattleMenu"] = 0] = "MainBattleMenu";
@@ -16,7 +15,7 @@ export class StateManager {
         this.mainBattleMenu = new BattleMenu(ctx);
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
-        this.currentGameState = new BattleStart(this.ctx, this.game.getPhilToMove(), this.game.getPhilToDefend());
+        this.currentGameScene = this.game.getNextScene();
     }
     start() {
         this.gameLoop();
@@ -24,6 +23,7 @@ export class StateManager {
     gameLoop() {
         const gameLoopStep = () => {
             this.processInput();
+            this.currentGameScene = this.game.getNextScene();
             this.render();
             requestAnimationFrame(gameLoopStep);
         };
@@ -40,7 +40,7 @@ export class StateManager {
         else {
             throw new Error('Menus were not as expected.');
         }
-        this.currentGameState.render();
+        this.currentGameScene.render();
     }
     /*
     Uses MenuState enum to switch the active menu object.

@@ -3,6 +3,7 @@ import { Philosopher } from '../entities/Philosopher.js';
 import { GameScene } from '../GameState.js';
 
 export class BattleStart implements GameScene {
+    private sceneComplete: boolean = false;
 
     constructor(private ctx: CanvasRenderingContext2D, 
                 private phil1: Philosopher,
@@ -45,6 +46,10 @@ export class BattleStart implements GameScene {
             // Restore the context to the previous state
             this.ctx.restore(); 
         }
+
+        if (this.phil1.iconLoaded() && this.phil2.iconLoaded()) {
+            this.sceneComplete = true;
+        }
     }
 
     private drawPlatform(x: number, y: number, radiusX: number, radiusY: number): void {
@@ -56,9 +61,8 @@ export class BattleStart implements GameScene {
         this.ctx.closePath();
     }
 
-    getNextState(): MenuType | null {
-        throw new Error('Method not implemented.');
+    isSceneComplete(): boolean {
+        return this.sceneComplete;
     }
-
 
 }
