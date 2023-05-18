@@ -1,21 +1,17 @@
 import { Move } from './Move.js';
 
 export class Philosopher {
-    private name: string;
-    private attack: number;
-    private defense: number;
-    private health: number;
     private moves: Move[] = [];
     private maxMoves: number = 5;
     private retired: boolean = false;
-    private imagePath: string;
 
-    constructor(name: string, attack: number, defense: number, health: number) {
-        this.name = name;
-        this.attack = attack;
-        this.defense = defense;
-        this.health = health;
-    }
+    constructor(
+        private name: string,
+        private attack: number,
+        private defense: number,
+        private health: number,
+        private imagePath: string
+      ) {}
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
