@@ -1,6 +1,6 @@
 import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
-import { EnterPhil } from './scenes/EnterPhil.js';
+import { BattleStart } from './scenes/BattleStart.js';
 export var MenuType;
 (function (MenuType) {
     MenuType[MenuType["MainBattleMenu"] = 0] = "MainBattleMenu";
@@ -16,9 +16,7 @@ export class StateManager {
         this.mainBattleMenu = new BattleMenu(ctx);
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
-        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToMove(), 75, 100, 125, 125);
-        // this.render();
-        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToDefend(), 200, 50, 50, 50);
+        this.currentGameState = new BattleStart(this.ctx, this.game.getPhilToMove(), this.game.getPhilToDefend());
     }
     start() {
         this.gameLoop();

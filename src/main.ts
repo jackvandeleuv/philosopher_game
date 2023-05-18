@@ -38,12 +38,12 @@ let moves: Move[] = [
 let imagePath = 'images/wittgenstein.jpg';
 
 let philosophers: Philosopher[] = [
-    new Philosopher('Bertrand Russell', 8, .3, 1000, imagePath, false),
-    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, imagePath, false),
-    new Philosopher('G.E. Moore', 7.5, .15, 100, imagePath, false),
+    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg', false),
+    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg', false),
+    new Philosopher('G.E. Moore', 7.5, .15, 100, 'images/moore.jpg', false),
     new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg', false),
-    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, imagePath, false),
-    new Philosopher('Immanuel Kant', 8, .1, 1100, imagePath, false)
+    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg', false),
+    new Philosopher('Immanuel Kant', 8, .1, 1100, 'images/kant.jpg', false)
 ]
 
 // For Analytic Philosophers

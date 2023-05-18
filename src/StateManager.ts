@@ -6,6 +6,7 @@ import { GameScene, MenuState } from './GameState.js';
 import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
 import { EnterPhil } from './scenes/EnterPhil.js';
+import { BattleStart } from './scenes/BattleStart.js';
 import { GameLogic } from './GameLogic.js';
 
 export enum MenuType {
@@ -27,9 +28,9 @@ export class StateManager {
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
         
-        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToMove(), 75, 100, 125, 125);
-        // this.render();
-        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToDefend(), 200, 50, 50, 50);
+        this.currentGameState = new BattleStart(this.ctx, 
+                                                this.game.getPhilToMove(), 
+                                                this.game.getPhilToDefend());
         }
 
         
