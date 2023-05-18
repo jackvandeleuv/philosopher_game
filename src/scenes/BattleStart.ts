@@ -30,7 +30,20 @@ export class BattleStart implements GameScene {
 
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, w * .8, h * .2);
             this.ctx.clearRect(x2, y2, w2, h2);
+        
+            // Save the context state
+            this.ctx.save(); 
+            
+            // Move to the center of the image, scale it negatively on x axis, then move it back
+            this.ctx.translate(x2 + w2 / 2, 0); 
+            this.ctx.scale(-1, 1);
+            this.ctx.translate(-(x2 + w2 / 2), 0);
+            
+            // Draw the mirrored image
             this.ctx.drawImage(image, x2, y2, w2, h2);
+            
+            // Restore the context to the previous state
+            this.ctx.restore(); 
         }
     }
 
@@ -42,8 +55,6 @@ export class BattleStart implements GameScene {
         this.ctx.fill();
         this.ctx.closePath();
     }
-
-
 
     getNextState(): MenuType | null {
         throw new Error('Method not implemented.');
