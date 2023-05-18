@@ -39,19 +39,6 @@ export class GameLogic {
         this.makeMove(moves[choice]);
     }
 
-    loadPhilIcons(): void {
-        // Load images
-        for (let philGroup of this.philGroups) {
-            for (let phil of philGroup) {
-                let icon = new Image();
-                icon.src = phil.getImagePath();
-                icon.onload = () => {
-                    phil.setLoadedImage(icon);
-                    }; 
-            }
-        }
-    }
-
     getPhils(): Philosopher[][] {
         let philGroupCopy: Philosopher[][] = []
         for (let i = 0; i < this.philGroups.length; i++) {
