@@ -3,7 +3,7 @@ import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
 import { MenuState } from './GameState.js';
-import { MainBattleMenu } from './MainBattleMenu.js';
+import { MainBattleMenu as BattleMenu } from './MainBattleMenu.js';
 import { MoveMenu } from './MoveMenu.js';
 
 export enum MenuType {
@@ -21,11 +21,11 @@ export class Game {
     private defending = 1;
     private ctx: CanvasRenderingContext2D;
     private currentMenuState: MenuState;
-    private mainBattleMenu: MainBattleMenu;
+    private mainBattleMenu: BattleMenu;
     private moveMenu: MoveMenu;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], ctx: CanvasRenderingContext2D) {
-        this.mainBattleMenu = new MainBattleMenu(ctx);
+        this.mainBattleMenu = new BattleMenu(ctx);
         this.moveMenu = new MoveMenu(ctx);
         
         this.players.push(player1.deepCopy());
@@ -73,7 +73,7 @@ export class Game {
     }
 
     private render(): void {
-        if (this.currentMenuState instanceof MainBattleMenu) {
+        if (this.currentMenuState instanceof BattleMenu) {
             this.mainBattleMenu.render();
         } else if (this.currentMenuState instanceof MoveMenu) {
             this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
@@ -104,7 +104,7 @@ export class Game {
     }
     
     private processInput() {
-        if (this.currentMenuState instanceof MainBattleMenu) {
+        if (this.currentMenuState instanceof BattleMenu) {
             // Switch menu state if applicable
             let newStateMain = this.mainBattleMenu.getNextState();
             if (newStateMain != null) {
