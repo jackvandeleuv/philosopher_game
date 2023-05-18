@@ -2,10 +2,10 @@ import { Move } from './Move.js';
 import { Philosopher } from './Philosopher.js';
 import { MenuButton } from './MenuButton.js';
 import { State } from './State.js'
-import { MenuState } from './Game.js';
+import { MenuType } from './Game.js';
 
 export class MoveMenu implements State {
-    private nextState: MenuState | null = null;
+    private nextState: MenuType | null = null;
     private nextMove: Move | null = null;
     private menuItems: MenuButton[] = [];
     private buttonWidth = this.ctx.canvas.width * (2 / 3);
@@ -44,7 +44,7 @@ export class MoveMenu implements State {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuState.MainBattleMenu
+            action: () => this.nextState = MenuType.MainBattleMenu
         })
     
         for (let item of this.menuItems) {
@@ -131,7 +131,7 @@ export class MoveMenu implements State {
         }
     }
 
-    getNextState(): MenuState | null {
+    getNextState(): MenuType | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

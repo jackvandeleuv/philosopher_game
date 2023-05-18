@@ -2,11 +2,11 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
-import { State } from './State.js';
+import { GameMenuState } from './State.js';
 import { MainBattleMenu } from './MainBattleMenu.js';
 import { MoveMenu } from './MoveMenu.js';
 
-export enum MenuState {
+export enum MenuType {
     MainBattleMenu,
     MoveMenu,
     SwitchMenu,
@@ -20,7 +20,7 @@ export class Game {
     private moving = 0;
     private defending = 1;
     private ctx: CanvasRenderingContext2D;
-    private activeMenuState: State;
+    private activeMenuState: GameMenuState;
     private mainBattleMenu: MainBattleMenu;
     private moveMenu: MoveMenu;
 
@@ -50,11 +50,12 @@ export class Game {
         this.activePhils.push(philGroup2Copy[0]);
 
         this.ctx = ctx;
+
+        this.activeMenuState = this.mainBattleMenu;
+        this.activeMenuState.activate();
     }
 
     start(): void {
-        this.activeMenuState = this.mainBattleMenu;
-        this.activeMenuState.activate();
         this.gameLoop();
     }
 
@@ -85,14 +86,14 @@ export class Game {
     /*
     Uses MenuState enum to switch the active menu object.
     */
-    private switchMenuState(state: MenuState) {
+    private switchMenuState(state: MenuType) {
         switch(state) {
-            case MenuState.MainBattleMenu:
+            case MenuType.MainBattleMenu:
                 this.activeMenuState.deactivate();
                 this.activeMenuState = this.mainBattleMenu;
                 this.activeMenuState.activate();
                 break;
-            case MenuState.MoveMenu:
+            case MenuType.MoveMenu:
                 this.activeMenuState.deactivate();
                 this.activeMenuState = this.moveMenu;
                 this.activeMenuState.activate();

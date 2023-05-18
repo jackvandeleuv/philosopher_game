@@ -2,10 +2,10 @@ import { Move } from './Move.js';
 import { Philosopher } from './Philosopher.js';
 import { MenuButton } from './MenuButton.js';
 import { State } from './State.js'
-import { MenuState } from './Game.js';
+import { MenuType } from './Game.js';
  
 export class MainBattleMenu implements State {
-    private nextState: MenuState | null = null;
+    private nextState: MenuType | null = null;
     private buttonWidth = this.ctx.canvas.width / 3.7;
     private buttonHeight = this.ctx.canvas.height / 14;
     private spacing = this.ctx.canvas.width / 3.2;
@@ -19,7 +19,7 @@ export class MainBattleMenu implements State {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuState.SwitchMenu
+            action: () => this.nextState = MenuType.SwitchMenu
         },
         {
             text: 'Philosophize!',
@@ -27,7 +27,7 @@ export class MainBattleMenu implements State {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuState.MoveMenu
+            action: () => this.nextState = MenuType.MoveMenu
         },
         {
             text: 'Resign',
@@ -35,7 +35,7 @@ export class MainBattleMenu implements State {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuState.Resign
+            action: () => this.nextState = MenuType.Resign
         }
     ]
 
@@ -124,7 +124,7 @@ export class MainBattleMenu implements State {
         }
     }
 
-    getNextState(): MenuState | null {
+    getNextState(): MenuType | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

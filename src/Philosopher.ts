@@ -8,6 +8,7 @@ export class Philosopher {
     private moves: Move[] = [];
     private maxMoves: number = 5;
     private retired: boolean = false;
+    private imagePath: string;
 
     constructor(name: string, attack: number, defense: number, health: number) {
         this.name = name;
@@ -18,6 +19,14 @@ export class Philosopher {
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
+    }
+
+    setImage(imagePath: string) {
+        this.imagePath = imagePath;
+    }
+
+    getImage(): string {
+        return this.imagePath;
     }
 
     getMoves(): Move[] {

@@ -33,10 +33,10 @@ export class Game {
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
         this.ctx = ctx;
-    }
-    start() {
         this.activeMenuState = this.mainBattleMenu;
         this.activeMenuState.activate();
+    }
+    start() {
         this.gameLoop();
     }
     /*

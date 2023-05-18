@@ -12,6 +12,12 @@ export class Philosopher {
     getMove(moveIndex) {
         return this.moves[moveIndex].deepCopy();
     }
+    setImage(imagePath) {
+        this.imagePath = imagePath;
+    }
+    getImage() {
+        return this.imagePath;
+    }
     getMoves() {
         let moveCopies = [];
         for (let i = 0; i < this.moves.length; i++) {

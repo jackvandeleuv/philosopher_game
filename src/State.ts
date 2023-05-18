@@ -1,12 +1,14 @@
-import { MenuState } from "./Game";
+import { MenuType } from "./Game";
 
-export interface State {
+export interface GameState {
     render(): void;
-    getNextState(): MenuState | null;
+    getNextState(): MenuType | null;
+} 
 
-    // Add relevant event listeners
+export interface GameMenuState extends GameState {  
+    // Adds event listener.
     activate(): void;
 
-    // Remove relevant event listeners
+    // Removes event listener.
     deactivate(): void;
-} 
+}

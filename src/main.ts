@@ -45,7 +45,6 @@ let philosophers: Philosopher[] = [
     new Philosopher('Immanuel Kant', 8, .1, 1100)
 ]
 
-
 // For Analytic Philosophers
 let russellMoves = [moves[0], moves[1], moves[6], moves[7]];
 let wittgensteinMoves = [moves[2], moves[3], moves[8], moves[9]];
@@ -55,16 +54,20 @@ philosophers[0].addMove(russellMoves[0]);
 philosophers[0].addMove(russellMoves[1]);
 philosophers[0].addMove(russellMoves[2]);
 philosophers[0].addMove(russellMoves[3]);
+philosophers[0].setImage('./images/wittgenstein.jpg')
 
 philosophers[1].addMove(wittgensteinMoves[0]);
 philosophers[1].addMove(wittgensteinMoves[1]);
 philosophers[1].addMove(wittgensteinMoves[2]);
 philosophers[1].addMove(wittgensteinMoves[3]);
+philosophers[1].setImage('./images/wittgenstein.jpg')
 
 philosophers[2].addMove(mooreMoves[0]);
 philosophers[2].addMove(mooreMoves[1]);
 philosophers[2].addMove(mooreMoves[2]);
 philosophers[2].addMove(mooreMoves[3]);
+philosophers[2].setImage('./images/wittgenstein.jpg')
+
 
 // For Continental Philosophers
 let nietzscheMoves = [moves[12], moves[13], moves[16], moves[17]];
@@ -75,25 +78,23 @@ philosophers[3].addMove(nietzscheMoves[0]);
 philosophers[3].addMove(nietzscheMoves[1]);
 philosophers[3].addMove(nietzscheMoves[2]);
 philosophers[3].addMove(nietzscheMoves[3]);
+philosophers[3].setImage('./images/wittgenstein.jpg')
 
 philosophers[4].addMove(sartreMoves[0]);
 philosophers[4].addMove(sartreMoves[1]);
 philosophers[4].addMove(sartreMoves[2]);
 philosophers[4].addMove(sartreMoves[3]);
+philosophers[4].setImage('./images/wittgenstein.jpg')
 
 philosophers[5].addMove(kantMoves[0]);
 philosophers[5].addMove(kantMoves[1]);
 philosophers[5].addMove(kantMoves[2]);
 philosophers[5].addMove(kantMoves[3]);
+philosophers[5].setImage('./images/wittgenstein.jpg')
 
 let canvas = <HTMLCanvasElement> document.getElementById('gameCanvas');
 let ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
  
-// let menu = new MainBattleMenu(ctx);
-// // let menu = new MoveMenu(ctx, philosophers[0].getMoves());
-// menu.render();
-// menu.activate()
-
 let game: Game = new Game(new Player('Player1'), 
                             new Player('Player2'), 
                             philosophers.slice(0, 3), 
