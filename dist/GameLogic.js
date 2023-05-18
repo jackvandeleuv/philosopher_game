@@ -27,18 +27,6 @@ export class GameLogic {
         let choice = Math.floor(Math.random() * moves.length);
         this.makeMove(moves[choice]);
     }
-    loadPhilIcons() {
-        // Load images
-        for (let philGroup of this.philGroups) {
-            for (let phil of philGroup) {
-                let icon = new Image();
-                icon.src = phil.getImagePath();
-                icon.onload = () => {
-                    phil.setLoadedImage(icon);
-                };
-            }
-        }
-    }
     getPhils() {
         let philGroupCopy = [];
         for (let i = 0; i < this.philGroups.length; i++) {

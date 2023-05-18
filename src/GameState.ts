@@ -1,4 +1,4 @@
-import { MenuType } from "./GameLogic";
+import { MenuType } from "./StateManager.js";
 
 export interface State {
     render(): void;

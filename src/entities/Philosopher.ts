@@ -3,7 +3,8 @@ import { Move } from './Move.js';
 export class Philosopher {
     private moves: Move[] = [];
     private maxMoves: number = 5;
-    private loadedImage: HTMLImageElement | null = null;
+    private icon: HTMLImageElement;
+    private imageLoaded: boolean = false;
 
     constructor(
         private name: string,
@@ -12,22 +13,25 @@ export class Philosopher {
         private health: number,
         private imagePath: string,
         private retired: boolean
-      ) {}
+      ) {
+        let icon = new Image();
+        icon.src = this.imagePath;
+        this.icon = icon;
+        icon.onload = () => {
+            this.imageLoaded = true;
+            };
+      }
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
     }
 
-    setLoadedImage(image: HTMLImageElement) {
-        this.loadedImage = image;
+    iconLoaded(): boolean {
+        return this.imageLoaded;
     }
 
-    getLoadedImage(): HTMLImageElement | null {
-        return this.loadedImage;
-    }
-
-    getImagePath(): string {
-        return this.imagePath;
+    getIcon(): HTMLImageElement {
+        return this.icon;
     }
 
     getMoves(): Move[] {
@@ -79,9 +83,6 @@ export class Philosopher {
                                                     this.health,
                                                     this.imagePath,
                                                     this.retired);
-        if (this.loadedImage != null) {
-            philCopy.setLoadedImage(this.loadedImage);
-        }
         for (let move of this.moves) { 
             philCopy.addMove(move); 
         }

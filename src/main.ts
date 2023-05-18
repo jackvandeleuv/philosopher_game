@@ -1,7 +1,7 @@
-import { Move } from './Move.js';
-import { School } from './School.js';
-import { Philosopher } from './Philosopher.js';
-import { Player } from './Player.js';
+import { Move } from './entities/Move.js';
+import { School } from './entities/School.js';
+import { Philosopher } from './entities/Philosopher.js';
+import { Player } from './entities/Player.js';
 import { GameLogic } from './GameLogic.js';
 import { StateManager } from './StateManager.js';
 
@@ -41,7 +41,7 @@ let philosophers: Philosopher[] = [
     new Philosopher('Bertrand Russell', 8, .3, 1000, imagePath, false),
     new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, imagePath, false),
     new Philosopher('G.E. Moore', 7.5, .15, 100, imagePath, false),
-    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, imagePath, false),
+    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg', false),
     new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, imagePath, false),
     new Philosopher('Immanuel Kant', 8, .1, 1100, imagePath, false)
 ]

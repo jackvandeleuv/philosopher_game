@@ -1,6 +1,6 @@
 import { MenuButton } from './MenuButton.js';
-import { MenuState } from './GameState.js'
-import { MenuType } from './StateManager.js';
+import { MenuState } from '../GameState.js'
+import { MenuType } from '../StateManager.js';
  
 export class BattleMenu implements MenuState {
     private nextState: MenuType | null = null;

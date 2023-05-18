@@ -1,7 +1,7 @@
-import { Move } from './Move.js';
-import { School } from './School.js';
-import { Philosopher } from './Philosopher.js';
-import { Player } from './Player.js';
+import { Move } from './entities/Move.js';
+import { School } from './entities/School.js';
+import { Philosopher } from './entities/Philosopher.js';
+import { Player } from './entities/Player.js';
 
 export class GameLogic {
     private players: Player[] = [];

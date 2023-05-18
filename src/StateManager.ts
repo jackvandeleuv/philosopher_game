@@ -1,11 +1,11 @@
-import { Move } from './Move.js';
-import { School } from './School.js';
-import { Philosopher } from './Philosopher.js';
-import { Player } from './Player.js';
+import { Move } from './entities/Move.js';
+import { School } from './entities/School.js';
+import { Philosopher } from './entities/Philosopher.js';
+import { Player } from './entities/Player.js';
 import { GameScene, MenuState } from './GameState.js';
-import { BattleMenu } from './BattleMenu.js';
-import { MoveMenu } from './MoveMenu.js';
-import { EnterPhil } from './EnterPhil.js';
+import { BattleMenu } from './menus/BattleMenu.js';
+import { MoveMenu } from './menus/MoveMenu.js';
+import { EnterPhil } from './scenes/EnterPhil.js';
 import { GameLogic } from './GameLogic.js';
 
 export enum MenuType {
@@ -22,16 +22,14 @@ export class StateManager {
     private moveMenu: MoveMenu;
 
     constructor(private ctx: CanvasRenderingContext2D, private game: GameLogic) {
-        this.game.loadPhilIcons();
-
         this.moveMenu = new MoveMenu(ctx);
         this.mainBattleMenu = new BattleMenu(ctx);
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
         
-        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToMove(), 50, 50, 50, 50);
+        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToMove(), 75, 100, 125, 125);
         // this.render();
-        // this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToDefend(), 200, 50, 50, 50);
+        this.currentGameState = new EnterPhil(this.ctx, this.game.getPhilToDefend(), 200, 50, 50, 50);
         }
 
         

@@ -1,4 +1,4 @@
-import { Move } from './entities/Move.js';
+import { Move } from './Move.js';
 export class Philosopher {
     constructor(name, attack, defense, health, imagePath, retired) {
         this.name = name;
