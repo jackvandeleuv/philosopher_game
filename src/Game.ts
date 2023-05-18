@@ -2,7 +2,7 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
-import { GameMenuState } from './GameState.js';
+import { MenuState } from './GameState.js';
 import { MainBattleMenu } from './MainBattleMenu.js';
 import { MoveMenu } from './MoveMenu.js';
 
@@ -20,7 +20,7 @@ export class Game {
     private moving = 0;
     private defending = 1;
     private ctx: CanvasRenderingContext2D;
-    private currentMenuState: GameMenuState;
+    private currentMenuState: MenuState;
     private mainBattleMenu: MainBattleMenu;
     private moveMenu: MoveMenu;
 

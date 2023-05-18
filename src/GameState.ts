@@ -5,7 +5,7 @@ export interface GameState {
     getNextState(): MenuType | null;
 } 
 
-export interface GameMenuState extends GameState {  
+export interface MenuState extends GameState {  
     // Adds event listener.
     activate(): void;
 
