@@ -2,32 +2,15 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
-import { MenuState } from './GameState.js';
-import { MainBattleMenu as BattleMenu } from './MainBattleMenu.js';
-import { MoveMenu } from './MoveMenu.js';
 
-export enum MenuType {
-    MainBattleMenu,
-    MoveMenu,
-    SwitchMenu,
-    Resign
-}
- 
-export class Game {
+export class GameLogic {
     private players: Player[] = [];
     private philGroups: Philosopher[][] = [];
     private activePhils: Philosopher[] = [];
     private moving = 0;
     private defending = 1;
-    private ctx: CanvasRenderingContext2D;
-    private currentMenuState: MenuState;
-    private mainBattleMenu: BattleMenu;
-    private moveMenu: MoveMenu;
 
-    constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], ctx: CanvasRenderingContext2D) {
-        this.mainBattleMenu = new BattleMenu(ctx);
-        this.moveMenu = new MoveMenu(ctx);
-        
+    constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[]) {
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
 
@@ -48,86 +31,46 @@ export class Game {
 
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
+    } 
 
-        this.ctx = ctx;
-
-        this.currentMenuState = this.mainBattleMenu;
-        this.currentMenuState.activate();
+    oppMove(): void {
+        let moves = this.activePhils[this.moving].getMoves();
+        let choice = Math.floor(Math.random() * moves.length);
+        this.makeMove(moves[choice]);
     }
 
-    start(): void {
-        this.gameLoop();
-    }
-
-    /*
-    Returns an integer indicating the winner.
-    */
-    private gameLoop(): void {
-        const gameLoopStep = () => {
-            this.processInput();
-            this.render();
-            requestAnimationFrame(gameLoopStep);
-        }
-
-        requestAnimationFrame(gameLoopStep);
-    }
-
-    private render(): void {
-        if (this.currentMenuState instanceof BattleMenu) {
-            this.mainBattleMenu.render();
-        } else if (this.currentMenuState instanceof MoveMenu) {
-            this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
-            this.moveMenu.render();
-        } else {
-            throw new Error('Menus were not as expected.');
-        }
-    }
-
-    /*
-    Uses MenuState enum to switch the active menu object.
-    */
-    private switchMenuState(state: MenuType) {
-        switch(state) {
-            case MenuType.MainBattleMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.mainBattleMenu;
-                this.currentMenuState.activate();
-                break;
-            case MenuType.MoveMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.moveMenu;
-                this.currentMenuState.activate();
-                break;   
-            default:
-                throw new Error("Menu state not as expected.");
-        }
-    }
-    
-    private processInput() {
-        if (this.currentMenuState instanceof BattleMenu) {
-            // Switch menu state if applicable
-            let newStateMain = this.mainBattleMenu.getNextState();
-            if (newStateMain != null) {
-                this.switchMenuState(newStateMain);
+    loadPhilIcons(): void {
+        // Load images
+        for (let philGroup of this.philGroups) {
+            for (let phil of philGroup) {
+                let icon = new Image();
+                icon.src = phil.getImagePath();
+                icon.onload = () => {
+                    phil.setLoadedImage(icon);
+                    }; 
             }
-        } else if (this.currentMenuState instanceof MoveMenu) {
-            // Switch menu state if applicable
-            let newStateMove = this.moveMenu.getNextState();
-            if (newStateMove != null) {
-                this.switchMenuState(newStateMove);
-            } 
-
-            // Make new move if applicable
-            let newMove = this.moveMenu.getNextMove();
-            if (newMove != null) {
-                this.makeMove(newMove.deepCopy())
-            }
-        } else {
-            throw new Error("Menu state not as expected.");
         }
     }
 
-    private makeMove(chosenMove: Move) {
+    getPhils(): Philosopher[][] {
+        let philGroupCopy: Philosopher[][] = []
+        for (let i = 0; i < this.philGroups.length; i++) {
+            for (let j = 0; j < this.philGroups[i].length; j++) {
+                philGroupCopy[i][j] = this.philGroups[i][j].deepCopy();
+            }
+        }
+        return philGroupCopy;
+    }
+
+    getPhilToMove(): Philosopher {
+        return this.activePhils[this.moving].deepCopy();
+    }
+
+    getPhilToDefend(): Philosopher {
+        return this.activePhils[this.defending].deepCopy();
+    }
+
+    makeMove(chosenMove: Move) {
         let philToMove: Philosopher = this.activePhils[this.moving];
         let philToDefend: Philosopher = this.activePhils[this.defending];
 
@@ -170,7 +113,7 @@ export class Game {
         this.defending = this.defending ^ 1;
     }
 
-    private chooseNewDefender(): Philosopher {
+    chooseNewDefender(): Philosopher {
         let defendingGroup: Philosopher[] = this.philGroups[this.defending];
 
         let promptString: string = ''; 

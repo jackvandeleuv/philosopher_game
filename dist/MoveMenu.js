@@ -1,4 +1,4 @@
-import { MenuState } from './Game.js';
+import { MenuType } from './StateManager.js';
 export class MoveMenu {
     constructor(ctx) {
         this.ctx = ctx;
@@ -36,7 +36,7 @@ export class MoveMenu {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuState.MainBattleMenu
+            action: () => this.nextState = MenuType.MainBattleMenu
         });
         for (let item of this.menuItems) {
             // Ensure the item is within the menu area
@@ -98,11 +98,13 @@ export class MoveMenu {
         this.ctx.canvas.addEventListener('click', this.handleClick);
     }
     handleClick(e) {
+        console.log('move menu handled click!');
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
         for (let item of this.menuItems) {
             if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                console.log('tripped detector');
                 item.action();
                 break;
             }

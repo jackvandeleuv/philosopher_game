@@ -3,25 +3,30 @@ import { Move } from './Move.js';
 export class Philosopher {
     private moves: Move[] = [];
     private maxMoves: number = 5;
-    private retired: boolean = false;
+    private loadedImage: HTMLImageElement | null = null;
 
     constructor(
         private name: string,
         private attack: number,
         private defense: number,
         private health: number,
-        private imagePath: string
+        private imagePath: string,
+        private retired: boolean
       ) {}
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
     }
 
-    setImage(imagePath: string) {
-        this.imagePath = imagePath;
+    setLoadedImage(image: HTMLImageElement) {
+        this.loadedImage = image;
     }
 
-    getImage(): string {
+    getLoadedImage(): HTMLImageElement | null {
+        return this.loadedImage;
+    }
+
+    getImagePath(): string {
         return this.imagePath;
     }
 
@@ -71,11 +76,15 @@ export class Philosopher {
         let philCopy: Philosopher = new Philosopher(this.name, 
                                                     this.attack, 
                                                     this.defense, 
-                                                    this.health);
-        for (let move of this.moves) {
-            philCopy.addMove(move);
+                                                    this.health,
+                                                    this.imagePath,
+                                                    this.retired);
+        if (this.loadedImage != null) {
+            philCopy.setLoadedImage(this.loadedImage);
         }
-
+        for (let move of this.moves) { 
+            philCopy.addMove(move); 
+        }
         return philCopy;
     }
 

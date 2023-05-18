@@ -1,5 +1,5 @@
-import { MenuState } from './Game.js';
-export class MainBattleMenu {
+import { MenuType } from './GameLogic.js';
+export class BattleMenu {
     ;
     constructor(ctx) {
         this.ctx = ctx;
@@ -16,7 +16,7 @@ export class MainBattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuState.SwitchMenu
+                action: () => this.nextState = MenuType.SwitchMenu
             },
             {
                 text: 'Philosophize!',
@@ -24,7 +24,7 @@ export class MainBattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuState.MoveMenu
+                action: () => this.nextState = MenuType.MoveMenu
             },
             {
                 text: 'Resign',
@@ -32,7 +32,7 @@ export class MainBattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuState.Resign
+                action: () => this.nextState = MenuType.Resign
             }
         ];
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 

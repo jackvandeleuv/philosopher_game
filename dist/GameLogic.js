@@ -1,22 +1,10 @@
-import { MainBattleMenu as BattleMenu } from './MainBattleMenu.js';
-import { MoveMenu } from './MoveMenu.js';
-import { EnterPhil } from './EnterPhil.js';
-export var MenuType;
-(function (MenuType) {
-    MenuType[MenuType["MainBattleMenu"] = 0] = "MainBattleMenu";
-    MenuType[MenuType["MoveMenu"] = 1] = "MoveMenu";
-    MenuType[MenuType["SwitchMenu"] = 2] = "SwitchMenu";
-    MenuType[MenuType["Resign"] = 3] = "Resign";
-})(MenuType || (MenuType = {}));
 export class GameLogic {
-    constructor(player1, player2, philGroup1, philGroup2, ctx) {
+    constructor(player1, player2, philGroup1, philGroup2) {
         this.players = [];
         this.philGroups = [];
         this.activePhils = [];
         this.moving = 0;
         this.defending = 1;
-        this.mainBattleMenu = new BattleMenu(ctx);
-        this.moveMenu = new MoveMenu(ctx);
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
         // Defensive copy
@@ -33,12 +21,13 @@ export class GameLogic {
         this.philGroups.push(philGroup2Copy);
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
-        this.ctx = ctx;
-        this.currentMenuState = this.mainBattleMenu;
-        this.currentMenuState.activate();
-        this.currentGameState = new EnterPhil(this.ctx, this.activePhils[this.moving]);
     }
-    start() {
+    oppMove() {
+        let moves = this.activePhils[this.moving].getMoves();
+        let choice = Math.floor(Math.random() * moves.length);
+        this.makeMove(moves[choice]);
+    }
+    loadPhilIcons() {
         // Load images
         for (let philGroup of this.philGroups) {
             for (let phil of philGroup) {
@@ -49,74 +38,21 @@ export class GameLogic {
                 };
             }
         }
-        this.gameLoop();
     }
-    /*
-    Returns an integer indicating the winner.
-    */
-    gameLoop() {
-        const gameLoopStep = () => {
-            this.processInput();
-            this.render();
-            requestAnimationFrame(gameLoopStep);
-        };
-        requestAnimationFrame(gameLoopStep);
-    }
-    render() {
-        if (this.currentMenuState instanceof BattleMenu) {
-            this.mainBattleMenu.render();
-        }
-        else if (this.currentMenuState instanceof MoveMenu) {
-            this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
-            this.moveMenu.render();
-        }
-        else {
-            throw new Error('Menus were not as expected.');
-        }
-        this.currentGameState.render();
-    }
-    /*
-    Uses MenuState enum to switch the active menu object.
-    */
-    switchMenuState(state) {
-        switch (state) {
-            case MenuType.MainBattleMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.mainBattleMenu;
-                this.currentMenuState.activate();
-                break;
-            case MenuType.MoveMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.moveMenu;
-                this.currentMenuState.activate();
-                break;
-            default:
-                throw new Error("Menu state not as expected.");
-        }
-    }
-    processInput() {
-        if (this.currentMenuState instanceof BattleMenu) {
-            // Switch menu state if applicable
-            let newStateMain = this.mainBattleMenu.getNextState();
-            if (newStateMain != null) {
-                this.switchMenuState(newStateMain);
+    getPhils() {
+        let philGroupCopy = [];
+        for (let i = 0; i < this.philGroups.length; i++) {
+            for (let j = 0; j < this.philGroups[i].length; j++) {
+                philGroupCopy[i][j] = this.philGroups[i][j].deepCopy();
             }
         }
-        else if (this.currentMenuState instanceof MoveMenu) {
-            // Switch menu state if applicable
-            let newStateMove = this.moveMenu.getNextState();
-            if (newStateMove != null) {
-                this.switchMenuState(newStateMove);
-            }
-            // Make new move if applicable
-            let newMove = this.moveMenu.getNextMove();
-            if (newMove != null) {
-                this.makeMove(newMove.deepCopy());
-            }
-        }
-        else {
-            throw new Error("Menu state not as expected.");
-        }
+        return philGroupCopy;
+    }
+    getPhilToMove() {
+        return this.activePhils[this.moving].deepCopy();
+    }
+    getPhilToDefend() {
+        return this.activePhils[this.defending].deepCopy();
     }
     makeMove(chosenMove) {
         let philToMove = this.activePhils[this.moving];

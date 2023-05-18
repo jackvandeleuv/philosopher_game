@@ -2,9 +2,8 @@ import { Move } from './Move.js';
 import { School } from './School.js';
 import { Philosopher } from './Philosopher.js';
 import { Player } from './Player.js';
-import { Game } from './Game.js';
-import { MainBattleMenu } from './MainBattleMenu.js';
-import { MoveMenu } from './MoveMenu.js';
+import { GameLogic } from './GameLogic.js';
+import { StateManager } from './StateManager.js';
 
 let moves: Move[] = [
     // Analytic Moves
@@ -36,13 +35,15 @@ let moves: Move[] = [
     new Move('Synthetic A Priori', new School(), .9, 75)
 ]
 
+let imagePath = 'images/wittgenstein.jpg';
+
 let philosophers: Philosopher[] = [
-    new Philosopher('Bertrand Russell', 8, .3, 1000),
-    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200),
-    new Philosopher('G.E. Moore', 7.5, .15, 100),
-    new Philosopher('Friedrich Nietzsche', 9, .3, 1000),
-    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200),
-    new Philosopher('Immanuel Kant', 8, .1, 1100)
+    new Philosopher('Bertrand Russell', 8, .3, 1000, imagePath, false),
+    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, imagePath, false),
+    new Philosopher('G.E. Moore', 7.5, .15, 100, imagePath, false),
+    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, imagePath, false),
+    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, imagePath, false),
+    new Philosopher('Immanuel Kant', 8, .1, 1100, imagePath, false)
 ]
 
 // For Analytic Philosophers
@@ -54,19 +55,16 @@ philosophers[0].addMove(russellMoves[0]);
 philosophers[0].addMove(russellMoves[1]);
 philosophers[0].addMove(russellMoves[2]);
 philosophers[0].addMove(russellMoves[3]);
-philosophers[0].setImage('./images/wittgenstein.jpg')
 
 philosophers[1].addMove(wittgensteinMoves[0]);
 philosophers[1].addMove(wittgensteinMoves[1]);
 philosophers[1].addMove(wittgensteinMoves[2]);
 philosophers[1].addMove(wittgensteinMoves[3]);
-philosophers[1].setImage('./images/wittgenstein.jpg')
 
 philosophers[2].addMove(mooreMoves[0]);
 philosophers[2].addMove(mooreMoves[1]);
 philosophers[2].addMove(mooreMoves[2]);
 philosophers[2].addMove(mooreMoves[3]);
-philosophers[2].setImage('./images/wittgenstein.jpg')
 
 
 // For Continental Philosophers
@@ -78,27 +76,31 @@ philosophers[3].addMove(nietzscheMoves[0]);
 philosophers[3].addMove(nietzscheMoves[1]);
 philosophers[3].addMove(nietzscheMoves[2]);
 philosophers[3].addMove(nietzscheMoves[3]);
-philosophers[3].setImage('./images/wittgenstein.jpg')
 
 philosophers[4].addMove(sartreMoves[0]);
 philosophers[4].addMove(sartreMoves[1]);
 philosophers[4].addMove(sartreMoves[2]);
 philosophers[4].addMove(sartreMoves[3]);
-philosophers[4].setImage('./images/wittgenstein.jpg')
 
 philosophers[5].addMove(kantMoves[0]);
 philosophers[5].addMove(kantMoves[1]);
 philosophers[5].addMove(kantMoves[2]);
 philosophers[5].addMove(kantMoves[3]);
-philosophers[5].setImage('./images/wittgenstein.jpg')
 
 let canvas = <HTMLCanvasElement> document.getElementById('gameCanvas');
 let ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
  
-let game: Game = new Game(new Player('Player1'), 
+let game: GameLogic = new GameLogic(new Player('Player1'), 
                             new Player('Player2'), 
                             philosophers.slice(0, 3), 
-                            philosophers.slice(3),
-                            ctx);
-game.start();
+                            philosophers.slice(3));
 
+let manager: StateManager = new StateManager(ctx, game);
+manager.start();
+
+// let icon = new Image();
+// icon.src = philosophers[0].getImage();
+// console.log(philosophers[0].getImage());
+// icon.onload = () => {
+//     ctx.drawImage(icon, 0, 0, 100, 100);
+//   };    

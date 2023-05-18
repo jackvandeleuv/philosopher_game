@@ -1,10 +1,8 @@
-import { Move } from './Move.js';
-import { Philosopher } from './Philosopher.js';
 import { MenuButton } from './MenuButton.js';
 import { MenuState } from './GameState.js'
-import { MenuType } from './Game.js';
+import { MenuType } from './StateManager.js';
  
-export class MainBattleMenu implements MenuState {
+export class BattleMenu implements MenuState {
     private nextState: MenuType | null = null;
     private buttonWidth = this.ctx.canvas.width / 3.7;
     private buttonHeight = this.ctx.canvas.height / 14;

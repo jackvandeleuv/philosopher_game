@@ -1,8 +1,7 @@
 import { Move } from './Move.js';
-import { Philosopher } from './Philosopher.js';
 import { MenuButton } from './MenuButton.js';
 import { MenuState } from './GameState.js'
-import { MenuType } from './Game.js';
+import { MenuType } from './StateManager.js';
 
 export class MoveMenu implements MenuState {
     private nextState: MenuType | null = null;
@@ -119,12 +118,14 @@ export class MoveMenu implements MenuState {
     }
 
     private handleClick(e: any): void {
+        console.log('move menu handled click!')
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
 
         for (let item of this.menuItems) {
             if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                console.log('tripped detector')
                 item.action();
                 break;
             } 
