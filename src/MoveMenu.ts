@@ -33,7 +33,10 @@ export class MoveMenu implements MenuState {
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
-                action: () => this.nextMove = this.moves[i].deepCopy()
+                action: () => {
+                    this.nextMove = this.moves[i].deepCopy();
+                    this.nextState = MenuType.MainBattleMenu;
+                }
             })
         }
 
@@ -118,14 +121,12 @@ export class MoveMenu implements MenuState {
     }
 
     private handleClick(e: any): void {
-        console.log('move menu handled click!')
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
 
         for (let item of this.menuItems) {
             if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                console.log('tripped detector')
                 item.action();
                 break;
             } 

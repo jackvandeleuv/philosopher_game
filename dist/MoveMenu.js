@@ -27,7 +27,10 @@ export class MoveMenu {
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
-                action: () => this.nextMove = this.moves[i].deepCopy()
+                action: () => {
+                    this.nextMove = this.moves[i].deepCopy();
+                    this.nextState = MenuType.MainBattleMenu;
+                }
             });
         }
         this.menuItems.push({
@@ -98,13 +101,11 @@ export class MoveMenu {
         this.ctx.canvas.addEventListener('click', this.handleClick);
     }
     handleClick(e) {
-        console.log('move menu handled click!');
         let rect = this.ctx.canvas.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
         for (let item of this.menuItems) {
             if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                console.log('tripped detector');
                 item.action();
                 break;
             }
