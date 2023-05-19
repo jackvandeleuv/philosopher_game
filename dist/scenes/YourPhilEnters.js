@@ -4,7 +4,7 @@ export class YourPhilEnters {
         this.phil1 = phil1;
         this.phil2 = phil2;
         this.sceneComplete = false;
-        this.x = -1000;
+        this.x = -500;
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.platformX = this.ctx.canvas.width / 6.4;
         this.destinationX = this.platformX;
@@ -20,7 +20,7 @@ export class YourPhilEnters {
     }
     updatePhilPosition() {
         if (this.x + this.w > 0) {
-            this.x = this.x - this.ctx.canvas.width / 150;
+            this.x = this.x + (this.ctx.canvas.width / 150);
         }
     }
     checkPhil1AtDestination() {
@@ -52,7 +52,7 @@ export class YourPhilEnters {
     render() {
         this.drawBattleMinusYourPhil();
         if (this.phil1.iconLoaded()) {
-            this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
+            // this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1AtDestination();
             this.drawPhil1();

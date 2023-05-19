@@ -58,7 +58,6 @@ export class YourPhilLeaves {
     render() {
         this.drawBattleMinusYourPhil();
         if (this.phil1.iconLoaded()) {
-            let image = this.phil1.getIcon();
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1OutOfBounds();

@@ -4,9 +4,7 @@ import { Philosopher } from './entities/Philosopher.js';
 import { Player } from './entities/Player.js';
 import { GameScene } from './GameState.js';
 import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
-import { BattleMenu } from './menus/BattleMenu.js';
 import { BattleStart } from './scenes/BattleStart.js';
-import { YourPhilEnters } from './scenes/YourPhilEnters.js';
 
 export class GameLogic {
     private players: Player[] = [];
@@ -14,7 +12,7 @@ export class GameLogic {
     private activePhils: Philosopher[] = [];
     private moving = 0;
     private defending = 1;
-    private nextScene: GameScene;
+    private nextGameScene: GameScene;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], private ctx: CanvasRenderingContext2D) {
         this.players.push(player1.deepCopy());
@@ -38,11 +36,33 @@ export class GameLogic {
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
 
-        this.nextScene = new BattleStart(this.ctx, this.activePhils[0], this.activePhils[1]);
+        this.nextGameScene = new BattleStart(this.ctx, this.activePhils[0], this.activePhils[1]);
     } 
 
+    /*
+    Flips turn to move between the two players.
+    */
+    nextTurn(): void {
+        this.moving = this.moving ^ 1;
+        this.defending = this.defending ^ 1;
+    }
+
+    /*
+    Player number is 0 for player 1 and 1 for player 2.
+    */
+    getTurnToMove(): number {
+        return this.moving;
+    }
+
+    /*
+    Player number should be 0 for player 1 and 1 for player 2.
+    */
+    setActivePhil(newActivePhil: Philosopher, playerNumber: number): void {
+        this.activePhils[playerNumber] = newActivePhil.deepCopy();
+    }
+
     getNextScene(): GameScene {
-        return this.nextScene;
+        return this.nextGameScene;
     }
 
     oppMove(): void {
@@ -54,9 +74,11 @@ export class GameLogic {
     getPhils(): Philosopher[][] {
         let philGroupCopy: Philosopher[][] = []
         for (let i = 0; i < this.philGroups.length; i++) {
+            let philGroupSubCopy: Philosopher[] = [];
             for (let j = 0; j < this.philGroups[i].length; j++) {
-                philGroupCopy[i][j] = this.philGroups[i][j].deepCopy();
+                philGroupSubCopy[j] = this.philGroups[i][j].deepCopy();
             }
+            philGroupCopy[i] = philGroupSubCopy;
         }
         return philGroupCopy;
     }
@@ -98,8 +120,7 @@ export class GameLogic {
             this.pickNewPhil();
         }
 
-        this.moving = this.moving ^ 1;
-        this.defending = this.defending ^ 1;
+        this.nextTurn();
     }
 
     private pickNewPhil(): void {
@@ -107,7 +128,7 @@ export class GameLogic {
         let philToReplace = this.activePhils[this.defending];
 
         if (this.moving == 1) {
-            this.nextScene = new YourPhilLeaves(this.ctx, philToReplace.deepCopy(), opposingPhil.deepCopy());
+            this.nextGameScene = new YourPhilLeaves(this.ctx, philToReplace.deepCopy(), opposingPhil.deepCopy());
             console.log(philToReplace + ' retired! Pick a new Philosopher:\n');
 
             while (philToReplace.isRetired()) {
@@ -119,7 +140,6 @@ export class GameLogic {
             }
             this.activePhils[this.defending] = philToReplace;
             console.log('Your turn, ' + philToReplace + '!\n');
-            this.nextScene = new YourPhilEnters(this.ctx, philToReplace.deepCopy(), opposingPhil);
         } 
         
         else {
@@ -154,8 +174,9 @@ export class GameLogic {
             }
         }
 
-        let chosenPhil: number = parseInt(prompt(promptString) as string) - 1;
-        return defendingGroup[chosenPhil];
+        // let chosenPhil: number = parseInt(prompt(promptString) as string) - 1;
+        // REMOVE LATER!!!!!!!
+        return defendingGroup[1];
     }
 
     private printBattleStatus(): void {
@@ -180,22 +201,17 @@ export class GameLogic {
     private allRetired(): number {
         // Check to see if all Philosophers on one team are retired.
         for (let i = 0; i < this.philGroups.length; i++) {
-
             let teamRetired: boolean = true;
-
             for (let phil of this.philGroups[i]) {
                 if (!phil.isRetired()) {
                     teamRetired = !teamRetired;
                     break;
                 }
             }
-
             if (teamRetired) {
                 return i ^ 1;
-            }
-            
+            }   
         }
-
         return -1;
     }
 
