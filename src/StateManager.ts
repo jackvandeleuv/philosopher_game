@@ -97,8 +97,17 @@ export class StateManager {
                 this.currentMenuState = this.switchMenu;
                 this.currentMenuState.activate();
                 break;
+            case MenuType.Resign:
+                console.log('Player ' 
+                                + (this.game.getTurnToMove() + 1).toString() 
+                                + ' resigned!\nPlayer '
+                                + ((this.game.getTurnToMove() ^ 1) + 1).toString()
+                                + ' wins!'
+                                );
+                this.currentMenuState.deactivate();
+                break;
             default:
-                throw new Error("Menu state not as expected.");
+                throw new Error('Menu state ' + state + ' not as expected.');
         }
     }
     
