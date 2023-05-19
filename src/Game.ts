@@ -54,10 +54,10 @@ export class Game {
         }
 
         let gameCopy = new Game(this.players[0].deepCopy(), 
-                this.players[1].deepCopy(), 
-                philGroup1Copy,
-                philGroup2Copy,
-                this.ctx)
+                                this.players[1].deepCopy(), 
+                                philGroup1Copy,
+                                philGroup2Copy,
+                                this.ctx)
 
         for (let i = 0; i < this.activePhils.length; i++) {
             gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
@@ -87,7 +87,9 @@ export class Game {
     }
 
     getNextMenuState(): MenuState | null {
-        return this.nextMenuState;
+        let nextState = this.nextMenuState;
+        this.nextMenuState = null;
+        return nextState;
     }
 
     /*
@@ -153,14 +155,14 @@ export class Game {
             console.log(chosenMove + ' did ' + damageDealt + ' damage!\n')
         }
 
-        philToDefend.takeDamage(damageDealt);  
+        philToDefend.takeDamage(damageDealt); 
+        
+        this.nextTurn();
         
         if (philToDefend.isRetired()) {
             this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove)
             this.nextMenuState = new SwitchMenuNoBack(this.ctx, this.deepCopy());
         }
-
-        this.nextTurn();
     }
 
     private printBattleStatus(): void {

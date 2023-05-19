@@ -23,7 +23,9 @@ export class StateManager {
     }
     gameLoop() {
         const gameLoopStep = () => {
+            // Process input from menus
             this.processInput();
+            // Get input from the game logic
             let nextScene = this.game.getNextScene();
             if (nextScene != null) {
                 this.gameSceneQueue.push(nextScene);
@@ -34,9 +36,11 @@ export class StateManager {
                 this.currentMenuState = nextState;
                 this.currentMenuState.activate();
             }
+            // Check for queued scenes
             if (this.gameSceneQueue.length > 0 && this.gameSceneQueue[0].isSceneComplete()) {
                 this.gameSceneQueue.pop();
             }
+            // Render current state
             this.render();
             requestAnimationFrame(gameLoopStep);
         };

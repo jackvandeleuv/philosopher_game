@@ -60,7 +60,9 @@ export class Game {
         this.defending = this.defending ^ 1;
     }
     getNextMenuState() {
-        return this.nextMenuState;
+        let nextState = this.nextMenuState;
+        this.nextMenuState = null;
+        return nextState;
     }
     /*
     Player number is 0 for player 1 and 1 for player 2.
@@ -114,11 +116,11 @@ export class Game {
             console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
         }
         philToDefend.takeDamage(damageDealt);
+        this.nextTurn();
         if (philToDefend.isRetired()) {
             this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove);
             this.nextMenuState = new SwitchMenuNoBack(this.ctx, this.deepCopy());
         }
-        this.nextTurn();
     }
     printBattleStatus() {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");

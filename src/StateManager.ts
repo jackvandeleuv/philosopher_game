@@ -3,6 +3,7 @@ import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
 import { Game } from './Game.js';
 import { SwitchMenu } from './menus/SwitchMenu.js';
+import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
 
 export enum MenuType {
     MainBattleMenu,
@@ -32,13 +33,14 @@ export class StateManager {
 
     private gameLoop(): void {
         const gameLoopStep = () => {
+            // Process input from menus
             this.processInput();
             
+            // Get input from the game logic
             let nextScene = this.game.getNextScene();
             if (nextScene != null) {
                 this.gameSceneQueue.push(nextScene);
             }
-
             let nextState = this.game.getNextMenuState();
             if (nextState != null) {
                 this.currentMenuState.deactivate();
@@ -46,10 +48,12 @@ export class StateManager {
                 this.currentMenuState.activate();
             }
 
+            // Check for queued scenes
             if (this.gameSceneQueue.length > 0 && this.gameSceneQueue[0].isSceneComplete()) {
                 this.gameSceneQueue.pop();
             }
 
+            // Render current state
             this.render();
 
             requestAnimationFrame(gameLoopStep);
