@@ -46,7 +46,7 @@ export class SwitchMenu implements MenuState {
             y: this.y + this.spacing * this.yourPhils.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuType.MainBattleMenu
+            action: () => this.nextState = MenuType.MainBattleMenu  
         })
     
         for (let item of this.menuItems) {

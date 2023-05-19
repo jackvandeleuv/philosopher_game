@@ -118,7 +118,6 @@ export class StateManager {
         let newMove = this.moveMenu.getNextMove();
         if (newMove != null) {
             this.game.makeMove(newMove.deepCopy())
-            this.game.oppMove();
         }
     }
 
@@ -136,7 +135,6 @@ export class StateManager {
             this.game.nextTurn();
             console.log('You switched Philosophers, forfeiting your turn!');
             this.currentGameScene = new YourPhilEnters(this.ctx, newPhil, this.game.getPhilToMove();)
-            this.game.oppMove();
         }
     }
 }

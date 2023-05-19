@@ -76,6 +76,7 @@ export class YourPhilLeaves implements GameScene {
     }
 
     render(): void {
+        console.log('rendering')
         this.drawBattleMinusYourPhil();
         if (this.phil1.iconLoaded()) {
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
