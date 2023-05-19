@@ -43,7 +43,7 @@ export class StateManager {
             this.moveMenu.render();
         }
         else if (this.currentMenuState instanceof SwitchMenu) {
-            this.switchMenu.updatePhils(this.game.getPhils()[0]);
+            this.switchMenu.updatePhils(this.game.getPhils()[this.game.getTurnToMove()]);
             this.switchMenu.render();
         }
         else {
@@ -119,6 +119,8 @@ export class StateManager {
         if (newPhil != null) {
             this.game.setActivePhil(newPhil.deepCopy(), this.game.getTurnToMove());
             this.game.nextTurn();
+            console.log(this.game.getTurnToMove());
+            console.log(this.game.getPhils());
             console.log('You switched Philosophers, forfeiting your turn!');
             this.currentGameScene = new YourPhilEnters(this.ctx, newPhil, this.game.getPhilToMove());
         }
