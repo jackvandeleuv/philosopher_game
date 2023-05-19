@@ -28,27 +28,31 @@ export class Game {
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
     }
-    deepCopy() {
-        // Defensive copy
-        let philGroup1Copy = [];
-        for (let i = 0; i < this.philGroups[0].length; i++) {
-            philGroup1Copy[i] = this.philGroups[0][i].deepCopy();
-        }
-        // Defensive copy
-        let philGroup2Copy = [];
-        for (let i = 0; i < this.philGroups[1].length; i++) {
-            philGroup2Copy[i] = this.philGroups[1][i].deepCopy();
-        }
-        let gameCopy = new Game(this.players[0].deepCopy(), this.players[1].deepCopy(), philGroup1Copy, philGroup2Copy, this.ctx);
-        for (let i = 0; i < this.activePhils.length; i++) {
-            gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
-        }
-        gameCopy.moving = this.moving;
-        gameCopy.defending = this.defending;
-        gameCopy.nextGameScene = this.nextGameScene;
-        gameCopy.nextMenuState = this.nextMenuState;
-        return gameCopy;
-    }
+    // deepCopy(): Game {
+    //     // Defensive copy
+    //     let philGroup1Copy: Philosopher[] = []
+    //     for (let i = 0; i < this.philGroups[0].length; i++) {
+    //         philGroup1Copy[i] = this.philGroups[0][i].deepCopy();
+    //     }
+    //     // Defensive copy
+    //     let philGroup2Copy: Philosopher[] = []
+    //     for (let i = 0; i < this.philGroups[1].length; i++) {
+    //         philGroup2Copy[i] = this.philGroups[1][i].deepCopy();
+    //     }
+    //     let gameCopy = new Game(this.players[0].deepCopy(), 
+    //                             this.players[1].deepCopy(), 
+    //                             philGroup1Copy,
+    //                             philGroup2Copy,
+    //                             this.ctx)
+    //     for (let i = 0; i < this.activePhils.length; i++) {
+    //         gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
+    //     }
+    //     gameCopy.moving = this.moving;
+    //     gameCopy.defending = this.defending;
+    //     gameCopy.nextGameScene = this.nextGameScene;
+    //     gameCopy.nextMenuState = this.nextMenuState;
+    //     return gameCopy;
+    // }
     getDefaultScene() {
         return new DefaultScene(this.ctx, this.activePhils[0].deepCopy(), this.activePhils[1].deepCopy());
     }
@@ -116,10 +120,12 @@ export class Game {
             console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
         }
         philToDefend.takeDamage(damageDealt);
-        this.nextTurn();
         if (philToDefend.isRetired()) {
             this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove);
-            this.nextMenuState = new SwitchMenuNoBack(this.ctx, this.deepCopy());
+            this.nextMenuState = new SwitchMenuNoBack(this.ctx, this);
+        }
+        else {
+            this.nextTurn();
         }
     }
     printBattleStatus() {
@@ -137,6 +143,15 @@ export class Game {
             + "'s health - "
             + defendingPhil.getHealth()
             + '\n');
+    }
+    battleUpdate() {
+        console.log('\nactivePhils: ' + this.activePhils);
+        console.log('all Phils: ' + this.getPhils());
+        console.log('Moving: ' + this.moving);
+        console.log('Defending: ' + this.defending);
+        // console.log('Next MenuState: ' + this.getNextMenuState())
+        // console.log('Next GameScene: ' + this.getNextScene() + '\n')
+        console.log('Retirement statuses: ' + this.activePhils[0].isRetired() + ', ' + this.activePhils[1].isRetired());
     }
     allRetired() {
         // Check to see if all Philosophers on one team are retired.

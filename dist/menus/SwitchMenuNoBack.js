@@ -1,25 +1,32 @@
 import { SwitchMenu } from "./SwitchMenu.js";
 import { MenuType } from "../StateManager.js";
 export class SwitchMenuNoBack extends SwitchMenu {
-    constructor(ctx, gameCopy) {
-        super(ctx, gameCopy);
+    constructor(ctx, game) {
+        super(ctx, game);
     }
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
         this.menuItems = [];
-        let yourPhils = this.gameCopy.getPhils()[this.gameCopy.getTurnToMove()];
-        for (let i = 0; i < yourPhils.length; i++) {
+        let defendingPhils = this.game.getPhils()[this.game.getTurnToMove() ^ 1];
+        for (let i = 0; i < defendingPhils.length; i++) {
+            let retiredIndicator = '';
+            if (defendingPhils[i].isRetired()) {
+                retiredIndicator = ' (retired)';
+            }
             this.menuItems.push({
-                text: yourPhils[i].toString(),
+                text: defendingPhils[i].toString() + retiredIndicator,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    this.nextPhil = yourPhils[i].deepCopy();
-                    this.nextMenuState = MenuType.MainBattleMenu;
+                    if (!defendingPhils[i].isRetired()) {
+                        this.game.setActivePhil(defendingPhils[i].deepCopy(), this.game.getTurnToMove() ^ 1);
+                        this.nextMenuState = MenuType.MainBattleMenu;
+                        this.game.nextTurn();
+                    }
                 }
             });
         }

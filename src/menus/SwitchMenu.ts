@@ -10,7 +10,6 @@ import { Game } from '../Game.js';
 export class SwitchMenu implements MenuState {
     protected nextMenuState: MenuType | null = null;
     protected nextGameScene: GameScene | null = null;
-    protected nextPhil: Philosopher | null = null;
     protected menuItems: MenuButton[] = [];
     protected buttonWidth = this.ctx.canvas.width * (2 / 3);
     protected buttonHeight = this.ctx.canvas.height / 18;
@@ -18,7 +17,7 @@ export class SwitchMenu implements MenuState {
     protected y = this.ctx.canvas.height * (5 / 8);
     protected x = (this.ctx.canvas.width - this.buttonWidth) / 2;
 
-    constructor(protected ctx: CanvasRenderingContext2D, protected gameCopy: Game) {
+    constructor(protected ctx: CanvasRenderingContext2D, protected game: Game) {
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this);
@@ -30,28 +29,36 @@ export class SwitchMenu implements MenuState {
         this.ctx.fillRect(0, 0, 1000, 1000);
     
         this.menuItems = [];
-        let yourPhils: Philosopher[] = this.gameCopy.getPhils()[this.gameCopy.getTurnToMove()];
+        let yourPhils: Philosopher[] = this.game.getPhils()[this.game.getTurnToMove()];
         for (let i = 0; i < yourPhils.length; i++) {
+            let retiredIndicator: string = '';
+            if (yourPhils[i].isRetired()) {
+                retiredIndicator = ' (retired)';
+            }
             this.menuItems.push({
-                text: yourPhils[i].toString(),
+                text: yourPhils[i].toString() + retiredIndicator,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    console.log('You switched Philosophers, forfeiting your turn!');
-                    this.nextPhil = yourPhils[i].deepCopy();
-                    this.nextMenuState = MenuType.MainBattleMenu;
-                    this.nextGameScene = new YourPhilSwaps(
-                        new YourPhilLeaves(this.ctx, 
-                                            this.gameCopy.getPhilToMove().deepCopy(), 
-                                            this.gameCopy.getPhilToDefend().deepCopy()
-                                            ),
-                        new YourPhilEnters(this.ctx, 
-                                            yourPhils[i].deepCopy(), 
-                                            this.gameCopy.getPhilToDefend().deepCopy()
-                                            )
-                    );
+                    if (!yourPhils[i].isRetired()) {
+                        console.log('You switched Philosophers to ' + yourPhils[i] + ' forfeiting your turn!');
+                        this.game.setActivePhil(yourPhils[i].deepCopy(), this.game.getTurnToMove());
+                        this.game.nextTurn();
+                        
+                        this.nextMenuState = MenuType.MainBattleMenu;
+                        this.nextGameScene = new YourPhilSwaps(
+                            new YourPhilLeaves(this.ctx, 
+                                                this.game.getPhilToMove().deepCopy(), 
+                                                this.game.getPhilToDefend().deepCopy()
+                                                ),
+                            new YourPhilEnters(this.ctx, 
+                                                yourPhils[i].deepCopy(), 
+                                                this.game.getPhilToDefend().deepCopy()
+                                                )
+                        );
+                    }
                 }
             })
         }
@@ -119,10 +126,6 @@ export class SwitchMenu implements MenuState {
         this.ctx.arcTo(x,   y,   x+w, y,   r);
         this.ctx.closePath();
     }
-
-    updateGameCopy(gameCopy: Game) {
-        this.gameCopy = gameCopy.deepCopy();
-    }
     
     deactivate(): void {
         this.ctx.canvas.removeEventListener('click', this.handleClick);
@@ -155,14 +158,5 @@ export class SwitchMenu implements MenuState {
         let nextScene = this.nextGameScene;
         this.nextGameScene = null;
         return nextScene;
-    }
-
-    getNextPhil(): Philosopher | null {
-        if (this.nextPhil == null) {
-            return null;
-        }
-        let nextPhil = this.nextPhil;
-        this.nextPhil = null;
-        return nextPhil;
     }
 }

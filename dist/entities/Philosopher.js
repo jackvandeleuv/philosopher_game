@@ -49,6 +49,7 @@ export class Philosopher {
     }
     deepCopy() {
         let philCopy = new Philosopher(this.name, this.attack, this.defense, this.health, this.imagePath, this.imageRepo);
+        philCopy.retired = this.retired;
         for (let move of this.moves) {
             philCopy.addMove(move);
         }

@@ -14,7 +14,7 @@ export class StateManager {
         this.gameSceneQueue = [];
         this.moveMenu = new MoveMenu(ctx);
         this.mainBattleMenu = new BattleMenu(ctx);
-        this.switchMenu = new SwitchMenu(ctx, this.game.deepCopy());
+        this.switchMenu = new SwitchMenu(ctx, this.game);
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
     }
@@ -50,9 +50,6 @@ export class StateManager {
         if (this.currentMenuState instanceof MoveMenu) {
             this.moveMenu.updateMoves(this.game.getPhilToMove().getMoves());
         }
-        if (this.currentMenuState instanceof SwitchMenu) {
-            this.switchMenu.updateGameCopy(this.game.deepCopy());
-        }
         this.currentMenuState.render();
         if (this.gameSceneQueue.length > 0) {
             this.gameSceneQueue[0].render();
@@ -65,6 +62,7 @@ export class StateManager {
     Uses MenuState enum to switch the active menu object.
     */
     changeMenuState(state) {
+        this.game.battleUpdate();
         switch (state) {
             case MenuType.MainBattleMenu:
                 this.currentMenuState.deactivate();
@@ -110,12 +108,6 @@ export class StateManager {
         let newScene = switchMenu.getNextGameScene();
         if (newScene != null) {
             this.gameSceneQueue.push(newScene);
-        }
-        // Make new move if applicable
-        let newPhil = switchMenu.getNextPhil();
-        if (newPhil != null) {
-            this.game.setActivePhil(newPhil.deepCopy(), this.game.getTurnToMove());
-            this.game.nextTurn();
         }
     }
 }

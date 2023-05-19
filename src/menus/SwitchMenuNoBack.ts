@@ -4,8 +4,8 @@ import { Philosopher } from "../entities/Philosopher.js";
 import { MenuType } from "../StateManager.js";
 
 export class SwitchMenuNoBack extends SwitchMenu {
-    constructor(ctx: CanvasRenderingContext2D, gameCopy: Game) {
-        super(ctx, gameCopy);
+    constructor(ctx: CanvasRenderingContext2D, game: Game) {
+        super(ctx, game);
     }
 
     render() {
@@ -14,17 +14,24 @@ export class SwitchMenuNoBack extends SwitchMenu {
         this.ctx.fillRect(0, 0, 1000, 1000);
     
         this.menuItems = [];
-        let yourPhils: Philosopher[] = this.gameCopy.getPhils()[this.gameCopy.getTurnToMove()];
-        for (let i = 0; i < yourPhils.length; i++) {
+        let defendingPhils: Philosopher[] = this.game.getPhils()[this.game.getTurnToMove() ^ 1];
+        for (let i = 0; i < defendingPhils.length; i++) {
+            let retiredIndicator: string = '';
+            if (defendingPhils[i].isRetired()) {
+                retiredIndicator = ' (retired)';
+            }
             this.menuItems.push({
-                text: yourPhils[i].toString(),
+                text: defendingPhils[i].toString() + retiredIndicator,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    this.nextPhil = yourPhils[i].deepCopy();
-                    this.nextMenuState = MenuType.MainBattleMenu;
+                    if (!defendingPhils[i].isRetired()) {
+                        this.game.setActivePhil(defendingPhils[i].deepCopy(), this.game.getTurnToMove() ^ 1);
+                        this.nextMenuState = MenuType.MainBattleMenu;
+                        this.game.nextTurn();
+                    }
                 }
             })
         }
