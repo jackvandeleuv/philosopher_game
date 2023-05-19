@@ -8,17 +8,17 @@ import { YourPhilLeaves } from '../scenes/YourPhilLeaves.js';
 import { Game } from '../Game.js';
 
 export class SwitchMenu implements MenuState {
-    private nextMenuState: MenuType | null = null;
-    private nextGameScene: GameScene | null = null;
-    private nextPhil: Philosopher | null = null;
-    private menuItems: MenuButton[] = [];
-    private buttonWidth = this.ctx.canvas.width * (2 / 3);
-    private buttonHeight = this.ctx.canvas.height / 18;
-    private spacing = this.ctx.canvas.width / 15;
-    private y = this.ctx.canvas.height * (5 / 8);
-    private x = (this.ctx.canvas.width - this.buttonWidth) / 2;
+    protected nextMenuState: MenuType | null = null;
+    protected nextGameScene: GameScene | null = null;
+    protected nextPhil: Philosopher | null = null;
+    protected menuItems: MenuButton[] = [];
+    protected buttonWidth = this.ctx.canvas.width * (2 / 3);
+    protected buttonHeight = this.ctx.canvas.height / 18;
+    protected spacing = this.ctx.canvas.width / 15;
+    protected y = this.ctx.canvas.height * (5 / 8);
+    protected x = (this.ctx.canvas.width - this.buttonWidth) / 2;
 
-    constructor(private ctx: CanvasRenderingContext2D, private gameCopy: Game) {
+    constructor(protected ctx: CanvasRenderingContext2D, protected gameCopy: Game) {
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this);
@@ -39,6 +39,7 @@ export class SwitchMenu implements MenuState {
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
+                    console.log('You switched Philosophers, forfeiting your turn!');
                     this.nextPhil = yourPhils[i].deepCopy();
                     this.nextMenuState = MenuType.MainBattleMenu;
                     this.nextGameScene = new YourPhilSwaps(
@@ -104,14 +105,10 @@ export class SwitchMenu implements MenuState {
         }
     }
 
-    updateGameCopy(gameCopy: Game) {
-        this.gameCopy = gameCopy.deepCopy();
-    }
-
     /* 
     Rounded rectangle function 
     */
-    private roundRect(x: number, y: number, w: number, h: number, r: number) {
+    protected roundRect(x: number, y: number, w: number, h: number, r: number) {
         if (w < 2 * r) r = w / 2;
         if (h < 2 * r) r = h / 2;
         this.ctx.beginPath();
@@ -121,6 +118,10 @@ export class SwitchMenu implements MenuState {
         this.ctx.arcTo(x,   y+h, x,   y,   r);
         this.ctx.arcTo(x,   y,   x+w, y,   r);
         this.ctx.closePath();
+    }
+
+    updateGameCopy(gameCopy: Game) {
+        this.gameCopy = gameCopy.deepCopy();
     }
     
     deactivate(): void {

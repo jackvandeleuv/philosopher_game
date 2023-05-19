@@ -33,6 +33,7 @@ export class SwitchMenu {
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
+                    console.log('You switched Philosophers, forfeiting your turn!');
                     this.nextPhil = yourPhils[i].deepCopy();
                     this.nextMenuState = MenuType.MainBattleMenu;
                     this.nextGameScene = new YourPhilSwaps(new YourPhilLeaves(this.ctx, this.gameCopy.getPhilToMove().deepCopy(), this.gameCopy.getPhilToDefend().deepCopy()), new YourPhilEnters(this.ctx, yourPhils[i].deepCopy(), this.gameCopy.getPhilToDefend().deepCopy()));
@@ -77,9 +78,6 @@ export class SwitchMenu {
             this.ctx.fillText(item.text, textX, textY);
         }
     }
-    updateGameCopy(gameCopy) {
-        this.gameCopy = gameCopy.deepCopy();
-    }
     /*
     Rounded rectangle function
     */
@@ -95,6 +93,9 @@ export class SwitchMenu {
         this.ctx.arcTo(x, y + h, x, y, r);
         this.ctx.arcTo(x, y, x + w, y, r);
         this.ctx.closePath();
+    }
+    updateGameCopy(gameCopy) {
+        this.gameCopy = gameCopy.deepCopy();
     }
     deactivate() {
         this.ctx.canvas.removeEventListener('click', this.handleClick);

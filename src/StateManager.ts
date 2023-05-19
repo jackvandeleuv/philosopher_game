@@ -3,8 +3,6 @@ import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
 import { Game } from './Game.js';
 import { SwitchMenu } from './menus/SwitchMenu.js';
-import { YourPhilEnters } from './scenes/YourPhilEnters.js';
-import { DefaultScene } from './scenes/DefaultScene.js';
 
 export enum MenuType {
     MainBattleMenu,
@@ -41,6 +39,13 @@ export class StateManager {
                 this.gameSceneQueue.push(nextScene);
             }
 
+            let nextState = this.game.getNextMenuState();
+            if (nextState != null) {
+                this.currentMenuState.deactivate();
+                this.currentMenuState = nextState;
+                this.currentMenuState.activate();
+            }
+
             if (this.gameSceneQueue.length > 0 && this.gameSceneQueue[0].isSceneComplete()) {
                 this.gameSceneQueue.pop();
             }
@@ -54,17 +59,15 @@ export class StateManager {
     }
 
     private render(): void {
-        if (this.currentMenuState instanceof BattleMenu) {
-            this.mainBattleMenu.render();
-        } else if (this.currentMenuState instanceof MoveMenu) {
+        if (this.currentMenuState instanceof MoveMenu) {
             this.moveMenu.updateMoves(this.game.getPhilToMove().getMoves());
-            this.moveMenu.render();
-        } else if (this.currentMenuState instanceof SwitchMenu) {
+        } 
+        
+        if (this.currentMenuState instanceof SwitchMenu) {
             this.switchMenu.updateGameCopy(this.game.deepCopy());
-            this.switchMenu.render();
-        } else {
-            throw new Error('Menus were not as expected.');
         }
+
+        this.currentMenuState.render();
 
         if (this.gameSceneQueue.length > 0) {
             this.gameSceneQueue[0].render();
@@ -99,32 +102,22 @@ export class StateManager {
     }
     
     private processInput(): void {
-        if (this.currentMenuState instanceof BattleMenu) {
-            this.processBattleMenuInput();
-        } else if (this.currentMenuState instanceof MoveMenu) {
+        if (this.currentMenuState instanceof MoveMenu) {
             this.processMoveMenuInput();
-        } else if (this.currentMenuState instanceof SwitchMenu) {
-            this.processSwitchMenuInput();
-        } else {
-            throw new Error("Menu state not as expected.");
-        }
-    }
+        } 
+        
+        if (this.currentMenuState instanceof SwitchMenu) {
+            this.processSwitchMenuInput(this.currentMenuState);
+        } 
 
-    private processBattleMenuInput(): void {
         // Switch menu state if applicable
-        let newState = this.mainBattleMenu.getNextMenuState();
-        if (newState != null) {
-            this.changeMenuState(newState);
-        }
-    }
-
-    private processMoveMenuInput(): void {
-        // Switch menu state if applicable
-        let newState = this.moveMenu.getNextMenuState();
+        let newState = this.currentMenuState.getNextMenuState();
         if (newState != null) {
             this.changeMenuState(newState);
         } 
+    }
 
+    private processMoveMenuInput(): void {
         // Make new move if applicable
         let newMove = this.moveMenu.getNextMove();
         if (newMove != null) {
@@ -132,25 +125,18 @@ export class StateManager {
         }
     }
 
-    private processSwitchMenuInput(): void {
-        // Switch menu state if applicable
-        let newState = this.switchMenu.getNextMenuState();
-        if (newState != null) {
-            this.changeMenuState(newState);
-        } 
-
+    private processSwitchMenuInput(switchMenu: SwitchMenu): void {
         // Add game scene to queue if applicable
-        let newScene = this.switchMenu.getNextGameScene();
+        let newScene = switchMenu.getNextGameScene();
         if (newScene != null) {
             this.gameSceneQueue.push(newScene);
         }
 
         // Make new move if applicable
-        let newPhil = this.switchMenu.getNextPhil();
+        let newPhil = switchMenu.getNextPhil();
         if (newPhil != null) {
             this.game.setActivePhil(newPhil.deepCopy(), this.game.getTurnToMove());
             this.game.nextTurn();
-            console.log('You switched Philosophers, forfeiting your turn!');
         }
     }
 }

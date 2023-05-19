@@ -1,6 +1,6 @@
 import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
 import { DefaultScene } from './scenes/DefaultScene.js';
-import { SwitchMenu } from './menus/SwitchMenu.js';
+import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
 export class Game {
     constructor(player1, player2, philGroup1, philGroup2, ctx) {
         this.ctx = ctx;
@@ -114,13 +114,9 @@ export class Game {
             console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
         }
         philToDefend.takeDamage(damageDealt);
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (philToDefend.isRetired()) {
             this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove);
-            this.nextMenuState = new SwitchMenu(this.ctx);
+            this.nextMenuState = new SwitchMenuNoBack(this.ctx, this.deepCopy());
         }
         this.nextTurn();
     }
