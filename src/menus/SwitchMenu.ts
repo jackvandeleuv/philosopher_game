@@ -143,7 +143,7 @@ export class SwitchMenu implements MenuState {
         if (this.nextPhil == null) {
             return null;
         }
-        let nextPhil = this.nextPhil.deepCopy();
+        let nextPhil = this.nextPhil;
         this.nextPhil = null;
         return nextPhil;
     }

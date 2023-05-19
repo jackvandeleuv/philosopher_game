@@ -13,7 +13,7 @@ export class YourPhilLeaves {
     }
     updatePhilPosition() {
         if (this.x + this.w > 0) {
-            this.x = this.x - this.ctx.canvas.width / 150;
+            this.x = this.x - this.ctx.canvas.width / 200;
         }
     }
     checkPhil1OutOfBounds() {
@@ -56,7 +56,6 @@ export class YourPhilLeaves {
         }
     }
     render() {
-        console.log('rendering');
         this.drawBattleMinusYourPhil();
         if (this.phil1.iconLoaded()) {
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);

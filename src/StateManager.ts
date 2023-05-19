@@ -134,7 +134,7 @@ export class StateManager {
             this.game.setActivePhil(newPhil.deepCopy(), this.game.getTurnToMove());
             this.game.nextTurn();
             console.log('You switched Philosophers, forfeiting your turn!');
-            this.currentGameScene = new YourPhilEnters(this.ctx, newPhil, this.game.getPhilToMove();)
+            this.currentGameScene = new YourPhilEnters(this.ctx, newPhil, this.game.getPhilToMove());
         }
     }
 }

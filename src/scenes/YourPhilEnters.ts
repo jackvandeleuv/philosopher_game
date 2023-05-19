@@ -5,7 +5,7 @@ export class YourPhilEnters implements GameScene {
     private sceneComplete = false;
     private platformX: number;
     private destinationX: number;
-    private x: number = -500
+    private x: number = -200;
     private y: number;
     private w: number;
     private h: number;
@@ -23,11 +23,11 @@ export class YourPhilEnters implements GameScene {
     }
 
     private drawPhil1(): void {
-        this.ctx.drawImage(this.phil1.getIcon(), this.x, this.y);
+        this.ctx.drawImage(this.phil1.getIcon(), this.x, this.y, this.w, this.h);
     }
 
     private updatePhilPosition(): void {
-        if (this.x + this.w > 0) {
+        if (this.x < this.destinationX) {
             this.x = this.x + (this.ctx.canvas.width / 150);
         }
     }
@@ -69,7 +69,6 @@ export class YourPhilEnters implements GameScene {
     render(): void {
         this.drawBattleMinusYourPhil();
         if (this.phil1.iconLoaded()) {
-            // this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1AtDestination();
             this.drawPhil1();
