@@ -1,8 +1,7 @@
-import { MenuType } from '../StateManager.js';
 import { Philosopher } from '../entities/Philosopher.js';
 import { GameScene } from '../GameState.js';
 
-export class BattleStart implements GameScene {
+export class DefaultScene implements GameScene {
     private sceneComplete: boolean = false;
 
     constructor(private ctx: CanvasRenderingContext2D, 
@@ -15,19 +14,19 @@ export class BattleStart implements GameScene {
         let w = this.ctx.canvas.width / 3.6;
         let h = this.ctx.canvas.width / 3.6;
 
-        if (this.phil1.iconLoaded()) {
-            let image = this.phil1.getIcon();
+        if (this.phil1.getImage()) {
+            let image = this.phil1.getImage()!;
             this.drawPlatform(x + (w / 2), y + h, w * .8, h * .2);
             this.ctx.clearRect(x, y, w, h);
             this.ctx.drawImage(image, x, y, w, h);
         }
 
-        if (this.phil2.iconLoaded()){
+        if (this.phil2.getImage()){
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
             let w2 = this.ctx.canvas.width / 5.4;
             let h2 = this.ctx.canvas.width / 5.4;
-            let image = this.phil2.getIcon();
+            let image = this.phil2.getImage();
 
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, w * .8, h * .2);
             this.ctx.clearRect(x2, y2, w2, h2);
@@ -41,13 +40,13 @@ export class BattleStart implements GameScene {
             this.ctx.translate(-(x2 + w2 / 2), 0);
             
             // Draw the mirrored image
-            this.ctx.drawImage(image, x2, y2, w2, h2);
+            this.ctx.drawImage(image!, x2, y2, w2, h2);
             
             // Restore the context to the previous state
             this.ctx.restore(); 
         }
 
-        if (this.phil1.iconLoaded() && this.phil2.iconLoaded()) {
+        if (this.phil1.getImage() && this.phil2.getImage()) {
             this.sceneComplete = true;
         }
     }

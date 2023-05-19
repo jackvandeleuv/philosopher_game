@@ -122,7 +122,7 @@ export class BattleMenu implements MenuState {
         }
     }
 
-    getNextState(): MenuType | null {
+    getNextMenuState(): MenuType | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

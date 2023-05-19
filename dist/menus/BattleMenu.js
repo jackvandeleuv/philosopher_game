@@ -104,7 +104,7 @@ export class BattleMenu {
             }
         }
     }
-    getNextState() {
+    getNextMenuState() {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

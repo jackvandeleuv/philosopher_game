@@ -1,30 +1,21 @@
 import { Move } from './Move.js';
 export class Philosopher {
-    constructor(name, attack, defense, health, imagePath, retired) {
+    constructor(name, attack, defense, health, imagePath, imageRepo) {
         this.name = name;
         this.attack = attack;
         this.defense = defense;
         this.health = health;
         this.imagePath = imagePath;
-        this.retired = retired;
+        this.imageRepo = imageRepo;
         this.moves = [];
         this.maxMoves = 5;
-        this.imageLoaded = false;
-        let icon = new Image();
-        icon.src = this.imagePath;
-        this.icon = icon;
-        icon.onload = () => {
-            this.imageLoaded = true;
-        };
+        this.retired = false;
     }
     getMove(moveIndex) {
         return this.moves[moveIndex].deepCopy();
     }
-    iconLoaded() {
-        return this.imageLoaded;
-    }
-    getIcon() {
-        return this.icon;
+    getImage() {
+        return this.imageRepo.getImage(this.imagePath);
     }
     getMoves() {
         let moveCopies = [];
@@ -57,7 +48,7 @@ export class Philosopher {
         return this.retired;
     }
     deepCopy() {
-        let philCopy = new Philosopher(this.name, this.attack, this.defense, this.health, this.imagePath, this.retired);
+        let philCopy = new Philosopher(this.name, this.attack, this.defense, this.health, this.imagePath, this.imageRepo);
         for (let move of this.moves) {
             philCopy.addMove(move);
         }

@@ -22,26 +22,29 @@ export class YourPhilLeaves {
         }
     }
     drawReversed() {
-        // Save the context state
-        this.ctx.save();
-        // Move to the center of the image, scale it negatively on x axis, 
-        // then move it back
-        this.ctx.translate(this.x + this.w / 2, 0);
-        this.ctx.scale(-1, 1);
-        this.ctx.translate(-(this.x + this.w / 2), 0);
-        // Draw the mirrored image
-        this.ctx.drawImage(this.phil1.getIcon(), this.x, this.y, this.w, this.h);
-        // Restore the context to the previous state
-        this.ctx.restore();
+        let phil1Image = this.phil1.getImage();
+        if (phil1Image != null) {
+            // Save the context state
+            this.ctx.save();
+            // Move to the center of the image, scale it negatively on x axis, 
+            // then move it back
+            this.ctx.translate(this.x + this.w / 2, 0);
+            this.ctx.scale(-1, 1);
+            this.ctx.translate(-(this.x + this.w / 2), 0);
+            // Draw the mirrored image
+            this.ctx.drawImage(phil1Image, this.x, this.y, this.w, this.h);
+            // Restore the context to the previous state
+            this.ctx.restore();
+        }
     }
     drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
-        if (this.phil2.iconLoaded()) {
+        if (this.phil2.getImage() != null) {
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
             let w2 = this.ctx.canvas.width / 5.4;
             let h2 = this.ctx.canvas.width / 5.4;
-            let image = this.phil2.getIcon();
+            let image = this.phil2.getImage();
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, this.w * .8, this.h * .2);
             // Save the context state
             this.ctx.save();
@@ -57,7 +60,7 @@ export class YourPhilLeaves {
     }
     render() {
         this.drawBattleMinusYourPhil();
-        if (this.phil1.iconLoaded()) {
+        if (this.phil1.getImage() != null) {
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1OutOfBounds();

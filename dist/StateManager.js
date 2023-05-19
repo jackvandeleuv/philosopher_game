@@ -1,7 +1,6 @@
 import { BattleMenu } from './menus/BattleMenu.js';
 import { MoveMenu } from './menus/MoveMenu.js';
 import { SwitchMenu } from './menus/SwitchMenu.js';
-import { YourPhilEnters } from './scenes/YourPhilEnters.js';
 export var MenuType;
 (function (MenuType) {
     MenuType[MenuType["MainBattleMenu"] = 0] = "MainBattleMenu";
@@ -11,14 +10,13 @@ export var MenuType;
 })(MenuType || (MenuType = {}));
 export class StateManager {
     constructor(ctx, game) {
-        this.ctx = ctx;
         this.game = game;
+        this.gameSceneQueue = [];
         this.moveMenu = new MoveMenu(ctx);
         this.mainBattleMenu = new BattleMenu(ctx);
-        this.switchMenu = new SwitchMenu(ctx);
+        this.switchMenu = new SwitchMenu(ctx, this.game.deepCopy());
         this.currentMenuState = this.mainBattleMenu;
         this.currentMenuState.activate();
-        this.currentGameScene = this.game.getNextScene();
     }
     start() {
         this.gameLoop();
@@ -26,8 +24,12 @@ export class StateManager {
     gameLoop() {
         const gameLoopStep = () => {
             this.processInput();
-            if (this.currentGameScene.isSceneComplete()) {
-                this.currentGameScene = this.game.getNextScene();
+            let nextScene = this.game.getNextScene();
+            if (nextScene != null) {
+                this.gameSceneQueue.push(nextScene);
+            }
+            if (this.gameSceneQueue.length > 0 && this.gameSceneQueue[0].isSceneComplete()) {
+                this.gameSceneQueue.pop();
             }
             this.render();
             requestAnimationFrame(gameLoopStep);
@@ -43,13 +45,18 @@ export class StateManager {
             this.moveMenu.render();
         }
         else if (this.currentMenuState instanceof SwitchMenu) {
-            this.switchMenu.updatePhils(this.game.getPhils()[this.game.getTurnToMove()]);
+            this.switchMenu.updateGameCopy(this.game.deepCopy());
             this.switchMenu.render();
         }
         else {
             throw new Error('Menus were not as expected.');
         }
-        this.currentGameScene.render();
+        if (this.gameSceneQueue.length > 0) {
+            this.gameSceneQueue[0].render();
+        }
+        else {
+            this.game.getDefaultScene().render();
+        }
     }
     /*
     Uses MenuState enum to switch the active menu object.
@@ -91,14 +98,14 @@ export class StateManager {
     }
     processBattleMenuInput() {
         // Switch menu state if applicable
-        let newState = this.mainBattleMenu.getNextState();
+        let newState = this.mainBattleMenu.getNextMenuState();
         if (newState != null) {
             this.changeMenuState(newState);
         }
     }
     processMoveMenuInput() {
         // Switch menu state if applicable
-        let newState = this.moveMenu.getNextState();
+        let newState = this.moveMenu.getNextMenuState();
         if (newState != null) {
             this.changeMenuState(newState);
         }
@@ -110,19 +117,21 @@ export class StateManager {
     }
     processSwitchMenuInput() {
         // Switch menu state if applicable
-        let newState = this.switchMenu.getNextState();
+        let newState = this.switchMenu.getNextMenuState();
         if (newState != null) {
             this.changeMenuState(newState);
+        }
+        // Add game scene to queue if applicable
+        let newScene = this.switchMenu.getNextGameScene();
+        if (newScene != null) {
+            this.gameSceneQueue.push(newScene);
         }
         // Make new move if applicable
         let newPhil = this.switchMenu.getNextPhil();
         if (newPhil != null) {
             this.game.setActivePhil(newPhil.deepCopy(), this.game.getTurnToMove());
             this.game.nextTurn();
-            console.log(this.game.getTurnToMove());
-            console.log(this.game.getPhils());
             console.log('You switched Philosophers, forfeiting your turn!');
-            this.currentGameScene = new YourPhilEnters(this.ctx, newPhil, this.game.getPhilToMove());
         }
     }
 }

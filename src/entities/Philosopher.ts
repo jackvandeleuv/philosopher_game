@@ -1,10 +1,10 @@
 import { Move } from './Move.js';
+import { ImageRepository } from '../ImageRepository.js';
 
 export class Philosopher {
     private moves: Move[] = [];
     private maxMoves: number = 5;
-    private icon: HTMLImageElement;
-    private imageLoaded: boolean = false;
+    private retired = false;
 
     constructor(
         private name: string,
@@ -12,26 +12,15 @@ export class Philosopher {
         private defense: number,
         private health: number,
         private imagePath: string,
-        private retired: boolean
-      ) {
-        let icon = new Image();
-        icon.src = this.imagePath;
-        this.icon = icon;
-        icon.onload = () => {
-            this.imageLoaded = true;
-            };
-      }
+        private imageRepo: ImageRepository
+      ) {}
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
     }
 
-    iconLoaded(): boolean {
-        return this.imageLoaded;
-    }
-
-    getIcon(): HTMLImageElement {
-        return this.icon;
+    getImage(): HTMLImageElement | null {
+        return this.imageRepo.getImage(this.imagePath);
     }
 
     getMoves(): Move[] {
@@ -82,7 +71,7 @@ export class Philosopher {
                                                     this.defense, 
                                                     this.health,
                                                     this.imagePath,
-                                                    this.retired);
+                                                    this.imageRepo);
         for (let move of this.moves) { 
             philCopy.addMove(move); 
         }

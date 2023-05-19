@@ -1,8 +1,13 @@
 import { MenuType } from '../StateManager.js';
+import { YourPhilEnters } from '../scenes/YourPhilEnters.js';
+import { YourPhilSwaps } from '../scenes/YourPhilSwaps.js';
+import { YourPhilLeaves } from '../scenes/YourPhilLeaves.js';
 export class SwitchMenu {
-    constructor(ctx) {
+    constructor(ctx, gameCopy) {
         this.ctx = ctx;
-        this.nextState = null;
+        this.gameCopy = gameCopy;
+        this.nextMenuState = null;
+        this.nextGameScene = null;
         this.nextPhil = null;
         this.menuItems = [];
         this.buttonWidth = this.ctx.canvas.width * (2 / 3);
@@ -10,7 +15,6 @@ export class SwitchMenu {
         this.spacing = this.ctx.canvas.width / 15;
         this.y = this.ctx.canvas.height * (5 / 8);
         this.x = (this.ctx.canvas.width - this.buttonWidth) / 2;
-        this.yourPhils = [];
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this);
@@ -20,26 +24,28 @@ export class SwitchMenu {
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
         this.menuItems = [];
-        for (let i = 0; i < this.yourPhils.length; i++) {
+        let yourPhils = this.gameCopy.getPhils()[this.gameCopy.getTurnToMove()];
+        for (let i = 0; i < yourPhils.length; i++) {
             this.menuItems.push({
-                text: this.yourPhils[i].toString(),
+                text: yourPhils[i].toString(),
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    this.nextPhil = this.yourPhils[i].deepCopy();
-                    this.nextState = MenuType.MainBattleMenu;
+                    this.nextPhil = yourPhils[i].deepCopy();
+                    this.nextMenuState = MenuType.MainBattleMenu;
+                    this.nextGameScene = new YourPhilSwaps(new YourPhilLeaves(this.ctx, this.gameCopy.getPhilToMove().deepCopy(), this.gameCopy.getPhilToDefend().deepCopy()), new YourPhilEnters(this.ctx, yourPhils[i].deepCopy(), this.gameCopy.getPhilToDefend().deepCopy()));
                 }
             });
         }
         this.menuItems.push({
             text: 'Back',
             x: this.x,
-            y: this.y + this.spacing * this.yourPhils.length,
+            y: this.y + this.spacing * yourPhils.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuType.MainBattleMenu
+            action: () => this.nextMenuState = MenuType.MainBattleMenu
         });
         for (let item of this.menuItems) {
             // Ensure the item is within the menu area
@@ -71,6 +77,9 @@ export class SwitchMenu {
             this.ctx.fillText(item.text, textX, textY);
         }
     }
+    updateGameCopy(gameCopy) {
+        this.gameCopy = gameCopy.deepCopy();
+    }
     /*
     Rounded rectangle function
     */
@@ -86,13 +95,6 @@ export class SwitchMenu {
         this.ctx.arcTo(x, y + h, x, y, r);
         this.ctx.arcTo(x, y, x + w, y, r);
         this.ctx.closePath();
-    }
-    updatePhils(yourPhils) {
-        let philCopy = [];
-        for (let phil of yourPhils) {
-            philCopy.push(phil.deepCopy());
-        }
-        this.yourPhils = philCopy;
     }
     deactivate() {
         this.ctx.canvas.removeEventListener('click', this.handleClick);
@@ -111,10 +113,15 @@ export class SwitchMenu {
             }
         }
     }
-    getNextState() {
-        let nextState = this.nextState;
-        this.nextState = null;
+    getNextMenuState() {
+        let nextState = this.nextMenuState;
+        this.nextMenuState = null;
         return nextState;
+    }
+    getNextGameScene() {
+        let nextScene = this.nextGameScene;
+        this.nextGameScene = null;
+        return nextScene;
     }
     getNextPhil() {
         if (this.nextPhil == null) {

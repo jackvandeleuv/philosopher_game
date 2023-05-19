@@ -111,7 +111,7 @@ export class MoveMenu {
             }
         }
     }
-    getNextState() {
+    getNextMenuState() {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

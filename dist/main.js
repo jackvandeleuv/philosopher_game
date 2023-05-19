@@ -2,8 +2,9 @@ import { Move } from './entities/Move.js';
 import { School } from './entities/School.js';
 import { Philosopher } from './entities/Philosopher.js';
 import { Player } from './entities/Player.js';
-import { GameLogic } from './GameLogic.js';
+import { Game } from './Game.js';
 import { StateManager } from './StateManager.js';
+import { ImageRepository } from './ImageRepository.js';
 let moves = [
     // Analytic Moves
     new Move('Logic Bomb', new School(), .9, 85),
@@ -32,13 +33,20 @@ let moves = [
     new Move('Ding an sich Damage', new School(), .8, 85),
     new Move('Synthetic A Priori', new School(), .9, 75)
 ];
+let imageRepo = new ImageRepository();
+imageRepo.loadImage('images/moore.jpg');
+imageRepo.loadImage('images/russell.jpg');
+imageRepo.loadImage('images/wittgenstein.jpg');
+imageRepo.loadImage('images/kant.jpg');
+imageRepo.loadImage('images/nietzsche.jpg');
+imageRepo.loadImage('images/sartre.jpg');
 let philosophers = [
-    new Philosopher('G.E. Moore', 75, .15, 1000, 'images/moore.jpg', false),
-    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg', false),
-    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg', false),
-    new Philosopher('Immanuel Kant', 80, .1, 1100, 'images/kant.jpg', false),
-    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg', false),
-    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg', false)
+    new Philosopher('G.E. Moore', 75, .15, 1000, 'images/moore.jpg', imageRepo),
+    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg', imageRepo),
+    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg', imageRepo),
+    new Philosopher('Immanuel Kant', 80, .1, 1100, 'images/kant.jpg', imageRepo),
+    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg', imageRepo),
+    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg', imageRepo)
 ];
 // For Analytic Philosophers
 let russellMoves = [moves[0], moves[1], moves[6], moves[7]];
@@ -74,7 +82,7 @@ philosophers[3].addMove(kantMoves[2]);
 philosophers[3].addMove(kantMoves[3]);
 let canvas = document.getElementById('gameCanvas');
 let ctx = canvas.getContext('2d');
-let game = new GameLogic(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3), ctx);
+let game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3), ctx);
 let manager = new StateManager(ctx, game);
 manager.start();
 // let icon = new Image();

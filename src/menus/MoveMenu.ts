@@ -133,7 +133,7 @@ export class MoveMenu implements MenuState {
         }
     }
 
-    getNextState(): MenuType | null {
+    getNextMenuState(): MenuType | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

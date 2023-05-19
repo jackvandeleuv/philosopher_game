@@ -4,16 +4,16 @@ import { Philosopher } from './entities/Philosopher.js';
 import { Player } from './entities/Player.js';
 import { GameScene, MenuState } from './GameState.js';
 import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
-import { BattleStart } from './scenes/BattleStart.js';
+import { DefaultScene } from './scenes/DefaultScene.js';
 import { SwitchMenu } from './menus/SwitchMenu.js';
 
-export class GameLogic {
+export class Game {
     private players: Player[] = [];
     private philGroups: Philosopher[][] = [];
     private activePhils: Philosopher[] = [];
     private moving = 0;
     private defending = 1;
-    private nextGameScene: GameScene;
+    private nextGameScene: GameScene | null = null;
     private nextMenuState: MenuState | null = null;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[], private ctx: CanvasRenderingContext2D) {
@@ -37,9 +37,45 @@ export class GameLogic {
 
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
-
-        this.nextGameScene = new BattleStart(this.ctx, this.activePhils[0], this.activePhils[1]);
     } 
+
+    deepCopy(): Game {
+        // Defensive copy
+        let philGroup1Copy: Philosopher[] = []
+        for (let i = 0; i < this.philGroups[0].length; i++) {
+            philGroup1Copy[i] = this.philGroups[0][i].deepCopy();
+        }
+
+        // Defensive copy
+        let philGroup2Copy: Philosopher[] = []
+        for (let i = 0; i < this.philGroups[1].length; i++) {
+            philGroup2Copy[i] = this.philGroups[1][i].deepCopy();
+        }
+
+        let gameCopy = new Game(this.players[0].deepCopy(), 
+                this.players[1].deepCopy(), 
+                philGroup1Copy,
+                philGroup2Copy,
+                this.ctx)
+
+        for (let i = 0; i < this.activePhils.length; i++) {
+            gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
+        }
+
+        gameCopy.moving = this.moving;
+        gameCopy.defending = this.defending;
+        gameCopy.nextGameScene = this.nextGameScene;
+        gameCopy.nextMenuState = this.nextMenuState;
+
+        return gameCopy;
+    }
+
+    getDefaultScene(): DefaultScene {
+        return new DefaultScene(this.ctx, 
+                                this.activePhils[0].deepCopy(), 
+                                this.activePhils[1].deepCopy()
+                                );
+    }
 
     /*
     Flips turn to move between the two players.
@@ -67,8 +103,10 @@ export class GameLogic {
         this.activePhils[playerNumber] = newActivePhil.deepCopy();
     }
 
-    getNextScene(): GameScene {
-        return this.nextGameScene;
+    getNextScene(): GameScene | null {
+        let nextScene = this.nextGameScene;
+        this.nextGameScene = null;
+        return nextScene;
     }
 
     getPhils(): Philosopher[][] {
@@ -116,6 +154,10 @@ export class GameLogic {
 
         philToDefend.takeDamage(damageDealt);  
         
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (philToDefend.isRetired()) {
             this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove)
             this.nextMenuState = new SwitchMenu(this.ctx);

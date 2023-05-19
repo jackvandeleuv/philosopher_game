@@ -1,22 +1,16 @@
-import { MainBattleMenu as BattleMenu } from './MainBattleMenu.js';
-import { MoveMenu } from './MoveMenu.js';
-import { EnterPhil } from './EnterPhil.js';
-export var MenuType;
-(function (MenuType) {
-    MenuType[MenuType["MainBattleMenu"] = 0] = "MainBattleMenu";
-    MenuType[MenuType["MoveMenu"] = 1] = "MoveMenu";
-    MenuType[MenuType["SwitchMenu"] = 2] = "SwitchMenu";
-    MenuType[MenuType["Resign"] = 3] = "Resign";
-})(MenuType || (MenuType = {}));
-export class GameLogic {
+import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
+import { DefaultScene } from './scenes/DefaultScene.js';
+import { SwitchMenu } from './menus/SwitchMenu.js';
+export class Game {
     constructor(player1, player2, philGroup1, philGroup2, ctx) {
+        this.ctx = ctx;
         this.players = [];
         this.philGroups = [];
         this.activePhils = [];
         this.moving = 0;
         this.defending = 1;
-        this.mainBattleMenu = new BattleMenu(ctx);
-        this.moveMenu = new MoveMenu(ctx);
+        this.nextGameScene = null;
+        this.nextMenuState = null;
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
         // Defensive copy
@@ -33,90 +27,74 @@ export class GameLogic {
         this.philGroups.push(philGroup2Copy);
         this.activePhils.push(philGroup1Copy[0]);
         this.activePhils.push(philGroup2Copy[0]);
-        this.ctx = ctx;
-        this.currentMenuState = this.mainBattleMenu;
-        this.currentMenuState.activate();
-        this.currentGameState = new EnterPhil(this.ctx, this.activePhils[this.moving]);
     }
-    start() {
-        // Load images
-        for (let philGroup of this.philGroups) {
-            for (let phil of philGroup) {
-                let icon = new Image();
-                icon.src = phil.getImagePath();
-                icon.onload = () => {
-                    phil.setLoadedImage(icon);
-                };
-            }
+    deepCopy() {
+        // Defensive copy
+        let philGroup1Copy = [];
+        for (let i = 0; i < this.philGroups[0].length; i++) {
+            philGroup1Copy[i] = this.philGroups[0][i].deepCopy();
         }
-        this.gameLoop();
+        // Defensive copy
+        let philGroup2Copy = [];
+        for (let i = 0; i < this.philGroups[1].length; i++) {
+            philGroup2Copy[i] = this.philGroups[1][i].deepCopy();
+        }
+        let gameCopy = new Game(this.players[0].deepCopy(), this.players[1].deepCopy(), philGroup1Copy, philGroup2Copy, this.ctx);
+        for (let i = 0; i < this.activePhils.length; i++) {
+            gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
+        }
+        gameCopy.moving = this.moving;
+        gameCopy.defending = this.defending;
+        gameCopy.nextGameScene = this.nextGameScene;
+        gameCopy.nextMenuState = this.nextMenuState;
+        return gameCopy;
     }
-    /*
-    Returns an integer indicating the winner.
-    */
-    gameLoop() {
-        const gameLoopStep = () => {
-            this.processInput();
-            this.render();
-            requestAnimationFrame(gameLoopStep);
-        };
-        requestAnimationFrame(gameLoopStep);
-    }
-    render() {
-        if (this.currentMenuState instanceof BattleMenu) {
-            this.mainBattleMenu.render();
-        }
-        else if (this.currentMenuState instanceof MoveMenu) {
-            this.moveMenu.updateMoves(this.activePhils[this.moving].getMoves());
-            this.moveMenu.render();
-        }
-        else {
-            throw new Error('Menus were not as expected.');
-        }
-        this.currentGameState.render();
+    getDefaultScene() {
+        return new DefaultScene(this.ctx, this.activePhils[0].deepCopy(), this.activePhils[1].deepCopy());
     }
     /*
-    Uses MenuState enum to switch the active menu object.
+    Flips turn to move between the two players.
     */
-    switchMenuState(state) {
-        switch (state) {
-            case MenuType.MainBattleMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.mainBattleMenu;
-                this.currentMenuState.activate();
-                break;
-            case MenuType.MoveMenu:
-                this.currentMenuState.deactivate();
-                this.currentMenuState = this.moveMenu;
-                this.currentMenuState.activate();
-                break;
-            default:
-                throw new Error("Menu state not as expected.");
-        }
+    nextTurn() {
+        this.moving = this.moving ^ 1;
+        this.defending = this.defending ^ 1;
     }
-    processInput() {
-        if (this.currentMenuState instanceof BattleMenu) {
-            // Switch menu state if applicable
-            let newStateMain = this.mainBattleMenu.getNextState();
-            if (newStateMain != null) {
-                this.switchMenuState(newStateMain);
+    getNextMenuState() {
+        return this.nextMenuState;
+    }
+    /*
+    Player number is 0 for player 1 and 1 for player 2.
+    */
+    getTurnToMove() {
+        return this.moving;
+    }
+    /*
+    Player number should be 0 for player 1 and 1 for player 2.
+    */
+    setActivePhil(newActivePhil, playerNumber) {
+        this.activePhils[playerNumber] = newActivePhil.deepCopy();
+    }
+    getNextScene() {
+        let nextScene = this.nextGameScene;
+        this.nextGameScene = null;
+        return nextScene;
+    }
+    getPhils() {
+        let philGroupCopy = [];
+        for (let i = 0; i < this.philGroups.length; i++) {
+            let philGroupSubCopy = [];
+            for (let j = 0; j < this.philGroups[i].length; j++) {
+                philGroupSubCopy[j] = this.philGroups[i][j].deepCopy();
             }
+            philGroupCopy[i] = philGroupSubCopy;
         }
-        else if (this.currentMenuState instanceof MoveMenu) {
-            // Switch menu state if applicable
-            let newStateMove = this.moveMenu.getNextState();
-            if (newStateMove != null) {
-                this.switchMenuState(newStateMove);
-            }
-            // Make new move if applicable
-            let newMove = this.moveMenu.getNextMove();
-            if (newMove != null) {
-                this.makeMove(newMove.deepCopy());
-            }
-        }
-        else {
-            throw new Error("Menu state not as expected.");
-        }
+        return philGroupCopy;
+    }
+    getPhilToMove() {
+        return this.activePhils[this.moving].deepCopy();
+    }
+    getPhilToDefend() {
+        return this.activePhils[this.defending].deepCopy();
     }
     makeMove(chosenMove) {
         let philToMove = this.activePhils[this.moving];
@@ -136,45 +114,15 @@ export class GameLogic {
             console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
         }
         philToDefend.takeDamage(damageDealt);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (philToDefend.isRetired()) {
-            console.log(philToDefend + ' retired! Pick a new Philosopher:\n');
-            while (philToDefend.isRetired()) {
-                if (this.allRetired() != -1) {
-                    return;
-                }
-                ;
-                philToDefend = this.chooseNewDefender();
-                if (philToDefend.isRetired()) {
-                    console.log('That Philosopher retired already! Pick a different one.\n');
-                }
-            }
-            this.activePhils[this.defending] = philToDefend;
-            console.log('Your turn, ' + philToDefend + '!\n');
+            this.nextGameScene = new YourPhilLeaves(this.ctx, philToDefend, philToMove);
+            this.nextMenuState = new SwitchMenu(this.ctx);
         }
-        this.moving = this.moving ^ 1;
-        this.defending = this.defending ^ 1;
-    }
-    chooseNewDefender() {
-        let defendingGroup = this.philGroups[this.defending];
-        let promptString = '';
-        for (let i = 0; i < defendingGroup.length; i++) {
-            if (!defendingGroup[i].isRetired()) {
-                promptString = promptString
-                    + (i + 1).toString()
-                    + ') '
-                    + defendingGroup[i]
-                    + '\n';
-            }
-            if (defendingGroup[i].isRetired()) {
-                promptString = promptString
-                    + (i + 1).toString()
-                    + ') '
-                    + defendingGroup[i]
-                    + ' (retired)\n';
-            }
-        }
-        let chosenPhil = parseInt(prompt(promptString)) - 1;
-        return defendingGroup[chosenPhil];
+        this.nextTurn();
     }
     printBattleStatus() {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");

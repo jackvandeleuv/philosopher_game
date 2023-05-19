@@ -11,7 +11,7 @@ export interface MenuState extends State {
     // Removes event listener.
     deactivate(): void;
 
-    getNextState(): MenuType | null;
+    getNextMenuState(): MenuType | null;
 }
 
 export interface GameScene extends State {
