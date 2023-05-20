@@ -1,4 +1,4 @@
-import { MenuType } from '../StateManager.js';
+import { MenuFlag } from '../StateManager.js';
 export class BattleMenu {
     ;
     constructor(ctx) {
@@ -16,7 +16,7 @@ export class BattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuType.SwitchMenu
+                action: () => this.nextState = MenuFlag.SwitchMenu
             },
             {
                 text: 'Philosophize!',
@@ -24,7 +24,7 @@ export class BattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuType.MoveMenu
+                action: () => this.nextState = MenuFlag.MoveMenu
             },
             {
                 text: 'Resign',
@@ -32,7 +32,7 @@ export class BattleMenu {
                 y: this.y,
                 height: this.buttonHeight,
                 width: this.buttonWidth,
-                action: () => this.nextState = MenuType.Resign
+                action: () => this.nextState = MenuFlag.Resign
             }
         ];
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 

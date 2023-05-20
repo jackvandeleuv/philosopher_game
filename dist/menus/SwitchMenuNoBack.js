@@ -1,8 +1,8 @@
 import { SwitchMenu } from "./SwitchMenu.js";
-import { MenuType } from "../StateManager.js";
+import { MenuFlag } from "../StateManager.js";
 export class SwitchMenuNoBack extends SwitchMenu {
-    constructor(ctx, game) {
-        super(ctx, game);
+    constructor(ctx, game, imageRepo) {
+        super(ctx, game, imageRepo);
     }
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -24,7 +24,7 @@ export class SwitchMenuNoBack extends SwitchMenu {
                 action: () => {
                     if (!defendingPhils[i].isRetired()) {
                         this.game.setActivePhil(defendingPhils[i].deepCopy(), this.game.getTurnToMove() ^ 1);
-                        this.nextMenuState = MenuType.MainBattleMenu;
+                        this.nextMenuState = MenuFlag.MainBattleMenu;
                         this.game.nextTurn();
                     }
                 }

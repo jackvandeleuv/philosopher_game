@@ -1,5 +1,6 @@
 import { Philosopher } from '../entities/Philosopher.js';
 import { GameScene } from '../GameState.js';
+import { ImageRepository } from '../ImageRepository.js';
 
 export class YourPhilLeaves implements GameScene {
     private sceneComplete = false;
@@ -9,7 +10,7 @@ export class YourPhilLeaves implements GameScene {
     private w: number;
     private h: number;
 
-    constructor(private ctx: CanvasRenderingContext2D, private phil1: Philosopher, private phil2: Philosopher) {
+    constructor(private ctx: CanvasRenderingContext2D, private phil1: Philosopher, private phil2: Philosopher, private imageRepo: ImageRepository) {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
         this.x = this.ctx.canvas.width / 6.4;
         this.platformX = this.x;
@@ -31,7 +32,7 @@ export class YourPhilLeaves implements GameScene {
     }
 
     private drawReversed() {
-        let phil1Image = this.phil1.getImage();
+        let phil1Image = this.imageRepo.getImage(this.phil1.getImagePath());
         if (phil1Image != null) {
             // Save the context state
             this.ctx.save(); 
@@ -54,12 +55,12 @@ export class YourPhilLeaves implements GameScene {
     private drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
 
-        if (this.phil2.getImage() != null){
+        let image = this.imageRepo.getImage(this.phil1.getImagePath())
+        if (image != null){
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
             let w2 = this.ctx.canvas.width / 5.4;
             let h2 = this.ctx.canvas.width / 5.4;
-            let image = this.phil2.getImage();
 
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, this.w * .8, this.h * .2);
         
@@ -72,7 +73,7 @@ export class YourPhilLeaves implements GameScene {
             this.ctx.translate(-(x2 + w2 / 2), 0);
             
             // Draw the mirrored image
-            this.ctx.drawImage(image!, x2, y2, w2, h2);
+            this.ctx.drawImage(image, x2, y2, w2, h2);
             
             // Restore the context to the previous state
             this.ctx.restore(); 
@@ -81,7 +82,7 @@ export class YourPhilLeaves implements GameScene {
 
     render(): void {
         this.drawBattleMinusYourPhil();
-        if (this.phil1.getImage() != null) {
+        if (this.phil1.getImagePath() != null) {
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1OutOfBounds();

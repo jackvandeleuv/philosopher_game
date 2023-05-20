@@ -1,4 +1,4 @@
-import { MenuType } from '../StateManager.js';
+import { MenuFlag } from '../StateManager.js';
 export class MoveMenu {
     constructor(ctx) {
         this.ctx = ctx;
@@ -29,7 +29,7 @@ export class MoveMenu {
                 height: this.buttonHeight,
                 action: () => {
                     this.nextMove = this.moves[i].deepCopy();
-                    this.nextState = MenuType.MainBattleMenu;
+                    this.nextState = MenuFlag.MainBattleMenu;
                 }
             });
         }
@@ -39,7 +39,7 @@ export class MoveMenu {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuType.MainBattleMenu
+            action: () => this.nextState = MenuFlag.MainBattleMenu
         });
         for (let item of this.menuItems) {
             // Ensure the item is within the menu area

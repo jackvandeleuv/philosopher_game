@@ -33,20 +33,27 @@ let moves = [
     new Move('Ding an sich Damage', new School(), .8, 85),
     new Move('Synthetic A Priori', new School(), .9, 75)
 ];
-let imageRepo = new ImageRepository();
-imageRepo.loadImage('images/moore.jpg');
-imageRepo.loadImage('images/russell.jpg');
-imageRepo.loadImage('images/wittgenstein.jpg');
-imageRepo.loadImage('images/kant.jpg');
-imageRepo.loadImage('images/nietzsche.jpg');
-imageRepo.loadImage('images/sartre.jpg');
+let imageRepo1 = new ImageRepository();
+imageRepo1.loadImage('images/moore.jpg');
+imageRepo1.loadImage('images/russell.jpg');
+imageRepo1.loadImage('images/wittgenstein.jpg');
+imageRepo1.loadImage('images/kant.jpg');
+imageRepo1.loadImage('images/nietzsche.jpg');
+imageRepo1.loadImage('images/sartre.jpg');
+let imageRepo2 = new ImageRepository();
+imageRepo2.loadImage('images/moore.jpg');
+imageRepo2.loadImage('images/russell.jpg');
+imageRepo2.loadImage('images/wittgenstein.jpg');
+imageRepo2.loadImage('images/kant.jpg');
+imageRepo2.loadImage('images/nietzsche.jpg');
+imageRepo2.loadImage('images/sartre.jpg');
 let philosophers = [
-    new Philosopher('G.E. Moore', 75, .15, 1000, 'images/moore.jpg', imageRepo),
-    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg', imageRepo),
-    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg', imageRepo),
-    new Philosopher('Immanuel Kant', 80, .1, 1100, 'images/kant.jpg', imageRepo),
-    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg', imageRepo),
-    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg', imageRepo)
+    new Philosopher('G.E. Moore', 75, .15, 1000, 'images/moore.jpg'),
+    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg'),
+    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg'),
+    new Philosopher('Immanuel Kant', 80, .1, 1100, 'images/kant.jpg'),
+    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg'),
+    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg')
 ];
 // For Analytic Philosophers
 let russellMoves = [moves[0], moves[1], moves[6], moves[7]];
@@ -80,14 +87,52 @@ philosophers[3].addMove(kantMoves[0]);
 philosophers[3].addMove(kantMoves[1]);
 philosophers[3].addMove(kantMoves[2]);
 philosophers[3].addMove(kantMoves[3]);
-let canvas = document.getElementById('gameCanvas');
-let ctx = canvas.getContext('2d');
-let game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3), ctx);
-let manager = new StateManager(ctx, game);
-manager.start();
-// let icon = new Image();
-// icon.src = philosophers[0].getImage();
-// console.log(philosophers[0].getImage());
-// icon.onload = () => {
-//     ctx.drawImage(icon, 0, 0, 100, 100);
-//   };    
+let canvas1 = document.getElementById('gameCanvas1');
+let ctx1 = canvas1.getContext('2d');
+let canvas2 = document.getElementById('gameCanvas2');
+let ctx2 = canvas2.getContext('2d');
+let game = new Game(new Player('Player1'), new Player('Player2'), philosophers.slice(0, 3), philosophers.slice(3));
+let manager1 = new StateManager(ctx1, game, 0, imageRepo1);
+let manager2 = new StateManager(ctx2, game, 1, imageRepo2);
+function gameLoop(manager1, manager2, game) {
+    const gameLoopStep = () => {
+        // Process input from menus
+        manager1.processMenuInput();
+        manager2.processMenuInput();
+        // Get input from the game logic
+        let nextScene = game.getNextScene();
+        if (nextScene != null) {
+            manager1.pushGameScene(nextScene);
+            manager2.pushGameScene(nextScene);
+        }
+        let nextState = game.getNextMenuState();
+        if (nextState != null) {
+            manager1.changeMenuState(nextState);
+            manager2.changeMenuState(nextState);
+        }
+        // Render current state
+        manager1.render();
+        manager2.render();
+        requestAnimationFrame(gameLoopStep);
+    };
+    requestAnimationFrame(gameLoopStep);
+}
+Promise.all([
+    imageRepo1.loadImage('images/moore.jpg'),
+    imageRepo1.loadImage('images/russell.jpg'),
+    imageRepo1.loadImage('images/wittgenstein.jpg'),
+    imageRepo1.loadImage('images/kant.jpg'),
+    imageRepo1.loadImage('images/nietzsche.jpg'),
+    imageRepo1.loadImage('images/sartre.jpg'),
+    imageRepo2.loadImage('images/moore.jpg'),
+    imageRepo2.loadImage('images/russell.jpg'),
+    imageRepo2.loadImage('images/wittgenstein.jpg'),
+    imageRepo2.loadImage('images/kant.jpg'),
+    imageRepo2.loadImage('images/nietzsche.jpg'),
+    imageRepo2.loadImage('images/sartre.jpg')
+]).then(() => {
+    // Start your game here
+    gameLoop(manager1, manager2, game);
+}).catch((error) => {
+    console.error('Failed to load images: ', error);
+});

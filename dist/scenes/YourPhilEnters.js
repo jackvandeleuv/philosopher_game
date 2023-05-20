@@ -1,8 +1,9 @@
 export class YourPhilEnters {
-    constructor(ctx, phil1, phil2) {
+    constructor(ctx, phil1, phil2, imageRepo) {
         this.ctx = ctx;
         this.phil1 = phil1;
         this.phil2 = phil2;
+        this.imageRepo = imageRepo;
         this.sceneComplete = false;
         this.defaultX = -200;
         this.x = this.defaultX;
@@ -14,7 +15,7 @@ export class YourPhilEnters {
         this.h = this.ctx.canvas.width / 3.6;
     }
     drawPhil1() {
-        let phil1Image = this.phil1.getImage();
+        let phil1Image = this.imageRepo.getImage(this.phil1.getImagePath());
         if (phil1Image != null) {
             this.ctx.drawImage(phil1Image, this.x, this.y, this.w, this.h);
         }
@@ -31,12 +32,12 @@ export class YourPhilEnters {
     }
     drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
-        if (this.phil2.getImage() != null) {
+        let image = this.imageRepo.getImage(this.phil1.getImagePath());
+        if (image != null) {
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
             let w2 = this.ctx.canvas.width / 5.4;
             let h2 = this.ctx.canvas.width / 5.4;
-            let image = this.phil2.getImage();
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, this.w * .8, this.h * .2);
             // Save the context state
             this.ctx.save();
@@ -52,7 +53,7 @@ export class YourPhilEnters {
     }
     render() {
         this.drawBattleMinusYourPhil();
-        let phil1Image = this.phil1.getImage();
+        let phil1Image = this.imageRepo.getImage(this.phil1.getImagePath());
         if (phil1Image != null) {
             if (this.x <= this.defaultX && this.defaultX <= -phil1Image.width) {
                 this.x = 0 - phil1Image.width;

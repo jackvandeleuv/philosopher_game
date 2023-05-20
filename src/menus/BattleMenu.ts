@@ -1,9 +1,9 @@
 import { MenuButton } from './MenuButton.js';
 import { MenuState } from '../GameState.js'
-import { MenuType } from '../StateManager.js';
+import { MenuFlag } from '../StateManager.js';
  
 export class BattleMenu implements MenuState {
-    private nextState: MenuType | null = null;
+    private nextState: MenuFlag | null = null;
     private buttonWidth = this.ctx.canvas.width / 3.7;
     private buttonHeight = this.ctx.canvas.height / 14;
     private spacing = this.ctx.canvas.width / 3.2;
@@ -17,7 +17,7 @@ export class BattleMenu implements MenuState {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuType.SwitchMenu
+            action: () => this.nextState = MenuFlag.SwitchMenu
         },
         {
             text: 'Philosophize!',
@@ -25,7 +25,7 @@ export class BattleMenu implements MenuState {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuType.MoveMenu
+            action: () => this.nextState = MenuFlag.MoveMenu
         },
         {
             text: 'Resign',
@@ -33,7 +33,7 @@ export class BattleMenu implements MenuState {
             y: this.y,
             height: this.buttonHeight,
             width: this.buttonWidth,
-            action: () => this.nextState = MenuType.Resign
+            action: () => this.nextState = MenuFlag.Resign
         }
     ]
 
@@ -122,7 +122,7 @@ export class BattleMenu implements MenuState {
         }
     }
 
-    getNextMenuState(): MenuType | null {
+    getNextMenuState(): MenuFlag | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

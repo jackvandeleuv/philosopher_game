@@ -1,11 +1,12 @@
-import { MenuType } from '../StateManager.js';
+import { MenuFlag } from '../StateManager.js';
 import { YourPhilEnters } from '../scenes/YourPhilEnters.js';
 import { YourPhilSwaps } from '../scenes/YourPhilSwaps.js';
 import { YourPhilLeaves } from '../scenes/YourPhilLeaves.js';
 export class SwitchMenu {
-    constructor(ctx, game) {
+    constructor(ctx, game, imageRepo) {
         this.ctx = ctx;
         this.game = game;
+        this.imageRepo = imageRepo;
         this.nextMenuState = null;
         this.nextGameScene = null;
         this.menuItems = [];
@@ -40,8 +41,8 @@ export class SwitchMenu {
                         console.log('You switched Philosophers to ' + yourPhils[i] + ' forfeiting your turn!');
                         this.game.setActivePhil(yourPhils[i].deepCopy(), this.game.getTurnToMove());
                         this.game.nextTurn();
-                        this.nextMenuState = MenuType.MainBattleMenu;
-                        this.nextGameScene = new YourPhilSwaps(new YourPhilLeaves(this.ctx, this.game.getPhilToMove().deepCopy(), this.game.getPhilToDefend().deepCopy()), new YourPhilEnters(this.ctx, yourPhils[i].deepCopy(), this.game.getPhilToDefend().deepCopy()));
+                        this.nextMenuState = MenuFlag.MainBattleMenu;
+                        this.nextGameScene = new YourPhilSwaps(new YourPhilLeaves(this.ctx, this.game.getPhilToMove().deepCopy(), this.game.getPhilToDefend().deepCopy(), this.imageRepo), new YourPhilEnters(this.ctx, yourPhils[i].deepCopy(), this.game.getPhilToDefend().deepCopy(), this.imageRepo));
                     }
                 }
             });
@@ -52,7 +53,7 @@ export class SwitchMenu {
             y: this.y + this.spacing * yourPhils.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextMenuState = MenuType.MainBattleMenu
+            action: () => this.nextMenuState = MenuFlag.MainBattleMenu
         });
         for (let item of this.menuItems) {
             // Ensure the item is within the menu area

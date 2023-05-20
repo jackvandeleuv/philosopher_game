@@ -1,11 +1,12 @@
 import { SwitchMenu } from "./SwitchMenu.js";
 import { Game } from "../Game.js";
 import { Philosopher } from "../entities/Philosopher.js";
-import { MenuType } from "../StateManager.js";
+import { MenuFlag } from "../StateManager.js";
+import { ImageRepository } from "../ImageRepository.js";
 
 export class SwitchMenuNoBack extends SwitchMenu {
-    constructor(ctx: CanvasRenderingContext2D, game: Game) {
-        super(ctx, game);
+    constructor(ctx: CanvasRenderingContext2D, game: Game, imageRepo: ImageRepository) {
+        super(ctx, game, imageRepo);
     }
 
     render() {
@@ -29,7 +30,7 @@ export class SwitchMenuNoBack extends SwitchMenu {
                 action: () => {
                     if (!defendingPhils[i].isRetired()) {
                         this.game.setActivePhil(defendingPhils[i].deepCopy(), this.game.getTurnToMove() ^ 1);
-                        this.nextMenuState = MenuType.MainBattleMenu;
+                        this.nextMenuState = MenuFlag.MainBattleMenu;
                         this.game.nextTurn();
                     }
                 }

@@ -1,10 +1,10 @@
 import { Move } from '../entities/Move.js';
 import { MenuButton } from './MenuButton.js';
 import { MenuState } from '../GameState.js'
-import { MenuType } from '../StateManager.js';
+import { MenuFlag } from '../StateManager.js';
 
 export class MoveMenu implements MenuState {
-    private nextState: MenuType | null = null;
+    private nextState: MenuFlag | null = null;
     private nextMove: Move | null = null;
     private menuItems: MenuButton[] = [];
     private buttonWidth = this.ctx.canvas.width * (2 / 3);
@@ -35,7 +35,7 @@ export class MoveMenu implements MenuState {
                 height: this.buttonHeight,
                 action: () => {
                     this.nextMove = this.moves[i].deepCopy();
-                    this.nextState = MenuType.MainBattleMenu;
+                    this.nextState = MenuFlag.MainBattleMenu;
                 }
             })
         }
@@ -46,7 +46,7 @@ export class MoveMenu implements MenuState {
             y: this.y + this.spacing * this.moves.length,
             width: this.buttonWidth,
             height: this.buttonHeight,
-            action: () => this.nextState = MenuType.MainBattleMenu
+            action: () => this.nextState = MenuFlag.MainBattleMenu
         })
     
         for (let item of this.menuItems) {
@@ -133,7 +133,7 @@ export class MoveMenu implements MenuState {
         }
     }
 
-    getNextMenuState(): MenuType | null {
+    getNextMenuState(): MenuFlag | null {
         let nextState = this.nextState;
         this.nextState = null;
         return nextState;

@@ -11,16 +11,15 @@ export class Philosopher {
         private attack: number,
         private defense: number,
         private health: number,
-        private imagePath: string,
-        private imageRepo: ImageRepository
-      ) {}
+        private imagePath: string
+        ) {}
 
     getMove(moveIndex: number): Move {
         return this.moves[moveIndex].deepCopy();
     }
 
-    getImage(): HTMLImageElement | null {
-        return this.imageRepo.getImage(this.imagePath);
+    getImagePath(): string {
+        return this.imagePath;
     }
 
     getMoves(): Move[] {
@@ -70,8 +69,7 @@ export class Philosopher {
                                                     this.attack, 
                                                     this.defense, 
                                                     this.health,
-                                                    this.imagePath,
-                                                    this.imageRepo);
+                                                    this.imagePath);
         philCopy.retired = this.retired;
         for (let move of this.moves) { 
             philCopy.addMove(move); 

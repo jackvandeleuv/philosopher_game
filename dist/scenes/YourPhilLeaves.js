@@ -1,8 +1,9 @@
 export class YourPhilLeaves {
-    constructor(ctx, phil1, phil2) {
+    constructor(ctx, phil1, phil2, imageRepo) {
         this.ctx = ctx;
         this.phil1 = phil1;
         this.phil2 = phil2;
+        this.imageRepo = imageRepo;
         this.sceneComplete = false;
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.x = this.ctx.canvas.width / 6.4;
@@ -22,7 +23,7 @@ export class YourPhilLeaves {
         }
     }
     drawReversed() {
-        let phil1Image = this.phil1.getImage();
+        let phil1Image = this.imageRepo.getImage(this.phil1.getImagePath());
         if (phil1Image != null) {
             // Save the context state
             this.ctx.save();
@@ -39,12 +40,12 @@ export class YourPhilLeaves {
     }
     drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
-        if (this.phil2.getImage() != null) {
+        let image = this.imageRepo.getImage(this.phil1.getImagePath());
+        if (image != null) {
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
             let w2 = this.ctx.canvas.width / 5.4;
             let h2 = this.ctx.canvas.width / 5.4;
-            let image = this.phil2.getImage();
             this.drawPlatform(x2 + (w2 / 2), y2 + h2, this.w * .8, this.h * .2);
             // Save the context state
             this.ctx.save();
@@ -60,7 +61,7 @@ export class YourPhilLeaves {
     }
     render() {
         this.drawBattleMinusYourPhil();
-        if (this.phil1.getImage() != null) {
+        if (this.phil1.getImagePath() != null) {
             this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
             this.updatePhilPosition();
             this.checkPhil1OutOfBounds();

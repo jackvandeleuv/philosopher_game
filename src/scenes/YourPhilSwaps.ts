@@ -1,9 +1,10 @@
 import { GameScene } from "../GameState";
+import { ImageRepository } from "../ImageRepository";
 import { YourPhilEnters } from "./YourPhilEnters";
 import { YourPhilLeaves } from "./YourPhilLeaves";
 
 export class YourPhilSwaps implements GameScene {
-    constructor(private leaveScene: YourPhilLeaves, private enterScene: YourPhilEnters, ) {}
+    constructor(private leaveScene: YourPhilLeaves, private enterScene: YourPhilEnters) {}
     
     isSceneComplete(): boolean {
         return this.leaveScene.isSceneComplete() && this.enterScene.isSceneComplete();

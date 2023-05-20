@@ -1,4 +1,4 @@
-import { MenuType } from "./StateManager.js";
+import { MenuFlag } from "./StateManager.js";
 
 export interface State {
     render(): void;
@@ -11,7 +11,7 @@ export interface MenuState extends State {
     // Removes event listener.
     deactivate(): void;
 
-    getNextMenuState(): MenuType | null;
+    getNextMenuState(): MenuFlag | null;
 }
 
 export interface GameScene extends State {
