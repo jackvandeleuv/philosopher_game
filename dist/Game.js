@@ -7,8 +7,10 @@ export class Game {
         this.activePhils = [];
         this.moving = 0;
         this.defending = 1;
-        this.nextGameScene = null;
-        this.nextMenuState = null;
+        this.nextGameScene1 = null;
+        this.nextGameScene2 = null;
+        this.nextMenuState1 = null;
+        this.nextMenuState2 = null;
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
         // Defensive copy
@@ -58,9 +60,14 @@ export class Game {
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
     }
-    getNextMenuState() {
-        let nextState = this.nextMenuState;
-        this.nextMenuState = null;
+    getNextMenuState1() {
+        let nextState = this.nextMenuState1;
+        this.nextMenuState1 = null;
+        return nextState;
+    }
+    getNextMenuState2() {
+        let nextState = this.nextMenuState2;
+        this.nextMenuState2 = null;
         return nextState;
     }
     /*
@@ -82,9 +89,14 @@ export class Game {
         }
         return copyActivePhils;
     }
-    getNextScene() {
-        let nextScene = this.nextGameScene;
-        this.nextGameScene = null;
+    getNextScene1() {
+        let nextScene = this.nextGameScene1;
+        this.nextGameScene1 = null;
+        return nextScene;
+    }
+    getNextScene2() {
+        let nextScene = this.nextGameScene2;
+        this.nextGameScene2 = null;
         return nextScene;
     }
     getPhils() {
@@ -126,12 +138,19 @@ export class Game {
             console.log('Player '
                 + (this.moving + 1).toString()
                 + ' won!');
-            this.nextMenuState = MenuFlag.SwitchMenuNoBack;
+            this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
+            this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
             return;
         }
         if (philToDefend.isRetired()) {
-            this.nextGameScene = GameSceneFlag.YourPhilLeaves;
-            this.nextMenuState = MenuFlag.SwitchMenuNoBack;
+            this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
+            this.nextGameScene2 = GameSceneFlag.YourPhilLeaves;
+            if (this.moving == 1) {
+                this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
+            }
+            if (this.moving == 0) {
+                this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
+            }
         }
         else {
             this.nextTurn();

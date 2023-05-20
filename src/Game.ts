@@ -2,11 +2,6 @@ import { Move } from './entities/Move.js';
 import { School } from './entities/School.js';
 import { Philosopher } from './entities/Philosopher.js';
 import { Player } from './entities/Player.js';
-import { GameScene, MenuState } from './GameState.js';
-import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
-import { DefaultScene } from './scenes/DefaultScene.js';
-import { SwitchMenu } from './menus/SwitchMenu.js';
-import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
 import { MenuFlag } from './StateManager.js';
 import { GameSceneFlag } from './StateManager.js';
 
@@ -16,8 +11,10 @@ export class Game {
     private activePhils: Philosopher[] = [];
     private moving = 0;
     private defending = 1;
-    private nextGameScene: GameSceneFlag | null = null;
-    private nextMenuState: MenuFlag | null = null;
+    private nextGameScene1: GameSceneFlag | null = null;
+    private nextGameScene2: GameSceneFlag | null = null;
+    private nextMenuState1: MenuFlag | null = null;
+    private nextMenuState2: MenuFlag | null = null;
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[]) {
         this.players.push(player1.deepCopy());
@@ -81,9 +78,15 @@ export class Game {
         this.defending = this.defending ^ 1;
     }
 
-    getNextMenuState(): MenuFlag | null {
-        let nextState = this.nextMenuState;
-        this.nextMenuState = null;
+    getNextMenuState1(): MenuFlag | null {
+        let nextState = this.nextMenuState1;
+        this.nextMenuState1 = null;
+        return nextState;
+    }
+
+    getNextMenuState2(): MenuFlag | null {
+        let nextState = this.nextMenuState2;
+        this.nextMenuState2 = null;
         return nextState;
     }
 
@@ -109,9 +112,15 @@ export class Game {
         return copyActivePhils;
     }
 
-    getNextScene(): GameSceneFlag | null {
-        let nextScene = this.nextGameScene;
-        this.nextGameScene = null;
+    getNextScene1(): GameSceneFlag | null {
+        let nextScene = this.nextGameScene1;
+        this.nextGameScene1 = null;
+        return nextScene;
+    }
+
+    getNextScene2(): GameSceneFlag | null {
+        let nextScene = this.nextGameScene2;
+        this.nextGameScene2 = null;
         return nextScene;
     }
 
@@ -164,13 +173,16 @@ export class Game {
             console.log('Player ' 
                             + (this.moving + 1).toString() 
                             + ' won!');
-            this.nextMenuState = MenuFlag.SwitchMenuNoBack;
+            this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
+            this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
             return;
         }
 
         if (philToDefend.isRetired()) {
-            this.nextGameScene = GameSceneFlag.YourPhilLeaves;
-            this.nextMenuState = MenuFlag.SwitchMenuNoBack;
+            this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
+            this.nextGameScene2 = GameSceneFlag.YourPhilLeaves;
+            if (this.moving == 1) { this.nextMenuState1 = MenuFlag.SwitchMenuNoBack; }
+            if (this.moving == 0) { this.nextMenuState2 = MenuFlag.SwitchMenuNoBack; }
         } else {
             this.nextTurn();
         }

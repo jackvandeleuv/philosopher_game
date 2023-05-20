@@ -127,16 +127,15 @@ function gameLoop(manager1: StateManager, manager2: StateManager, game: Game): v
         manager2.processMenuInput();
         
         // Get input from the game logic
-        let nextScene = game.getNextScene();
-        if (nextScene != null) {
-            manager1.pushGameScene(nextScene);
-            manager2.pushGameScene(nextScene);
-        }
-        let nextState = game.getNextMenuState();
-        if (nextState != null) {
-            manager1.changeMenuState(nextState);
-            manager2.changeMenuState(nextState)
-        }
+        let nextScene1 = game.getNextScene1();
+        let nextScene2 = game.getNextScene2();
+        if (nextScene1 != null) { manager1.pushGameScene(nextScene1); }
+        if (nextScene2 != null) { manager2.pushGameScene(nextScene2); }
+
+        let nextState1 = game.getNextMenuState1();
+        let nextState2 = game.getNextMenuState2();
+        if (nextState1 != null) { manager1.changeMenuState(nextState1); }
+        if (nextState2 != null) { manager2.changeMenuState(nextState2) }
 
         // Render current state
         manager1.render();
