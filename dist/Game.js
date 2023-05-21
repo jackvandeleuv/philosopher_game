@@ -42,7 +42,7 @@ export class Game {
         if (this.gameMessageQueue.length == 0) {
             return null;
         }
-        while (this.gameMessageQueue[0].readByAll()) {
+        while (this.gameMessageQueue.length > 0 && this.gameMessageQueue[0].readByAll()) {
             this.gameMessageQueue.shift();
         }
         if (this.gameMessageQueue.length != 0) {
