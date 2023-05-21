@@ -52,7 +52,7 @@ export class Game {
 
     getGameMessage(): GameMessage | null {
         if (this.gameMessageQueue.length == 0) { return null }
-        while (this.gameMessageQueue[0].readByAll()) { this.gameMessageQueue.shift() }
+        while (this.gameMessageQueue.length > 0 && this.gameMessageQueue[0].readByAll()) { this.gameMessageQueue.shift() }
         if (this.gameMessageQueue.length != 0) { return this.gameMessageQueue[0] }
         return null;
     }
