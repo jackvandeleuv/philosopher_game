@@ -1,5 +1,6 @@
 import { MenuFlag } from './StateManager.js';
 import { GameSceneFlag } from './StateManager.js';
+import { GameMessage } from './entities/GameMessage.js';
 export class Game {
     constructor(player1, player2, philGroup1, philGroup2) {
         this.players = [];
@@ -12,6 +13,7 @@ export class Game {
         this.nextGameScene2 = null;
         this.nextMenuState1 = null;
         this.nextMenuState2 = null;
+        this.gameMessageQueue = [];
         this.players.push(player1.deepCopy());
         this.players.push(player2.deepCopy());
         // Defensive copy
@@ -36,6 +38,18 @@ export class Game {
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
     }
+    getGameMessage() {
+        if (this.gameMessageQueue.length == 0) {
+            return null;
+        }
+        while (this.gameMessageQueue[0].readByAll()) {
+            this.gameMessageQueue.shift();
+        }
+        if (this.gameMessageQueue.length != 0) {
+            return this.gameMessageQueue[0];
+        }
+        return null;
+    }
     replaceRetiredPhil(newActivePhil, player) {
         if (!newActivePhil.isRetired()) {
             let philGroup = this.philGroups[player];
@@ -48,11 +62,11 @@ export class Game {
                 this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
                 this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
             }
-            console.log('Player '
+            this.gameMessageQueue.push(new GameMessage('Player '
                 + (player + 1).toString()
                 + ' sent out '
                 + newActivePhil
-                + 'to go argue!');
+                + 'to go argue!'));
         }
     }
     getLeavingPhil() {
@@ -145,19 +159,17 @@ export class Game {
         let philGroupToDefend = this.philGroups[playerIndex ^ 1];
         let philToMove = philGroupToMove[this.activePhils[playerIndex]];
         let philToDefend = philGroupToDefend[this.activePhils[playerIndex]];
-        this.printBattleStatus();
-        console.log(philToMove
+        this.gameMessageQueue.push(new GameMessage(philToMove
             + ' used '
             + chosenMove
-            + '!\n');
+            + '!\n'));
         let damageOut = philToMove.getAttack() * chosenMove.getPower();
         let damageDealt = damageOut * philToDefend.getDefense();
         if (damageDealt == 0) {
-            console.log(chosenMove
-                + ' missed the mark and did no damage!');
+            this.gameMessageQueue.push(new GameMessage(chosenMove + ' missed the mark and did no damage!'));
         }
         if (damageDealt > 0) {
-            console.log(chosenMove + ' did ' + damageDealt + ' damage!\n');
+            this.gameMessageQueue.push(new GameMessage(chosenMove + ' did ' + damageDealt + ' damage!\n'));
         }
         philToDefend.takeDamage(damageDealt);
         if (playerIndex == 0) {
@@ -169,9 +181,7 @@ export class Game {
             this.nextMenuState2 = MenuFlag.FrozenMenu;
         }
         if (this.defenderGroupRetired()) {
-            console.log('Player '
-                + (this.moving + 1).toString()
-                + ' won!');
+            this.gameMessageQueue.push(new GameMessage('Player ' + (this.moving + 1).toString() + ' won!'));
             this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
             this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
             return;
@@ -189,35 +199,6 @@ export class Game {
             }
         }
         this.nextTurn();
-    }
-    printBattleStatus() {
-        console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
-        let movingPhil = this.philGroups[this.moving][this.activePhils[this.moving]];
-        let defendingPhil = this.philGroups[this.moving][this.activePhils[this.defending]];
-        console.log(movingPhil + ' is ready to move.\n');
-        console.log('Your '
-            + movingPhil
-            + "'s Health - "
-            + movingPhil.getHealth().toString()
-            + '\n');
-        console.log('Opposing '
-            + defendingPhil
-            + "'s health - "
-            + defendingPhil.getHealth()
-            + '\n');
-    }
-    printBattleUpdate() {
-        console.log('\nactivePhils: ' + this.activePhils);
-        let philStr = '';
-        for (let philGroup of this.getPhils()) {
-            for (let phil of philGroup) {
-                philStr = philStr + phil.toString();
-                philStr = philStr + ' ' + phil.isRetired() + '\n';
-            }
-        }
-        console.log('all Phils: ' + philStr);
-        console.log('Moving: ' + this.moving);
-        console.log('Defending: ' + this.defending);
     }
     defenderGroupRetired() {
         // Check to see if all Philosophers on one team are retired.

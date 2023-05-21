@@ -105,12 +105,18 @@ export class StateManager {
             this.gameSceneQueue[0] = this.generateGameScene(GameSceneFlag.DefaultScene);
         }
         this.gameSceneQueue[0].render();
+        let gameMessage = this.game.getGameMessage();
+        if (gameMessage != null) {
+            if (!gameMessage.isReadBy(this.playerIndex)) {
+                console.log(gameMessage.getMessage());
+                gameMessage.setMessageRead(this.playerIndex);
+            }
+        }
     }
     /*
     Uses MenuState enum to switch the active menu object.
     */
     changeMenuState(state) {
-        this.game.printBattleUpdate();
         switch (state) {
             case MenuFlag.MainBattleMenu:
                 this.currentMenuState.deactivate();
@@ -159,7 +165,6 @@ export class StateManager {
         // Switch menu state if applicable
         let newState = this.currentMenuState.getNextMenuState();
         if (newState != null) {
-            console.log('Changing menu state to: ' + newState);
             this.changeMenuState(newState);
         }
     }

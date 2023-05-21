@@ -4,6 +4,7 @@ import { Philosopher } from './entities/Philosopher.js';
 import { Player } from './entities/Player.js';
 import { MenuFlag } from './StateManager.js';
 import { GameSceneFlag } from './StateManager.js';
+import { GameMessage } from './entities/GameMessage.js';
 
 export class Game {
     private players: Player[] = [];
@@ -16,6 +17,7 @@ export class Game {
     private nextGameScene2: GameSceneFlag | null = null;
     private nextMenuState1: MenuFlag | null = null;
     private nextMenuState2: MenuFlag | null = null;
+    private gameMessageQueue: GameMessage[] = [];
 
     constructor(player1: Player, player2: Player, philGroup1: Philosopher[], philGroup2: Philosopher[]) {
         this.players.push(player1.deepCopy());
@@ -48,6 +50,13 @@ export class Game {
         this.defending = this.defending ^ 1;
     }
 
+    getGameMessage(): GameMessage | null {
+        if (this.gameMessageQueue.length == 0) { return null }
+        while (this.gameMessageQueue[0].readByAll()) { this.gameMessageQueue.shift() }
+        if (this.gameMessageQueue.length != 0) { return this.gameMessageQueue[0] }
+        return null;
+    }
+
     replaceRetiredPhil(newActivePhil: Philosopher, player: number): void {
         if (!newActivePhil.isRetired()) {
             let philGroup = this.philGroups[player];
@@ -60,11 +69,12 @@ export class Game {
                 this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
                 this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
             }
-            console.log('Player ' 
-                            + (player + 1).toString() 
-                            + ' sent out ' 
-                            + newActivePhil 
-                            + 'to go argue!');
+            this.gameMessageQueue.push(new GameMessage('Player ' 
+                                                        + (player + 1).toString() 
+                                                        + ' sent out ' 
+                                                        + newActivePhil 
+                                                        + 'to go argue!'
+                                                        ));
         } 
     }
 
@@ -173,23 +183,26 @@ export class Game {
         let philToMove: Philosopher = philGroupToMove[this.activePhils[playerIndex]];
         let philToDefend: Philosopher = philGroupToDefend[this.activePhils[playerIndex]];
 
-        this.printBattleStatus();
-
-        console.log(philToMove 
-                    + ' used ' 
-                    + chosenMove
-                    + '!\n');
+        this.gameMessageQueue.push(new GameMessage(philToMove 
+                                                    + ' used ' 
+                                                    + chosenMove
+                                                    + '!\n'
+                                                    ));
         
         let damageOut: number = philToMove.getAttack() * chosenMove.getPower();
         let damageDealt: number = damageOut * philToDefend.getDefense();
 
         if (damageDealt == 0) {
-            console.log(chosenMove 
-                            + ' missed the mark and did no damage!');
+            this.gameMessageQueue.push(new GameMessage(
+                chosenMove + ' missed the mark and did no damage!'
+            ));
+
         } 
 
         if (damageDealt > 0) {
-            console.log(chosenMove + ' did ' + damageDealt + ' damage!\n')
+            this.gameMessageQueue.push(new GameMessage(
+                chosenMove + ' did ' + damageDealt + ' damage!\n'
+            ));
         }
 
         philToDefend.takeDamage(damageDealt); 
@@ -204,9 +217,9 @@ export class Game {
         }
 
         if (this.defenderGroupRetired()) {
-            console.log('Player ' 
-                            + (this.moving + 1).toString() 
-                            + ' won!');
+            this.gameMessageQueue.push(new GameMessage(
+                'Player ' + (this.moving + 1).toString() + ' won!'
+                ));
             this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
             this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
             return;
@@ -226,39 +239,6 @@ export class Game {
         } 
         
         this.nextTurn();
-    }
-
-    private printBattleStatus(): void {
-        console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
-
-        let movingPhil: Philosopher = this.philGroups[this.moving][this.activePhils[this.moving]];
-        let defendingPhil: Philosopher = this.philGroups[this.moving][this.activePhils[this.defending]];
-
-        console.log(movingPhil + ' is ready to move.\n');
-        console.log('Your '
-                        + movingPhil 
-                        + "'s Health - " 
-                        + movingPhil.getHealth().toString() 
-                        + '\n');
-        console.log('Opposing ' 
-                        + defendingPhil 
-                        + "'s health - " 
-                        + defendingPhil.getHealth()
-                        + '\n');
-    }
-
-    printBattleUpdate(): void {
-        console.log('\nactivePhils: ' + this.activePhils);
-        let philStr = '';
-        for (let philGroup of this.getPhils()) {
-            for (let phil of philGroup) {
-                philStr = philStr + phil.toString();
-                philStr = philStr + ' ' + phil.isRetired() + '\n';
-            }
-        }
-        console.log('all Phils: ' + philStr);
-        console.log('Moving: ' + this.moving);
-        console.log('Defending: ' + this.defending)
     }
 
     private defenderGroupRetired(): boolean {
