@@ -5,6 +5,7 @@ import { Player } from './entities/Player.js';
 import { Game } from './Game.js';
 import { StateManager } from './StateManager.js';
 import { ImageRepository } from './ImageRepository.js';
+import { MenuFlag } from './StateManager.js';
 
 let moves: Move[] = [
     // Analytic Moves
@@ -163,6 +164,7 @@ Promise.all([
     imageRepo2.loadImage('images/sartre.jpg')
 ]).then(() => {
     // Start your game here
+    manager2.changeMenuState(MenuFlag.FrozenMenu);
     gameLoop(manager1, manager2, game);
 }).catch((error) => {
     console.error('Failed to load images: ', error);

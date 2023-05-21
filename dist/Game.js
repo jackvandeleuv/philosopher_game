@@ -29,31 +29,6 @@ export class Game {
         this.activePhils[0] = 0;
         this.activePhils[1] = 0;
     }
-    // deepCopy(): Game {
-    //     // Defensive copy
-    //     let philGroup1Copy: Philosopher[] = []
-    //     for (let i = 0; i < this.philGroups[0].length; i++) {
-    //         philGroup1Copy[i] = this.philGroups[0][i].deepCopy();
-    //     }
-    //     // Defensive copy
-    //     let philGroup2Copy: Philosopher[] = []
-    //     for (let i = 0; i < this.philGroups[1].length; i++) {
-    //         philGroup2Copy[i] = this.philGroups[1][i].deepCopy();
-    //     }
-    //     let gameCopy = new Game(this.players[0].deepCopy(), 
-    //                             this.players[1].deepCopy(), 
-    //                             philGroup1Copy,
-    //                             philGroup2Copy,
-    //                             this.ctx)
-    //     for (let i = 0; i < this.activePhils.length; i++) {
-    //         gameCopy.activePhils[i] = this.activePhils[i].deepCopy();
-    //     }
-    //     gameCopy.moving = this.moving;
-    //     gameCopy.defending = this.defending;
-    //     gameCopy.nextGameScene = this.nextGameScene;
-    //     gameCopy.nextMenuState = this.nextMenuState;
-    //     return gameCopy;
-    // }
     /*
     Flips turn to move between the two players.
     */

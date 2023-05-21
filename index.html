@@ -4,11 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TypeScript HTML Example</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .canvas-container {
+      display: flex;
+      gap: 3%;
+    }
+
+    canvas {
+      border: 1px solid black;
+      width: calc((100% - 6%) / 2); /* Adjust the width based on the desired gap */
+    }
+  </style>
 </head>
 <body>
-  <canvas id="gameCanvas1" width="500" height="500"></canvas>
-  <br>
-  <canvas id="gameCanvas2" width="500" height="500"></canvas>
+  <div class="canvas-container">
+    <canvas id="gameCanvas1" width="500" height="500"></canvas>
+    <canvas id="gameCanvas2" width="500" height="500"></canvas>
+  </div>
 
   <script src="dist/main.js" type="module"></script>
 </body>
