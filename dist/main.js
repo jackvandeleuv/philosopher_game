@@ -50,11 +50,11 @@ imageRepo2.loadImage('images/nietzsche.jpg');
 imageRepo2.loadImage('images/sartre.jpg');
 let philosophers = [
     new Philosopher('G.E. Moore', 75, .15, 1000, 'images/moore.jpg'),
-    new Philosopher('Bertrand Russell', 8, .3, 1000, 'images/russell.jpg'),
-    new Philosopher('Ludwig Wittgenstein', 7, .1, 1200, 'images/wittgenstein.jpg'),
+    new Philosopher('Bertrand Russell', 80, .3, 1000, 'images/russell.jpg'),
+    new Philosopher('Ludwig Wittgenstein', 70, .1, 1200, 'images/wittgenstein.jpg'),
     new Philosopher('Immanuel Kant', 80, .1, 1100, 'images/kant.jpg'),
-    new Philosopher('Friedrich Nietzsche', 9, .3, 1000, 'images/nietzsche.jpg'),
-    new Philosopher('Jean-Paul Sartre', 7.5, .15, 1200, 'images/sartre.jpg')
+    new Philosopher('Friedrich Nietzsche', 90, .3, 1000, 'images/nietzsche.jpg'),
+    new Philosopher('Jean-Paul Sartre', 75, .15, 1200, 'images/sartre.jpg')
 ];
 // For Analytic Philosophers
 let russellMoves = [moves[0], moves[1], moves[6], moves[7]];
