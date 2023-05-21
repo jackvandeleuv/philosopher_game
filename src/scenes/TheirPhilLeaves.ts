@@ -20,8 +20,8 @@ export class TheirPhilLeaves implements GameScene {
     }
 
     private updatePhilPosition(): void {
-        if (this.x + this.w > 0) {
-            this.x = this.x + this.ctx.canvas.width / 1000; // 200
+        if (this.x < this.ctx.canvas.width) {
+            this.x = this.x + this.ctx.canvas.width / 200;
         }
     }
 

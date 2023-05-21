@@ -78,16 +78,23 @@ export class Game {
                 + 'to go argue!');
         }
     }
+    getLeavingPhil() {
+        if (this.leavingPhil != null) {
+            return this.leavingPhil.deepCopy();
+        }
+        return null;
+    }
     swapActivePhil(newActivePhil, player) {
         if (!newActivePhil.isRetired()) {
+            this.leavingPhil = this.activePhils[player];
             this.activePhils[player] = newActivePhil.deepCopy();
             if (player == 0) {
                 this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
                 this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
             }
             if (player == 1) {
-                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
-                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+                this.nextGameScene1 = GameSceneFlag.TheirPhilSwaps;
+                this.nextGameScene2 = GameSceneFlag.YourPhilSwaps;
             }
             console.log('Player '
                 + (player + 1).toString()

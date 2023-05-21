@@ -9,6 +9,7 @@ export class Game {
     private players: Player[] = [];
     private philGroups: Philosopher[][] = [];
     private activePhils: Philosopher[] = [];
+    private leavingPhil: Philosopher | null;
     private moving = 0;
     private defending = 1;
     private nextGameScene1: GameSceneFlag | null = null;
@@ -97,16 +98,24 @@ export class Game {
         } 
     }
 
+    getLeavingPhil(): Philosopher | null {
+        if (this.leavingPhil != null) { 
+            return this.leavingPhil.deepCopy() 
+        }
+        return null;
+    }
+
     swapActivePhil(newActivePhil: Philosopher, player: number): void {
         if (!newActivePhil.isRetired()) {
+            this.leavingPhil = this.activePhils[player];
             this.activePhils[player] = newActivePhil.deepCopy();
             if (player == 0) {
                 this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
                 this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
             }
             if (player == 1) {
-                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
-                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+                this.nextGameScene1 = GameSceneFlag.TheirPhilSwaps;
+                this.nextGameScene2 = GameSceneFlag.YourPhilSwaps;
             }
             console.log('Player ' 
                             + (player + 1).toString() 

@@ -1,8 +1,4 @@
-import { Game } from "phaser";
 import { GameScene } from "../GameState";
-import { ImageRepository } from "../ImageRepository";
-import { YourPhilEnters } from "./YourPhilEnters";
-import { YourPhilLeaves } from "./YourPhilLeaves";
 
 export class PhilSwaps implements GameScene {
     constructor(private leaveScene: GameScene, private enterScene: GameScene) {}

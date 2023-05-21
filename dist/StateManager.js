@@ -53,7 +53,13 @@ export class StateManager {
                 return new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.YourPhilSwaps:
-                return new PhilSwaps(new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                let yourLeavingPhil = this.game.getLeavingPhil();
+                if (yourLeavingPhil != null) {
+                    return new PhilSwaps(new YourPhilLeaves(this.ctx, yourLeavingPhil, activePhils[this.yourIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                }
+                else {
+                    throw new Error('Flagged YourPhilSwaps but game did not have a leaving phil to display');
+                }
                 break;
             case GameSceneFlag.TheirPhilEnters:
                 return new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
@@ -61,8 +67,14 @@ export class StateManager {
             case GameSceneFlag.TheirPhilLeaves:
                 return new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
                 break;
-            case GameSceneFlag.YourPhilSwaps:
-                return new PhilSwaps(new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+            case GameSceneFlag.TheirPhilSwaps:
+                let theirLeavingPhil = this.game.getLeavingPhil();
+                if (theirLeavingPhil != null) {
+                    return new PhilSwaps(new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], theirLeavingPhil, this.imageRepo));
+                }
+                else {
+                    throw new Error('Flagged TheirPhilSwaps but game does not have a leaving phil to display');
+                }
                 break;
             default:
                 throw new Error('Unknown GameSceneFlag sent to generateGameScene');

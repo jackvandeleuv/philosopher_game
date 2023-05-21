@@ -14,7 +14,7 @@ export class YourPhilLeaves {
     }
     updatePhilPosition() {
         if (this.x + this.w > 0) {
-            this.x = this.x - this.ctx.canvas.width / 1000;
+            this.x = this.x - this.ctx.canvas.width / 200;
         }
     }
     checkPhil1OutOfBounds() {

@@ -30,7 +30,7 @@ export class YourPhilEnters implements GameScene {
 
     private updatePhilPosition(): void {
         if (this.x < this.destinationX) {
-            this.x = this.x + (this.ctx.canvas.width / 1000); // 150
+            this.x = this.x + (this.ctx.canvas.width / 200);
         }
     }
 

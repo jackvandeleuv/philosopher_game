@@ -31,7 +31,7 @@ export class TheirPhilEnters {
     }
     updatePhilPosition() {
         if (this.x > this.destinationX) {
-            this.x = this.x - (this.ctx.canvas.width / 1000); // 150
+            this.x = this.x - (this.ctx.canvas.width / 200);
         }
     }
     checkPhilAtDestination() {
