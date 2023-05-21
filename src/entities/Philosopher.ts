@@ -93,6 +93,6 @@ export class Philosopher {
     }
 
     isActive(): boolean {
-        return this.isActive();
+        return this.active;
     }
 }

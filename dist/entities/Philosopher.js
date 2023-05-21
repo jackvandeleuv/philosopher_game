@@ -67,6 +67,6 @@ export class Philosopher {
         this.active = false;
     }
     isActive() {
-        return this.isActive();
+        return this.active;
     }
 }

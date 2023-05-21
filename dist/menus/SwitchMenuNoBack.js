@@ -9,25 +9,24 @@ export class SwitchMenuNoBack extends SwitchMenu {
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
         this.menuItems = [];
-        let defendingPhils = this.game.getPhils()[this.playerID];
-        for (let i = 0; i < defendingPhils.length; i++) {
+        let yourPhils = this.game.getPhils()[this.playerID];
+        for (let i = 0; i < yourPhils.length; i++) {
             let addedLabel = '';
-            if (defendingPhils[i].isRetired()) {
-                addedLabel = ' (retired)';
-            }
-            let isActive = i == this.game.getActivePhilIndex(this.playerID);
-            if (isActive) {
+            if (i == this.game.getActivePhilIndex(this.playerID)) {
                 addedLabel = ' (active)';
             }
+            if (yourPhils[i].isRetired()) {
+                addedLabel = ' (retired)';
+            }
             this.menuItems.push({
-                text: defendingPhils[i].toString() + addedLabel,
+                text: yourPhils[i].toString() + addedLabel,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    if (!defendingPhils[i].isRetired()) {
-                        this.game.replaceRetiredPhil(defendingPhils[i].deepCopy(), this.playerID);
+                    if (!yourPhils[i].isRetired()) {
+                        this.game.replaceRetiredPhil(i, this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
                     }
                 }

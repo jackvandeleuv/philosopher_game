@@ -51,22 +51,14 @@ export class Game {
         return null;
     }
     replaceRetiredPhil(newActivePhil, player) {
-        if (!newActivePhil.isRetired()) {
-            let philGroup = this.philGroups[player];
-            philGroup[this.activePhils[player]] = newActivePhil.deepCopy();
-            if (player == 0) {
-                this.nextGameScene1 = GameSceneFlag.YourPhilEnters;
-                this.nextGameScene2 = GameSceneFlag.TheirPhilEnters;
-            }
-            if (player == 1) {
-                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
-                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
-            }
-            this.gameMessageQueue.push(new GameMessage('Player '
-                + (player + 1).toString()
-                + ' sent out '
-                + newActivePhil
-                + 'to go argue!'));
+        this.activePhils[player] = newActivePhil;
+        if (player == 0) {
+            this.nextGameScene1 = GameSceneFlag.YourPhilEnters;
+            this.nextGameScene2 = GameSceneFlag.TheirPhilEnters;
+        }
+        if (player == 1) {
+            this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
+            this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
         }
     }
     getLeavingPhil() {
@@ -155,10 +147,10 @@ export class Game {
         return philGroupCopy;
     }
     makeMove(chosenMove, playerIndex) {
-        let philGroupToMove = this.philGroups[playerIndex];
-        let philGroupToDefend = this.philGroups[playerIndex ^ 1];
-        let philToMove = philGroupToMove[this.activePhils[playerIndex]];
-        let philToDefend = philGroupToDefend[this.activePhils[playerIndex]];
+        let philGroupToMove = this.philGroups[this.moving];
+        let philGroupToDefend = this.philGroups[this.defending];
+        let philToMove = philGroupToMove[this.activePhils[this.moving]];
+        let philToDefend = philGroupToDefend[this.activePhils[this.defending]];
         this.gameMessageQueue.push(new GameMessage(philToMove
             + ' used '
             + chosenMove
@@ -182,8 +174,8 @@ export class Game {
         }
         if (this.defenderGroupRetired()) {
             this.gameMessageQueue.push(new GameMessage('Player ' + (this.moving + 1).toString() + ' won!'));
-            this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
-            this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
+            this.nextMenuState1 = MenuFlag.FrozenMenu;
+            this.nextMenuState2 = MenuFlag.FrozenMenu;
             return;
         }
         if (philToDefend.isRetired()) {

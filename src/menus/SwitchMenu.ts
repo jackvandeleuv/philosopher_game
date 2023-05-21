@@ -25,16 +25,13 @@ export class SwitchMenu implements MenuState {
         this.ctx.fillRect(0, 0, 1000, 1000);
     
         this.menuItems = [];
-        let yourPhils: Philosopher[] = this.game.getPhils()[this.game.getTurnToMove()];
+        let yourPhils: Philosopher[] = this.game.getPhils()[this.playerID];
         for (let i = 0; i < yourPhils.length; i++) {
+
             let addedLabel: string = '';
-            if (yourPhils[i].isRetired()) {
-                addedLabel = ' (retired)';
-            }
-            let isActive = i == this.game.getActivePhilIndex(this.playerID);
-            if (isActive) {
-                addedLabel = ' (active)'
-            }
+            if (i == this.game.getActivePhilIndex(this.playerID)) { addedLabel = ' (active)' }
+            if (yourPhils[i].isRetired()) { addedLabel = ' (retired)' }
+
             this.menuItems.push({
                 text: yourPhils[i].toString() + addedLabel,
                 x: this.x,
@@ -42,7 +39,7 @@ export class SwitchMenu implements MenuState {
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    if (!yourPhils[i].isRetired() && !isActive) {
+                    if (!yourPhils[i].isRetired() && !(i == this.game.getActivePhilIndex(this.playerID))) {
                         this.game.swapActivePhil(yourPhils[i].deepCopy(), this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
                     }
