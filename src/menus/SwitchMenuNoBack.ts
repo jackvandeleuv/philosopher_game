@@ -17,12 +17,16 @@ export class SwitchMenuNoBack extends SwitchMenu {
         this.menuItems = [];
         let defendingPhils: Philosopher[] = this.game.getPhils()[this.playerID];
         for (let i = 0; i < defendingPhils.length; i++) {
-            let retiredIndicator: string = '';
+            let addedLabel: string = '';
             if (defendingPhils[i].isRetired()) {
-                retiredIndicator = ' (retired)';
+                addedLabel = ' (retired)';
+            }
+            let isActive = i == this.game.getActivePhilIndex(this.playerID);
+            if (isActive) {
+                addedLabel = ' (active)'
             }
             this.menuItems.push({
-                text: defendingPhils[i].toString() + retiredIndicator,
+                text: defendingPhils[i].toString() + addedLabel,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,

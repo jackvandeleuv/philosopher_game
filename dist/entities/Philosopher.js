@@ -9,6 +9,7 @@ export class Philosopher {
         this.moves = [];
         this.maxMoves = 5;
         this.retired = false;
+        this.active = false;
     }
     getMove(moveIndex) {
         return this.moves[moveIndex].deepCopy();
@@ -49,6 +50,7 @@ export class Philosopher {
     deepCopy() {
         let philCopy = new Philosopher(this.name, this.attack, this.defense, this.health, this.imagePath);
         philCopy.retired = this.retired;
+        philCopy.active = this.active;
         for (let move of this.moves) {
             philCopy.addMove(move);
         }
@@ -57,5 +59,14 @@ export class Philosopher {
     takeDamage(damage) {
         this.health = this.health - damage;
         this.retired = this.health <= 0;
+    }
+    activate() {
+        this.active = true;
+    }
+    deactivate() {
+        this.active = false;
+    }
+    isActive() {
+        return this.isActive();
     }
 }

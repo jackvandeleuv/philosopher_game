@@ -22,18 +22,22 @@ export class SwitchMenu {
         this.menuItems = [];
         let yourPhils = this.game.getPhils()[this.game.getTurnToMove()];
         for (let i = 0; i < yourPhils.length; i++) {
-            let retiredIndicator = '';
+            let addedLabel = '';
             if (yourPhils[i].isRetired()) {
-                retiredIndicator = ' (retired)';
+                addedLabel = ' (retired)';
+            }
+            let isActive = i == this.game.getActivePhilIndex(this.playerID);
+            if (isActive) {
+                addedLabel = ' (active)';
             }
             this.menuItems.push({
-                text: yourPhils[i].toString() + retiredIndicator,
+                text: yourPhils[i].toString() + addedLabel,
                 x: this.x,
                 y: this.y + this.spacing * i,
                 width: this.buttonWidth,
                 height: this.buttonHeight,
                 action: () => {
-                    if (!yourPhils[i].isRetired()) {
+                    if (!yourPhils[i].isRetired() && !isActive) {
                         this.game.swapActivePhil(yourPhils[i].deepCopy(), this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
                     }

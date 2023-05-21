@@ -5,6 +5,7 @@ export class Game {
         this.players = [];
         this.philGroups = [];
         this.activePhils = [];
+        this.leavingPhil = null;
         this.moving = 0;
         this.defending = 1;
         this.nextGameScene1 = null;
@@ -25,8 +26,8 @@ export class Game {
         }
         this.philGroups.push(philGroup1Copy);
         this.philGroups.push(philGroup2Copy);
-        this.activePhils.push(philGroup1Copy[0]);
-        this.activePhils.push(philGroup2Copy[0]);
+        this.activePhils[0] = 0;
+        this.activePhils[1] = 0;
     }
     // deepCopy(): Game {
     //     // Defensive copy
@@ -62,7 +63,8 @@ export class Game {
     }
     replaceRetiredPhil(newActivePhil, player) {
         if (!newActivePhil.isRetired()) {
-            this.activePhils[player] = newActivePhil.deepCopy();
+            let philGroup = this.philGroups[player];
+            philGroup[this.activePhils[player]] = newActivePhil.deepCopy();
             if (player == 0) {
                 this.nextGameScene1 = GameSceneFlag.YourPhilEnters;
                 this.nextGameScene2 = GameSceneFlag.TheirPhilEnters;
@@ -84,10 +86,14 @@ export class Game {
         }
         return null;
     }
+    getActivePhilIndex(playerIndex) {
+        return this.activePhils[playerIndex];
+    }
     swapActivePhil(newActivePhil, player) {
         if (!newActivePhil.isRetired()) {
-            this.leavingPhil = this.activePhils[player];
-            this.activePhils[player] = newActivePhil.deepCopy();
+            let philGroup = this.philGroups[player];
+            this.leavingPhil = philGroup[this.activePhils[player]];
+            philGroup[this.activePhils[player]] = newActivePhil.deepCopy();
             if (player == 0) {
                 this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
                 this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
@@ -127,13 +133,12 @@ export class Game {
     Player number should be 0 for player 1 and 1 for player 2.
     */
     setActivePhil(newActivePhil, playerNumber) {
-        this.activePhils[playerNumber] = newActivePhil.deepCopy();
+        this.activePhils[playerNumber] = newActivePhil;
     }
     getActivePhils() {
         let copyActivePhils = [];
-        for (let phil of this.activePhils) {
-            copyActivePhils.push(phil.deepCopy());
-        }
+        copyActivePhils[0] = this.philGroups[0][this.activePhils[0]].deepCopy();
+        copyActivePhils[1] = this.philGroups[1][this.activePhils[1]].deepCopy();
         return copyActivePhils;
     }
     getNextScene1() {
@@ -157,9 +162,11 @@ export class Game {
         }
         return philGroupCopy;
     }
-    makeMove(chosenMove) {
-        let philToMove = this.activePhils[this.moving];
-        let philToDefend = this.activePhils[this.defending];
+    makeMove(chosenMove, playerIndex) {
+        let philGroupToMove = this.philGroups[playerIndex];
+        let philGroupToDefend = this.philGroups[playerIndex ^ 1];
+        let philToMove = philGroupToMove[this.activePhils[playerIndex]];
+        let philToDefend = philGroupToDefend[this.activePhils[playerIndex]];
         this.printBattleStatus();
         console.log(philToMove
             + ' used '
@@ -199,8 +206,8 @@ export class Game {
     }
     printBattleStatus() {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");
-        let movingPhil = this.activePhils[this.moving];
-        let defendingPhil = this.activePhils[this.defending];
+        let movingPhil = this.philGroups[this.moving][this.activePhils[this.moving]];
+        let defendingPhil = this.philGroups[this.moving][this.activePhils[this.defending]];
         console.log(movingPhil + ' is ready to move.\n');
         console.log('Your '
             + movingPhil
@@ -225,9 +232,6 @@ export class Game {
         console.log('all Phils: ' + philStr);
         console.log('Moving: ' + this.moving);
         console.log('Defending: ' + this.defending);
-        // console.log('Next MenuState: ' + this.getNextMenuState())
-        // console.log('Next GameScene: ' + this.getNextScene() + '\n')
-        console.log('Retirement statuses: ' + this.activePhils[0].isRetired() + ', ' + this.activePhils[1].isRetired());
     }
     defenderGroupRetired() {
         // Check to see if all Philosophers on one team are retired.
