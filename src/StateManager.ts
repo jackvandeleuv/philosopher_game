@@ -78,8 +78,8 @@ export class StateManager {
                 let theirLeavingPhil = this.game.getLeavingPhil();
                 if (theirLeavingPhil != null) {
                     return new PhilSwaps(
-                        new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo),
-                        new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], theirLeavingPhil, this.imageRepo)
+                        new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], theirLeavingPhil, this.imageRepo),
+                        new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo)
                     );
                 } else {
                     throw new Error('Flagged TheirPhilSwaps but game does not have a leaving phil to display');
