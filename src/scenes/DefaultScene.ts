@@ -15,23 +15,24 @@ export class DefaultScene implements GameScene {
         let y = this.ctx.canvas.width / 3.6;
         let w = this.ctx.canvas.width / 3.6;
         let h = this.ctx.canvas.width / 3.6;
+        this.drawPlatform(x + (w / 2), y + h, w * .8, h * .2);
 
         let image1 = this.imageRepo.getImage(this.phil1.getImagePath());
-        if (image1 != null) {
-            this.drawPlatform(x + (w / 2), y + h, w * .8, h * .2);
+        if (image1 != null && !this.phil1.isRetired()) {
             this.ctx.clearRect(x, y, w, h);
             this.ctx.drawImage(image1, x, y, w, h);
         }
 
-        let image2 = this.imageRepo.getImage(this.phil2.getImagePath());
-        if (image2 != null){
-            let x2 = this.ctx.canvas.width / 1.55;
-            let y2 = this.ctx.canvas.width / 9;
-            let w2 = this.ctx.canvas.width / 5.4;
-            let h2 = this.ctx.canvas.width / 5.4;
 
-            this.drawPlatform(x2 + (w2 / 2), y2 + h2, w * .8, h * .2);
-            this.ctx.clearRect(x2, y2, w2, h2);
+        let x2 = this.ctx.canvas.width / 1.55;
+        let y2 = this.ctx.canvas.width / 9;
+        let w2 = this.ctx.canvas.width / 5.4;
+        let h2 = this.ctx.canvas.width / 5.4;
+        this.drawPlatform(x2 + (w2 / 2), y2 + h2, w * .8, h * .2);
+
+        let image2 = this.imageRepo.getImage(this.phil2.getImagePath());
+        if (image2 != null && !this.phil2.isRetired()) {
+            // this.ctx.clearRect(x2, y2, w2, h2);
         
             // Save the context state
             this.ctx.save(); 

@@ -4,8 +4,10 @@ import { SwitchMenu } from './menus/SwitchMenu.js';
 import { DefaultScene } from './scenes/DefaultScene.js';
 import { YourPhilEnters } from './scenes/YourPhilEnters.js';
 import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
-import { YourPhilSwaps } from './scenes/YourPhilSwaps.js';
+import { PhilSwaps } from './scenes/PhilSwaps.js';
 import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
+import { TheirPhilEnters } from './scenes/TheirPhilEnters.js';
+import { TheirPhilLeaves } from './scenes/TheirPhilLeaves.js';
 export var MenuFlag;
 (function (MenuFlag) {
     MenuFlag[MenuFlag["MainBattleMenu"] = 0] = "MainBattleMenu";
@@ -19,7 +21,10 @@ export var GameSceneFlag;
     GameSceneFlag[GameSceneFlag["DefaultScene"] = 0] = "DefaultScene";
     GameSceneFlag[GameSceneFlag["YourPhilEnters"] = 1] = "YourPhilEnters";
     GameSceneFlag[GameSceneFlag["YourPhilLeaves"] = 2] = "YourPhilLeaves";
-    GameSceneFlag[GameSceneFlag["YourPhilSwaps"] = 3] = "YourPhilSwaps";
+    GameSceneFlag[GameSceneFlag["TheirPhilEnters"] = 3] = "TheirPhilEnters";
+    GameSceneFlag[GameSceneFlag["TheirPhilLeaves"] = 4] = "TheirPhilLeaves";
+    GameSceneFlag[GameSceneFlag["YourPhilSwaps"] = 5] = "YourPhilSwaps";
+    GameSceneFlag[GameSceneFlag["TheirPhilSwaps"] = 6] = "TheirPhilSwaps";
 })(GameSceneFlag || (GameSceneFlag = {}));
 export class StateManager {
     constructor(ctx, game, yourIndex, imageRepo) {
@@ -48,7 +53,16 @@ export class StateManager {
                 return new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.YourPhilSwaps:
-                return new YourPhilSwaps(new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                return new PhilSwaps(new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                break;
+            case GameSceneFlag.TheirPhilEnters:
+                return new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                break;
+            case GameSceneFlag.TheirPhilLeaves:
+                return new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                break;
+            case GameSceneFlag.YourPhilSwaps:
+                return new PhilSwaps(new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo), new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
                 break;
             default:
                 throw new Error('Unknown GameSceneFlag sent to generateGameScene');
@@ -56,14 +70,14 @@ export class StateManager {
     }
     render() {
         if (this.currentMenuState instanceof MoveMenu) {
-            this.currentMenuState.updateMoves(this.game.getPhilToMove().getMoves());
+            this.currentMenuState.updateMoves(this.game.getActivePhils()[this.yourIndex].getMoves());
         }
         this.currentMenuState.render();
         // If there are scenes waiting, remove the first completed one
         if (this.gameSceneQueue.length > 1) {
             // Clear any completed scenes from the head of the queue
             while (this.gameSceneQueue.length > 1 && this.gameSceneQueue[0].isSceneComplete()) {
-                this.gameSceneQueue.pop();
+                this.gameSceneQueue.shift();
             }
         }
         // If the only scene in queue is complete and non-default, replace it with default
@@ -96,12 +110,12 @@ export class StateManager {
                 break;
             case MenuFlag.SwitchMenu:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.imageRepo);
+                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.yourIndex);
                 this.currentMenuState.activate();
                 break;
             case MenuFlag.SwitchMenuNoBack:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.imageRepo);
+                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.yourIndex);
                 this.currentMenuState.activate();
                 break;
             case MenuFlag.Resign:
@@ -123,12 +137,10 @@ export class StateManager {
         if (this.currentMenuState instanceof MoveMenu) {
             this.processMoveMenuInput();
         }
-        if (this.currentMenuState instanceof SwitchMenu) {
-            this.processSwitchMenuInput(this.currentMenuState);
-        }
         // Switch menu state if applicable
         let newState = this.currentMenuState.getNextMenuState();
         if (newState != null) {
+            console.log('Changing menu state to: ' + newState);
             this.changeMenuState(newState);
         }
     }
@@ -142,13 +154,6 @@ export class StateManager {
         }
         else {
             throw new Error('Process move menu input called when current menu not Move Menu');
-        }
-    }
-    processSwitchMenuInput(switchMenu) {
-        // Add game scene to queue if applicable
-        let newScene = switchMenu.getNextGameScene();
-        if (newScene != null) {
-            this.gameSceneQueue.push(newScene);
         }
     }
 }

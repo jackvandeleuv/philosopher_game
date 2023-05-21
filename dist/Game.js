@@ -60,6 +60,46 @@ export class Game {
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
     }
+    replaceRetiredPhil(newActivePhil, player) {
+        if (!newActivePhil.isRetired()) {
+            this.activePhils[player] = newActivePhil.deepCopy();
+            if (player == 0) {
+                this.nextGameScene1 = GameSceneFlag.YourPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilEnters;
+            }
+            if (player == 1) {
+                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+            }
+            console.log('Player '
+                + (player + 1).toString()
+                + ' sent out '
+                + newActivePhil
+                + 'to go argue!');
+        }
+    }
+    swapActivePhil(newActivePhil, player) {
+        if (!newActivePhil.isRetired()) {
+            this.activePhils[player] = newActivePhil.deepCopy();
+            if (player == 0) {
+                this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
+            }
+            if (player == 1) {
+                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+            }
+            console.log('Player '
+                + (player + 1).toString()
+                + ' switched Philosophers to '
+                + newActivePhil
+                + ', forfeiting their turn!');
+            this.nextTurn();
+        }
+        else {
+            throw new Error('Called swap active phil to try and swap in a retired phil!');
+        }
+    }
     getNextMenuState1() {
         let nextState = this.nextMenuState1;
         this.nextMenuState1 = null;
@@ -110,12 +150,6 @@ export class Game {
         }
         return philGroupCopy;
     }
-    getPhilToMove() {
-        return this.activePhils[this.moving].deepCopy();
-    }
-    getPhilToDefend() {
-        return this.activePhils[this.defending].deepCopy();
-    }
     makeMove(chosenMove) {
         let philToMove = this.activePhils[this.moving];
         let philToDefend = this.activePhils[this.defending];
@@ -143,18 +177,18 @@ export class Game {
             return;
         }
         if (philToDefend.isRetired()) {
-            this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
-            this.nextGameScene2 = GameSceneFlag.YourPhilLeaves;
             if (this.moving == 1) {
                 this.nextMenuState1 = MenuFlag.SwitchMenuNoBack;
+                this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilLeaves;
             }
             if (this.moving == 0) {
                 this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
+                this.nextGameScene1 = GameSceneFlag.TheirPhilLeaves;
+                this.nextGameScene2 = GameSceneFlag.YourPhilLeaves;
             }
         }
-        else {
-            this.nextTurn();
-        }
+        this.nextTurn();
     }
     printBattleStatus() {
         console.log('\nPlayer ' + (this.moving + 1).toString() + "'s turn:\n");

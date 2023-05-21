@@ -99,7 +99,7 @@ function gameLoop(manager1, manager2, game) {
         // Process input from menus
         manager1.processMenuInput();
         manager2.processMenuInput();
-        // Get input from the game logic
+        // Get next game scene from the game logic
         let nextScene1 = game.getNextScene1();
         let nextScene2 = game.getNextScene2();
         if (nextScene1 != null) {
@@ -108,6 +108,7 @@ function gameLoop(manager1, manager2, game) {
         if (nextScene2 != null) {
             manager2.pushGameScene(nextScene2);
         }
+        // Get next menu state from the game logics
         let nextState1 = game.getNextMenuState1();
         let nextState2 = game.getNextMenuState2();
         if (nextState1 != null) {

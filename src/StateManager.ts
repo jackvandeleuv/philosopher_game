@@ -7,9 +7,11 @@ import { DefaultScene } from './scenes/DefaultScene.js';
 import { Philosopher } from './entities/Philosopher.js';
 import { YourPhilEnters } from './scenes/YourPhilEnters.js';
 import { YourPhilLeaves } from './scenes/YourPhilLeaves.js';
-import { YourPhilSwaps } from './scenes/YourPhilSwaps.js';
+import { PhilSwaps } from './scenes/PhilSwaps.js';
 import { ImageRepository } from './ImageRepository.js';
 import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
+import { TheirPhilEnters } from './scenes/TheirPhilEnters.js';
+import { TheirPhilLeaves } from './scenes/TheirPhilLeaves.js'
 
 export enum MenuFlag {
     MainBattleMenu,
@@ -23,7 +25,10 @@ export enum GameSceneFlag {
     DefaultScene,
     YourPhilEnters,
     YourPhilLeaves,
-    YourPhilSwaps
+    TheirPhilEnters,
+    TheirPhilLeaves,
+    YourPhilSwaps,
+    TheirPhilSwaps
 }
 
 export class StateManager {
@@ -53,9 +58,21 @@ export class StateManager {
                 return new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo)
                 break;
             case GameSceneFlag.YourPhilSwaps:
-                return new YourPhilSwaps(
+                return new PhilSwaps(
                     new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo),
                     new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo)
+                );
+                break;
+            case GameSceneFlag.TheirPhilEnters:
+                return new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                break;
+            case GameSceneFlag.TheirPhilLeaves:
+                return new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo)
+                break;
+            case GameSceneFlag.YourPhilSwaps:
+                return new PhilSwaps(
+                    new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo),
+                    new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo)
                 );
                 break;
             default:
@@ -65,7 +82,7 @@ export class StateManager {
 
     render(): void {
         if (this.currentMenuState instanceof MoveMenu) {
-            this.currentMenuState.updateMoves(this.game.getPhilToMove().getMoves());
+            this.currentMenuState.updateMoves(this.game.getActivePhils()[this.yourIndex].getMoves());
         } 
 
         this.currentMenuState.render();
@@ -74,7 +91,7 @@ export class StateManager {
         if (this.gameSceneQueue.length > 1) {
             // Clear any completed scenes from the head of the queue
             while (this.gameSceneQueue.length > 1 && this.gameSceneQueue[0].isSceneComplete()) {
-                this.gameSceneQueue.pop();
+                this.gameSceneQueue.shift();
             }
         } 
 
@@ -111,12 +128,12 @@ export class StateManager {
                 break; 
             case MenuFlag.SwitchMenu:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.imageRepo);
+                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.yourIndex);
                 this.currentMenuState.activate();
                 break;
             case MenuFlag.SwitchMenuNoBack:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.imageRepo);
+                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.yourIndex);
                 this.currentMenuState.activate();                
                 break;
             case MenuFlag.Resign:
@@ -141,14 +158,11 @@ export class StateManager {
         if (this.currentMenuState instanceof MoveMenu) {
             this.processMoveMenuInput();
         } 
-        
-        if (this.currentMenuState instanceof SwitchMenu) {
-            this.processSwitchMenuInput(this.currentMenuState);
-        } 
 
         // Switch menu state if applicable
         let newState = this.currentMenuState.getNextMenuState();
         if (newState != null) {
+            console.log('Changing menu state to: ' + newState)
             this.changeMenuState(newState);
         } 
     }
@@ -165,11 +179,4 @@ export class StateManager {
         }
     }
 
-    private processSwitchMenuInput(switchMenu: SwitchMenu): void {
-        // Add game scene to queue if applicable
-        let newScene = switchMenu.getNextGameScene();
-        if (newScene != null) {
-            this.gameSceneQueue.push(newScene);
-        }
-    }
 }

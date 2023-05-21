@@ -73,9 +73,52 @@ export class Game {
     /*
     Flips turn to move between the two players.
     */
-    nextTurn(): void {
+    private nextTurn(): void {
         this.moving = this.moving ^ 1;
         this.defending = this.defending ^ 1;
+    }
+
+    replaceRetiredPhil(newActivePhil: Philosopher, player: number): void {
+        if (!newActivePhil.isRetired()) {
+            this.activePhils[player] = newActivePhil.deepCopy();
+            if (player == 0) {
+                this.nextGameScene1 = GameSceneFlag.YourPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilEnters;
+            }
+            if (player == 1) {
+                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+            }
+            console.log('Player ' 
+                            + (player + 1).toString() 
+                            + ' sent out ' 
+                            + newActivePhil 
+                            + 'to go argue!');
+        } 
+    }
+
+    swapActivePhil(newActivePhil: Philosopher, player: number): void {
+        if (!newActivePhil.isRetired()) {
+            this.activePhils[player] = newActivePhil.deepCopy();
+            if (player == 0) {
+                this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
+            }
+            if (player == 1) {
+                this.nextGameScene1 = GameSceneFlag.TheirPhilEnters;
+                this.nextGameScene2 = GameSceneFlag.YourPhilEnters;
+            }
+            console.log('Player ' 
+                            + (player + 1).toString() 
+                            + ' switched Philosophers to ' 
+                            + newActivePhil 
+                            + ', forfeiting their turn!');
+            this.nextTurn();
+        } 
+        
+        else {
+            throw new Error('Called swap active phil to try and swap in a retired phil!');
+        }
     }
 
     getNextMenuState1(): MenuFlag | null {
@@ -100,7 +143,7 @@ export class Game {
     /*
     Player number should be 0 for player 1 and 1 for player 2.
     */
-    setActivePhil(newActivePhil: Philosopher, playerNumber: number): void {
+    private setActivePhil(newActivePhil: Philosopher, playerNumber: number): void {
         this.activePhils[playerNumber] = newActivePhil.deepCopy();
     }
 
@@ -134,14 +177,6 @@ export class Game {
             philGroupCopy[i] = philGroupSubCopy;
         }
         return philGroupCopy;
-    }
-
-    getPhilToMove(): Philosopher {
-        return this.activePhils[this.moving].deepCopy();
-    }
-
-    getPhilToDefend(): Philosopher {
-        return this.activePhils[this.defending].deepCopy();
     }
 
     makeMove(chosenMove: Move) {
@@ -179,13 +214,19 @@ export class Game {
         }
 
         if (philToDefend.isRetired()) {
-            this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
-            this.nextGameScene2 = GameSceneFlag.YourPhilLeaves;
-            if (this.moving == 1) { this.nextMenuState1 = MenuFlag.SwitchMenuNoBack; }
-            if (this.moving == 0) { this.nextMenuState2 = MenuFlag.SwitchMenuNoBack; }
-        } else {
-            this.nextTurn();
-        }
+            if (this.moving == 1) { 
+                this.nextMenuState1 = MenuFlag.SwitchMenuNoBack; 
+                this.nextGameScene1 = GameSceneFlag.YourPhilLeaves;
+                this.nextGameScene2 = GameSceneFlag.TheirPhilLeaves;
+            }
+            if (this.moving == 0) { 
+                this.nextMenuState2 = MenuFlag.SwitchMenuNoBack;
+                this.nextGameScene1 = GameSceneFlag.TheirPhilLeaves;
+                this.nextGameScene2 = GameSceneFlag.YourPhilLeaves; 
+            }
+        } 
+        
+        this.nextTurn();
     }
 
     private printBattleStatus(): void {

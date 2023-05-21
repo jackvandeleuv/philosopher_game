@@ -2,15 +2,10 @@ import { MenuButton } from './MenuButton.js';
 import { GameScene, MenuState } from '../GameState.js'
 import { MenuFlag } from '../StateManager.js';
 import { Philosopher } from '../entities/Philosopher.js';
-import { YourPhilEnters } from '../scenes/YourPhilEnters.js';
-import { YourPhilSwaps } from '../scenes/YourPhilSwaps.js';
-import { YourPhilLeaves } from '../scenes/YourPhilLeaves.js';
 import { Game } from '../Game.js';
-import { ImageRepository } from '../ImageRepository.js';
 
 export class SwitchMenu implements MenuState {
     protected nextMenuState: MenuFlag | null = null;
-    protected nextGameScene: GameScene | null = null;
     protected menuItems: MenuButton[] = [];
     protected buttonWidth = this.ctx.canvas.width * (2 / 3);
     protected buttonHeight = this.ctx.canvas.height / 18;
@@ -18,7 +13,7 @@ export class SwitchMenu implements MenuState {
     protected y = this.ctx.canvas.height * (5 / 8);
     protected x = (this.ctx.canvas.width - this.buttonWidth) / 2;
 
-    constructor(protected ctx: CanvasRenderingContext2D, protected game: Game, private imageRepo: ImageRepository) {
+    constructor(protected ctx: CanvasRenderingContext2D, protected game: Game, protected playerID: number) {
         // Bind 'this' from MainBattleMenu to handleClick to avoid ambiguity when 
         // firing from a different context.
         this.handleClick = this.handleClick.bind(this);
@@ -44,23 +39,8 @@ export class SwitchMenu implements MenuState {
                 height: this.buttonHeight,
                 action: () => {
                     if (!yourPhils[i].isRetired()) {
-                        console.log('You switched Philosophers to ' + yourPhils[i] + ' forfeiting your turn!');
-                        this.game.setActivePhil(yourPhils[i].deepCopy(), this.game.getTurnToMove());
-                        this.game.nextTurn();
-                        
+                        this.game.swapActivePhil(yourPhils[i].deepCopy(), this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
-                        this.nextGameScene = new YourPhilSwaps(
-                            new YourPhilLeaves(this.ctx, 
-                                                this.game.getPhilToMove().deepCopy(), 
-                                                this.game.getPhilToDefend().deepCopy(),
-                                                this.imageRepo
-                                                ),
-                            new YourPhilEnters(this.ctx, 
-                                                yourPhils[i].deepCopy(), 
-                                                this.game.getPhilToDefend().deepCopy(),
-                                                this.imageRepo
-                                                )
-                        );
                     }
                 }
             })
@@ -155,11 +135,5 @@ export class SwitchMenu implements MenuState {
         let nextState = this.nextMenuState;
         this.nextMenuState = null;
         return nextState;
-    }
-
-    getNextGameScene(): GameScene | null {
-        let nextScene = this.nextGameScene;
-        this.nextGameScene = null;
-        return nextScene;
     }
 }

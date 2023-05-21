@@ -1,14 +1,10 @@
 import { MenuFlag } from '../StateManager.js';
-import { YourPhilEnters } from '../scenes/YourPhilEnters.js';
-import { YourPhilSwaps } from '../scenes/YourPhilSwaps.js';
-import { YourPhilLeaves } from '../scenes/YourPhilLeaves.js';
 export class SwitchMenu {
-    constructor(ctx, game, imageRepo) {
+    constructor(ctx, game, playerID) {
         this.ctx = ctx;
         this.game = game;
-        this.imageRepo = imageRepo;
+        this.playerID = playerID;
         this.nextMenuState = null;
-        this.nextGameScene = null;
         this.menuItems = [];
         this.buttonWidth = this.ctx.canvas.width * (2 / 3);
         this.buttonHeight = this.ctx.canvas.height / 18;
@@ -38,11 +34,8 @@ export class SwitchMenu {
                 height: this.buttonHeight,
                 action: () => {
                     if (!yourPhils[i].isRetired()) {
-                        console.log('You switched Philosophers to ' + yourPhils[i] + ' forfeiting your turn!');
-                        this.game.setActivePhil(yourPhils[i].deepCopy(), this.game.getTurnToMove());
-                        this.game.nextTurn();
+                        this.game.swapActivePhil(yourPhils[i].deepCopy(), this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
-                        this.nextGameScene = new YourPhilSwaps(new YourPhilLeaves(this.ctx, this.game.getPhilToMove().deepCopy(), this.game.getPhilToDefend().deepCopy(), this.imageRepo), new YourPhilEnters(this.ctx, yourPhils[i].deepCopy(), this.game.getPhilToDefend().deepCopy(), this.imageRepo));
                     }
                 }
             });
@@ -122,10 +115,5 @@ export class SwitchMenu {
         let nextState = this.nextMenuState;
         this.nextMenuState = null;
         return nextState;
-    }
-    getNextGameScene() {
-        let nextScene = this.nextGameScene;
-        this.nextGameScene = null;
-        return nextScene;
     }
 }

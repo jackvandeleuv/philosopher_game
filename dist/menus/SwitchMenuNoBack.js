@@ -1,15 +1,15 @@
 import { SwitchMenu } from "./SwitchMenu.js";
 import { MenuFlag } from "../StateManager.js";
 export class SwitchMenuNoBack extends SwitchMenu {
-    constructor(ctx, game, imageRepo) {
-        super(ctx, game, imageRepo);
+    constructor(ctx, game, playerID) {
+        super(ctx, game, playerID);
     }
     render() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = '#9FB4C7';
         this.ctx.fillRect(0, 0, 1000, 1000);
         this.menuItems = [];
-        let defendingPhils = this.game.getPhils()[this.game.getTurnToMove() ^ 1];
+        let defendingPhils = this.game.getPhils()[this.playerID];
         for (let i = 0; i < defendingPhils.length; i++) {
             let retiredIndicator = '';
             if (defendingPhils[i].isRetired()) {
@@ -23,9 +23,8 @@ export class SwitchMenuNoBack extends SwitchMenu {
                 height: this.buttonHeight,
                 action: () => {
                     if (!defendingPhils[i].isRetired()) {
-                        this.game.setActivePhil(defendingPhils[i].deepCopy(), this.game.getTurnToMove() ^ 1);
+                        this.game.replaceRetiredPhil(defendingPhils[i].deepCopy(), this.playerID);
                         this.nextMenuState = MenuFlag.MainBattleMenu;
-                        this.game.nextTurn();
                     }
                 }
             });
