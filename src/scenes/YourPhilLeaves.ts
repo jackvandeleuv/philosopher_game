@@ -21,7 +21,7 @@ export class YourPhilLeaves implements GameScene {
 
     private updatePhilPosition(): void {
         if (this.x + this.w > 0) {
-            this.x = this.x - this.ctx.canvas.width / 200;
+            this.x = this.x - this.ctx.canvas.width / 1000;
         }
     }
 
@@ -55,7 +55,7 @@ export class YourPhilLeaves implements GameScene {
     private drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
 
-        let image = this.imageRepo.getImage(this.phil1.getImagePath())
+        let image = this.imageRepo.getImage(this.phil2.getImagePath())
         if (image != null){
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
@@ -82,12 +82,9 @@ export class YourPhilLeaves implements GameScene {
 
     render(): void {
         this.drawBattleMinusYourPhil();
-        if (this.phil1.getImagePath() != null) {
-            this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
-            this.updatePhilPosition();
-            this.checkPhil1OutOfBounds();
-            this.drawReversed();
-        }
+        this.updatePhilPosition();
+        this.checkPhil1OutOfBounds();
+        this.drawReversed();
     }
 
     private drawPlatform(x: number, y: number, radiusX: number, radiusY: number): void {

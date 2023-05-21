@@ -5,19 +5,18 @@ export class TheirPhilEnters {
         this.phil2 = phil2;
         this.imageRepo = imageRepo;
         this.sceneComplete = false;
-        this.defaultX = 200;
-        this.x = this.defaultX;
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.platformX = this.ctx.canvas.width / 1.55;
         this.destinationX = this.platformX;
         this.y = this.ctx.canvas.width / 9;
         this.w = this.ctx.canvas.width / 5.4;
         this.h = this.ctx.canvas.width / 5.4;
+        this.defaultX = this.ctx.canvas.width + this.w;
+        this.x = this.defaultX;
     }
     drawPhil2() {
-        let phil2Image = this.imageRepo.getImage(this.phil1.getImagePath());
+        let phil2Image = this.imageRepo.getImage(this.phil2.getImagePath());
         if (phil2Image != null) {
-            this.drawPlatform(this.x + (this.w / 2), this.y + this.y, this.w * .8, this.h * .2);
             // Save the context state
             this.ctx.save();
             // Move to the center of the image, scale it negatively on x axis, then move it back
@@ -32,7 +31,7 @@ export class TheirPhilEnters {
     }
     updatePhilPosition() {
         if (this.x > this.destinationX) {
-            this.x = this.x - (this.ctx.canvas.width / 150);
+            this.x = this.x - (this.ctx.canvas.width / 1000); // 150
         }
     }
     checkPhilAtDestination() {
@@ -41,14 +40,14 @@ export class TheirPhilEnters {
         }
     }
     drawBattleMinusYourPhil() {
-        this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
         let image = this.imageRepo.getImage(this.phil1.getImagePath());
         if (image != null) {
             let x2 = this.ctx.canvas.width / 6.4;
             let y2 = this.ctx.canvas.width / 3.6;
             let w2 = this.ctx.canvas.width / 3.6;
             let h2 = this.ctx.canvas.width / 3.6;
-            this.drawPlatform(x2 + (w2 / 2), y2 + h2, this.w * .8, this.h * .2);
+            this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, w2 * .8, h2 * .2);
+            this.drawPlatform(x2 + (w2 / 2), y2 + h2, w2 * .8, h2 * .2);
             this.ctx.drawImage(image, x2, y2, w2, h2);
         }
     }

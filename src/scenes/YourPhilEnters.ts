@@ -30,7 +30,7 @@ export class YourPhilEnters implements GameScene {
 
     private updatePhilPosition(): void {
         if (this.x < this.destinationX) {
-            this.x = this.x + (this.ctx.canvas.width / 150);
+            this.x = this.x + (this.ctx.canvas.width / 1000); // 150
         }
     }
 
@@ -42,7 +42,7 @@ export class YourPhilEnters implements GameScene {
 
     private drawBattleMinusYourPhil() {
         this.drawPlatform(this.platformX + (this.w / 2), this.y + this.h, this.w * .8, this.h * .2);
-        let image = this.imageRepo.getImage(this.phil1.getImagePath());
+        let image = this.imageRepo.getImage(this.phil2.getImagePath());
         if (image != null) {
             let x2 = this.ctx.canvas.width / 1.55;
             let y2 = this.ctx.canvas.width / 9;
