@@ -8,6 +8,7 @@ import { PhilSwaps } from './scenes/PhilSwaps.js';
 import { SwitchMenuNoBack } from './menus/SwitchMenuNoBack.js';
 import { TheirPhilEnters } from './scenes/TheirPhilEnters.js';
 import { TheirPhilLeaves } from './scenes/TheirPhilLeaves.js';
+import { FrozenMenu } from './menus/FrozenMenu.js';
 export var MenuFlag;
 (function (MenuFlag) {
     MenuFlag[MenuFlag["MainBattleMenu"] = 0] = "MainBattleMenu";
@@ -15,6 +16,7 @@ export var MenuFlag;
     MenuFlag[MenuFlag["SwitchMenu"] = 2] = "SwitchMenu";
     MenuFlag[MenuFlag["SwitchMenuNoBack"] = 3] = "SwitchMenuNoBack";
     MenuFlag[MenuFlag["Resign"] = 4] = "Resign";
+    MenuFlag[MenuFlag["FrozenMenu"] = 5] = "FrozenMenu";
 })(MenuFlag || (MenuFlag = {}));
 export var GameSceneFlag;
 (function (GameSceneFlag) {
@@ -27,10 +29,10 @@ export var GameSceneFlag;
     GameSceneFlag[GameSceneFlag["TheirPhilSwaps"] = 6] = "TheirPhilSwaps";
 })(GameSceneFlag || (GameSceneFlag = {}));
 export class StateManager {
-    constructor(ctx, game, yourIndex, imageRepo) {
+    constructor(ctx, game, playerIndex, imageRepo) {
         this.ctx = ctx;
         this.game = game;
-        this.yourIndex = yourIndex;
+        this.playerIndex = playerIndex;
         this.imageRepo = imageRepo;
         this.gameSceneQueue = [];
         this.currentMenuState = new BattleMenu(ctx);
@@ -44,33 +46,33 @@ export class StateManager {
         let activePhils = this.game.getActivePhils();
         switch (flag) {
             case GameSceneFlag.DefaultScene:
-                return new DefaultScene(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                return new DefaultScene(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.YourPhilEnters:
-                return new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                return new YourPhilEnters(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.YourPhilLeaves:
-                return new YourPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                return new YourPhilLeaves(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.YourPhilSwaps:
                 let yourLeavingPhil = this.game.getLeavingPhil();
                 if (yourLeavingPhil != null) {
-                    return new PhilSwaps(new YourPhilLeaves(this.ctx, yourLeavingPhil, activePhils[this.yourIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                    return new PhilSwaps(new YourPhilLeaves(this.ctx, yourLeavingPhil, activePhils[this.playerIndex ^ 1], this.imageRepo), new YourPhilEnters(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo));
                 }
                 else {
                     throw new Error('Flagged YourPhilSwaps but game did not have a leaving phil to display');
                 }
                 break;
             case GameSceneFlag.TheirPhilEnters:
-                return new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                return new TheirPhilEnters(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.TheirPhilLeaves:
-                return new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo);
+                return new TheirPhilLeaves(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo);
                 break;
             case GameSceneFlag.TheirPhilSwaps:
                 let theirLeavingPhil = this.game.getLeavingPhil();
                 if (theirLeavingPhil != null) {
-                    return new PhilSwaps(new TheirPhilLeaves(this.ctx, activePhils[this.yourIndex], theirLeavingPhil, this.imageRepo), new TheirPhilEnters(this.ctx, activePhils[this.yourIndex], activePhils[this.yourIndex ^ 1], this.imageRepo));
+                    return new PhilSwaps(new TheirPhilLeaves(this.ctx, activePhils[this.playerIndex], theirLeavingPhil, this.imageRepo), new TheirPhilEnters(this.ctx, activePhils[this.playerIndex], activePhils[this.playerIndex ^ 1], this.imageRepo));
                 }
                 else {
                     throw new Error('Flagged TheirPhilSwaps but game does not have a leaving phil to display');
@@ -82,7 +84,7 @@ export class StateManager {
     }
     render() {
         if (this.currentMenuState instanceof MoveMenu) {
-            this.currentMenuState.updateMoves(this.game.getActivePhils()[this.yourIndex].getMoves());
+            this.currentMenuState.updateMoves(this.game.getActivePhils()[this.playerIndex].getMoves());
         }
         this.currentMenuState.render();
         // If there are scenes waiting, remove the first completed one
@@ -122,12 +124,12 @@ export class StateManager {
                 break;
             case MenuFlag.SwitchMenu:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.yourIndex);
+                this.currentMenuState = new SwitchMenu(this.ctx, this.game, this.playerIndex);
                 this.currentMenuState.activate();
                 break;
             case MenuFlag.SwitchMenuNoBack:
                 this.currentMenuState.deactivate();
-                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.yourIndex);
+                this.currentMenuState = new SwitchMenuNoBack(this.ctx, this.game, this.playerIndex);
                 this.currentMenuState.activate();
                 break;
             case MenuFlag.Resign:
@@ -137,6 +139,11 @@ export class StateManager {
                     + ((this.game.getTurnToMove() ^ 1) + 1).toString()
                     + ' wins!');
                 this.currentMenuState.deactivate();
+                break;
+            case MenuFlag.FrozenMenu:
+                this.currentMenuState.deactivate();
+                this.currentMenuState = new FrozenMenu(this.ctx);
+                this.currentMenuState.activate();
                 break;
             default:
                 throw new Error('Menu state ' + state + ' not as expected.');
@@ -161,7 +168,7 @@ export class StateManager {
             // Make new move if applicable
             let newMove = this.currentMenuState.getNextMove();
             if (newMove != null) {
-                this.game.makeMove(newMove.deepCopy());
+                this.game.makeMove(newMove.deepCopy(), this.playerIndex);
             }
         }
         else {

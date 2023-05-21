@@ -110,24 +110,29 @@ export class Game {
         return this.activePhils[playerIndex];
     }
 
-    swapActivePhil(newActivePhil: Philosopher, player: number): void {
+    swapActivePhil(newActivePhil: Philosopher, playerIndex: number): void {
         if (!newActivePhil.isRetired()) {
-            let philGroup = this.philGroups[player];
-            this.leavingPhil = philGroup[this.activePhils[player]];
-            philGroup[this.activePhils[player]] = newActivePhil.deepCopy();
-            if (player == 0) {
+            let philGroup = this.philGroups[playerIndex];
+            this.leavingPhil = philGroup[this.activePhils[playerIndex]];
+            philGroup[this.activePhils[playerIndex]] = newActivePhil.deepCopy();
+            if (playerIndex == 0) {
                 this.nextGameScene1 = GameSceneFlag.YourPhilSwaps;
                 this.nextGameScene2 = GameSceneFlag.TheirPhilSwaps;
             }
-            if (player == 1) {
+            if (playerIndex == 1) {
                 this.nextGameScene1 = GameSceneFlag.TheirPhilSwaps;
                 this.nextGameScene2 = GameSceneFlag.YourPhilSwaps;
             }
-            console.log('Player ' 
-                            + (player + 1).toString() 
-                            + ' switched Philosophers to ' 
-                            + newActivePhil 
-                            + ', forfeiting their turn!');
+
+            if (playerIndex == 0) { 
+                this.nextMenuState1 = MenuFlag.FrozenMenu;
+                this.nextMenuState2 = MenuFlag.MainBattleMenu;
+            }
+            if (playerIndex == 1) { 
+                this.nextMenuState1 = MenuFlag.MainBattleMenu;
+                this.nextMenuState2 = MenuFlag.FrozenMenu;
+            }
+    
             this.nextTurn();
         } 
         
@@ -219,6 +224,15 @@ export class Game {
         }
 
         philToDefend.takeDamage(damageDealt); 
+
+        if (playerIndex == 0) { 
+            this.nextMenuState1 = MenuFlag.FrozenMenu;
+            this.nextMenuState2 = MenuFlag.MainBattleMenu;
+        }
+        if (playerIndex == 1) { 
+            this.nextMenuState1 = MenuFlag.MainBattleMenu;
+            this.nextMenuState2 = MenuFlag.FrozenMenu;
+        }
 
         if (this.defenderGroupRetired()) {
             console.log('Player ' 
