@@ -1,40 +1,32 @@
-"use strict";
-const canvas = document.getElementById('myCanvas');
-const context = canvas.getContext('2d');
-const witty = new Image();
-const berty = new Image();
-witty.src = '../images/wittgenstein.jpg';
-berty.src = '../images/russell.jpg';
-if (context != null) {
-    context.fillStyle = 'lightBlue';
-    context.fillRect(0, 0, 1000, 1000);
-    let wittyX = 50;
-    let wittyY = 300;
-    witty.onload = () => {
-        context.drawImage(witty, wittyX, wittyY, 200, 200);
-    };
-    berty.onload = () => {
-        context.drawImage(berty, 700, 300, 200, 200);
-    };
-    let signX = -8;
-    let signY = -8;
-    let lastTime = 0;
-    function drawImage(now) {
-        const timeChange = now - lastTime;
-        lastTime = now;
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = 'lightBlue';
-        context.fillRect(0, 0, 1000, 1000);
-        if (wittyX >= canvas.width - 200 || wittyX <= 0) {
-            signX = signX * -1 * (Math.random() + .5);
-        }
-        if (wittyY >= canvas.width - 200 || wittyY <= 0) {
-            signY = signY * -1 * (Math.random() + .5);
-        }
-        wittyY = wittyY + signY;
-        wittyX = wittyX + signX;
-        context.drawImage(witty, wittyX, wittyY, 200, 200);
-        requestAnimationFrame(drawImage);
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var _a;
+import { createClient } from '@supabase/supabase-js';
+require('dotenv').config();
+const supabaseUrl = 'https://kbywruuwozsgvibmpmcm.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+(_a = document.getElementById('sign-up-form')) === null || _a === void 0 ? void 0 : _a.addEventListener('submit', (e) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b, _c;
+    e.preventDefault();
+    const email = (_b = document.getElementById('email-input')) === null || _b === void 0 ? void 0 : _b.value;
+    const password = (_c = document.getElementById('password-input')) === null || _c === void 0 ? void 0 : _c.value;
+    const { data, error } = yield supabase.auth.signUp({
+        email: email,
+        password: password,
+    });
+    const user = data === null || data === void 0 ? void 0 : data.user;
+    if (error) {
+        console.error('Error signing up:', error.message);
     }
-    drawImage();
-}
+    else {
+        console.log('User signed up:', user);
+    }
+}));
